@@ -1342,7 +1342,7 @@ function parseXmlData(xmlString) {
 
     console.log('Parsing XML data...');
     
-    // The data might be split into lines, so join it back
+    // Join all lines to form complete XML
     const fullXml = xmlString.split('\n').join('');
     console.log('Full XML length:', fullXml.length);
     
@@ -1357,9 +1357,9 @@ function parseXmlData(xmlString) {
             return fallbackParse(xmlString);
         }
         
-        // Look for rows - based on your structure, rows are in <Row> tags
+        // Find all Row elements
         const rows = xmlDoc.getElementsByTagName('Row');
-        console.log(`Found ${rows.length} <Row> elements`);
+        console.log(`Found ${rows.length} Row elements`);
         
         if (rows.length === 0) {
             return fallbackParse(xmlString);
@@ -1367,7 +1367,7 @@ function parseXmlData(xmlString) {
         
         const data = [];
         
-        // First, extract headers from the first row's column tags
+        // Extract headers from first row's Column tags
         const firstRow = rows[0];
         const headers = [];
         const columns = firstRow.getElementsByTagName('Column');
@@ -1381,7 +1381,7 @@ function parseXmlData(xmlString) {
             console.log('Headers extracted:', headers);
         }
         
-        // Then extract all data rows
+        // Extract all data rows
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             const rowData = [];
@@ -1389,7 +1389,7 @@ function parseXmlData(xmlString) {
             
             for (let col of cols) {
                 let value = col.textContent || col.innerHTML || '';
-                // Clean up the value
+                // Clean up HTML entities
                 value = value.replace(/&amp;/g, '&')
                              .replace(/&lt;/g, '<')
                              .replace(/&gt;/g, '>')
@@ -1421,32 +1421,23 @@ function fallbackParse(xmlString) {
     console.log('Using fallback regex parser...');
     const data = [];
     
-    // Split into lines and process
+    // Split into lines
     const lines = xmlString.split('\n').filter(line => line.trim());
     
-    // Find where the actual data starts (after XML declaration and Root tag)
-    let startIndex = 0;
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i].includes('<Row>')) {
-            startIndex = i;
-            break;
-        }
-    }
-    
-    // Collect all rows
-    let currentRow = [];
+    // Find where data rows start (after XML declaration and Root)
+    let rowData = [];
     let inRow = false;
     
-    for (let i = startIndex; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         
         if (line.includes('<Row>')) {
             inRow = true;
-            currentRow = [];
+            rowData = [];
         } else if (line.includes('</Row>')) {
             inRow = false;
-            if (currentRow.length > 0) {
-                data.push(currentRow);
+            if (rowData.length > 0) {
+                data.push(rowData);
             }
         } else if (inRow && line.includes('<Column>')) {
             // Extract value between <Column> and </Column>
@@ -1459,7 +1450,7 @@ function fallbackParse(xmlString) {
                              .replace(/&gt;/g, '>')
                              .replace(/&quot;/g, '"')
                              .replace(/&#39;/g, "'");
-                currentRow.push(value);
+                rowData.push(value);
             }
         }
     }
