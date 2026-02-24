@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>CRIUS Business Dashboard - Auto Connect</title>
+    <title>CRIUS Business Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -99,83 +98,50 @@
             border-radius: 4px;
         }
 
-        .api-config-panel {
+        .connection-status-bar {
             background: #e8f0fe;
-            padding: 20px 24px;
+            padding: 10px 24px;
             border-bottom: 2px solid #b8d1f0;
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .server-selector {
-            display: flex;
-            gap: 10px;
+        .status-connected {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 8px;
-            border: 1px solid #4a6fa5;
-            min-width: 350px;
+            gap: 8px;
         }
 
-        .server-selector select {
-            padding: 8px;
-            border: none;
-            width: 100%;
-            background: transparent;
-            font-size: 14px;
+        .status-connecting {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .server-selector select:focus {
-            outline: none;
-        }
-
-        .api-config-panel input, .api-config-panel select {
-            padding: 8px 12px;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            min-width: 140px;
-            font-size: 13px;
-        }
-
-        .api-config-panel button {
-            background: #1e3a5f;
+        .refresh-btn-small {
+            background: #4a6fa5;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 6px 15px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
-            transition: all 0.2s;
+            font-size: 12px;
         }
 
-        .api-config-panel button:hover {
-            background: #0f2a44;
-            transform: translateY(-1px);
-        }
-
-        .api-config-panel button.test-btn {
-            background: #4CAF50;
-        }
-
-        .api-config-panel button.test-btn:hover {
-            background: #45a049;
-        }
-
-        .api-config-panel button.proxy-btn {
-            background: #ff9800;
-        }
-
-        .connection-status {
-            font-size: 13px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: #fff3cd;
-            display: inline-block;
-            font-weight: 500;
+        .refresh-btn-small:hover {
+            background: #1e3a5f;
         }
 
         .nav-sidebar {
@@ -487,111 +453,12 @@
             cursor: not-allowed;
         }
 
-        .proxy-panel {
-            background: #f8f9fa;
-            padding: 15px 24px;
-            border-bottom: 2px solid #dee2e9;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
+        .connection-panel {
+            display: none; /* Hidden by default */
         }
 
-        .proxy-panel select {
-            padding: 8px 12px;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            min-width: 250px;
-        }
-
-        .proxy-panel button {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .proxy-panel button:hover {
-            background: #138496;
-        }
-
-        .proxy-status {
-            font-size: 13px;
-            color: #1e3a5f;
-            font-weight: 500;
-        }
-
-        .working-proxy-note {
-            background: #d4edda;
-            padding: 10px 24px;
-            border-left: 4px solid #28a745;
-            font-size: 13px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .working-proxy-note button {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .it-team-panel {
-            background: #e8eaf6;
-            padding: 15px 24px;
-            border-bottom: 2px solid #3f51b5;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .it-team-panel button {
-            background: #3f51b5;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .it-team-panel button:hover {
-            background: #303f9f;
-        }
-
-        .it-team-status {
-            background: #c5cae9;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #1a237e;
-        }
-
-        .auto-connect-badge {
-            background: #4caf50;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-left: 15px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
+        .config-data {
+            display: none; /* Hidden configuration data */
         }
     </style>
 </head>
@@ -599,12 +466,9 @@
     <div class="dashboard">
         <div class="main-header">
             <div>
-                CRIUS Business Dashboard - Auto Connect
+                CRIUS Business Dashboard
                 <span class="api-badge" id="apiBadge" style="display: none;">
                     <span>✅</span> Connected
-                </span>
-                <span class="auto-connect-badge" id="autoConnectBadge">
-                    <span>🔄</span> Auto-connecting...
                 </span>
             </div>
             <div class="weather-info">
@@ -615,62 +479,39 @@
 
         <div class="company-header">
             CRIUS GROUP OF COMPANIES
-            <div class="company-subheader">Enterprise Business Intelligence Dashboard - Auto Connect Edition</div>
+            <div class="company-subheader">Enterprise Business Intelligence Dashboard</div>
         </div>
 
-
-        <!-- Working Proxy Found Note (initially hidden) -->
-        <div class="working-proxy-note" id="workingProxyNote">
-            <span>✅ <strong>Working Proxy Found!</strong></span>
-            <button onclick="useWorkingProxy()">Connect with Working Proxy</button>
-            <span id="workingProxyUrl" style="font-weight: bold; color: #155724;"></span>
+        <div class="nav-menu">
+            <a href="#">Home</a>
+            <a href="#">Ceoitbox</a>
+            <a href="#">Training Videos</a>
+            <a href="#">Management</a>
+            <a href="#">Head Office</a>
+            <a href="#">CRIUS</a>
+            <a href="#">CHIROS/SIGNOVA</a>
+            <a href="#">CHIMAK/SYSKEM/MARSK</a>
+            <a href="#">WELZO</a>
+            <a href="#">CRIUS HEALTHCARE</a>
         </div>
 
-        <!-- Server Selection -->
-        <div class="api-config-panel">
-            <div class="server-selector">
-                <select id="serverSelect" onchange="onServerChange()">
-                    <option value="http://43.246.140.102:6060/smarten/">🌐 Public Server 1 (43.246.140.102:6060)</option>
-                    <option value="http://43.246.140.102:6060/smarten/">🏠 Local Server (43.246.140.102:6060)</option>
-                    <option value="http://103.54.103.91:6060/smarten/">🌍 Public Server 2 (103.54.103.91:6060)</option>
-                    <option value="http://43.246.140.102:6060/smarten/" selected>🏢 IT TEAM SERVER (Port 43) - RECOMMENDED</option>
-                    <option value="custom">✏️ Custom URL</option>
-                </select>
+        <!-- Simple Status Bar (Only visible after connection) -->
+        <div class="connection-status-bar" id="statusBar" style="display: none;">
+            <div id="connectionStatus" class="status-connected">
+                <span>✅</span> Connected via CORS Anywhere
             </div>
-            
-            <div class="filter-group" id="customUrlGroup" style="display: none;">
-                <input type="text" id="customUrl" placeholder="http://your-server:6060/smarten" style="width: 250px;">
-            </div>
-
-            <input type="text" id="apiUsername" value="SOURAV" placeholder="Username">
-            <input type="password" id="apiPassword" value="KUMAR@1308" placeholder="Password">
-            <input type="text" id="reportId" value="r17d84895210.rpt" placeholder="Report ID">
-            
-            <button onclick="saveConfig()" class="proxy-btn">💾 Save Config</button>
-            <span id="connectionStatus" class="connection-status">Auto-connecting...</span>
+            <button class="refresh-btn-small" onclick="refreshData()">
+                <span>🔄</span> Refresh Data
+            </button>
         </div>
 
-        <!-- Proxy Selection Panel with Working Proxies -->
-        <div class="proxy-panel">
-            <span style="font-weight: 700; color: #1e3a5f;">🌐 Auto Connect Proxy:</span>
-<select id="proxySelect">
-    <option value="https://cors-anywhere.herokuapp.com/" selected>✅ CORS Anywhere (Auto Connect)</option>
-    <option value="https://cors-anywhere.azm.workers.dev/?">✅ CORS Bypass (Worker)</option>
-    <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">✅ CORS Proxy Worker - Fast</option>
-    <option value="https://thingproxy.freeboard.io/fetch/">🔄 ThingProxy</option>
-</select>
-            <button onclick="testSelectedProxy()" class="test-btn">✓ Test Selected</button>
-            <button onclick="findWorkingProxy()" class="proxy-btn">🔍 Find Working Proxy</button>
-            <button onclick="connectWithProxy()" class="refresh-btn">🚀 Connect via Proxy</button>
-            <span id="proxyTestResult" class="proxy-status"></span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="padding: 10px 24px; display: flex; gap: 15px; background: #f8f9fa; border-bottom: 2px solid #dee2e9; flex-wrap: wrap;">
-            <button onclick="testDirectConnection()" class="test-btn">Test Direct Connection</button>
-            <button onclick="connectWithCorsAnywhere()" class="test-btn" style="background: #4caf50;">🚀 Connect with CORS Anywhere</button>
-            <button onclick="loadSavedConfig()" class="proxy-btn">Load Saved Config</button>
-            <span id="globalConnectionStatus" class="connection-status">Auto-connecting...</span>
+        <!-- Hidden Configuration (never visible to users) -->
+        <div class="config-data">
+            <input type="text" id="apiUsername" value="SOURAV">
+            <input type="password" id="apiPassword" value="KUMAR@1308">
+            <input type="text" id="reportId" value="r17d84895210.rpt">
+            <input type="text" id="serverUrl" value="http://43.246.140.102:6060/smarten/">
+            <input type="text" id="proxyUrl" value="https://cors-anywhere.herokuapp.com/">
         </div>
 
         <div class="nav-sidebar" id="tabNav"></div>
@@ -718,7 +559,7 @@
             <button onclick="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #856404; cursor: pointer; font-weight: 600;">Clear All ✕</button>
         </div>
 
-        <div id="loading" class="loading">Auto-connecting to CORS Anywhere... Please wait.</div>
+        <div id="loading" class="loading">Connecting to CORS Anywhere... Please wait.</div>
         <div id="error" class="error" style="display: none;"></div>
 
         <div id="tabContainers" style="display: none;"></div>
@@ -730,31 +571,24 @@
 
         <div class="dashboard-footer">
             <div class="footer-left">
-                <span>© 2026 CRIUS Group - Auto Connect Edition</span>
+                <span>© 2026 CRIUS Group</span>
             </div>
             <div class="footer-right">
-                <span>🌐 v2.0 | AUTO CONNECT</span>
+                <span>🌐 v2.0</span>
             </div>
         </div>
     </div>
 
     <script>
         // ==================== CONFIGURATION ====================
-        let CONFIG = {
+        const CONFIG = {
             serverUrl: 'http://43.246.140.102:6060/smarten/',
             username: 'SOURAV',
             password: 'KUMAR@1308',
-            reportId: 'r17d84895210.rpt'
+            reportId: 'r17d84895210.rpt',
+            proxyUrl: 'https://cors-anywhere.herokuapp.com/'
         };
 
-        const PROXIES = [
-            { name: 'CORS Anywhere (Auto Connect)', url: 'https://cors-anywhere.herokuapp.com/' },
-            { name: 'CORS Bypass (Worker)', url: 'https://cors-anywhere.azm.workers.dev/?' },
-            { name: 'CORS Proxy Worker - Fast', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-            { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' }
-        ];
-
-        let workingProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Default to CORS Anywhere
         let allData = [];
         let filteredData = [];
         let headers = [];
@@ -773,10 +607,10 @@
         let sortStates = {
             mktBy: { column: 1, direction: 'desc' },
             location: { column: 1, direction: 'desc' },
-            sfWise: { column: 5, direction: 'desc' },
-            brand: { column: 9, direction: 'desc' },
+            sfWise: { column: 2, direction: 'desc' },
+            brand: { column: 4, direction: 'desc' },
             productMonth: { column: 3, direction: 'desc' },
-            dpr: { column: 0, direction: 'desc' }
+            dpr: { column: 6, direction: 'desc' }
         };
 
         let uniqueLocations = new Set();
@@ -794,27 +628,11 @@
         // ==================== AUTO CONNECT ON PAGE LOAD ====================
         window.onload = function() {
             initializeUI();
-            loadSavedConfig();
-            
-            // Show auto-connect badge
-            document.getElementById('autoConnectBadge').style.display = 'inline-block';
-            
-            // Auto-select CORS Anywhere proxy
+            // Auto-connect after a short delay
             setTimeout(() => {
-                document.getElementById('proxySelect').value = 'https://cors-anywhere.herokuapp.com/';
-                
-                // Auto-connect after a short delay
-                setTimeout(() => {
-                    connectWithCorsAnywhere();
-                }, 1500);
-            }, 500);
+                autoConnect();
+            }, 1000);
         };
-
-        function onServerChange() {
-            const serverSelect = document.getElementById('serverSelect');
-            const customGroup = document.getElementById('customUrlGroup');
-            customGroup.style.display = serverSelect.value === 'custom' ? 'flex' : 'none';
-        }
 
         function initializeUI() {
             updateLastUpdateTime(new Date());
@@ -822,546 +640,99 @@
             createTabContainers();
         }
 
-        function saveConfig() {
-            const config = {
-                serverUrl: getServerUrl(),
-                username: document.getElementById('apiUsername').value,
-                password: document.getElementById('apiPassword').value,
-                reportId: document.getElementById('reportId').value
-            };
-            localStorage.setItem('smartenConfig', JSON.stringify(config));
-            showStatus('✅ Configuration saved!', '#d4edda');
-        }
-
-        function loadSavedConfig() {
-            const saved = localStorage.getItem('smartenConfig');
-            if (saved) {
-                try {
-                    CONFIG = JSON.parse(saved);
-                    document.getElementById('apiUsername').value = CONFIG.username;
-                    document.getElementById('apiPassword').value = CONFIG.password;
-                    document.getElementById('reportId').value = CONFIG.reportId;
-                    
-                    const serverSelect = document.getElementById('serverSelect');
-                    const options = Array.from(serverSelect.options).map(opt => opt.value);
-                    
-                    if (options.includes(CONFIG.serverUrl)) {
-                        serverSelect.value = CONFIG.serverUrl;
-                    } else {
-                        serverSelect.value = 'custom';
-                        document.getElementById('customUrlGroup').style.display = 'flex';
-                        document.getElementById('customUrl').value = CONFIG.serverUrl;
-                    }
-                    
-                    showStatus('✅ Config loaded', '#d4edda');
-                } catch (e) {
-                    console.log('Error loading config');
-                }
-            }
-        }
-
-        function getServerUrl() {
-            const serverSelect = document.getElementById('serverSelect');
-            if (serverSelect.value === 'custom') {
-                return document.getElementById('customUrl').value;
-            }
-            return serverSelect.value;
-        }
-
-        function showStatus(message, color) {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            statusEl.textContent = message;
-            statusEl.style.background = color;
-        }
-
         function updateLastUpdateTime(date) {
             const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
             document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + date.toLocaleDateString('en-GB', options);
         }
 
-        // ==================== AUTO CONNECT WITH CORS ANYWHERE ====================
+        // ==================== AUTO CONNECT FUNCTION ====================
+        async function autoConnect() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').textContent = 'Connecting to CORS Anywhere... Please wait.';
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                // Open CORS Anywhere demo page in new tab
+                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
+                
+                // Wait for user to click the button (3 seconds)
+                document.getElementById('loading').textContent = 'Waiting for CORS Anywhere access... Click the button in the new tab.';
+                
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Connect using CORS Anywhere
+                await connectWithCorsAnywhere();
+                
+            } catch (error) {
+                console.error('Auto-connect error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
+                    <strong>Connection Error:</strong><br>
+                    ${error.message}<br><br>
+                    <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
+                `;
+            }
+        }
+
+        // ==================== CONNECT WITH CORS ANYWHERE ====================
         async function connectWithCorsAnywhere() {
-            // Hide auto-connect badge
-            document.getElementById('autoConnectBadge').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').textContent = 'Fetching data via CORS Anywhere...';
             
-            // Set working proxy to CORS Anywhere
-            workingProxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            
-            // Try to request CORS Anywhere demo access
             try {
-                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                showStatus('Requesting CORS Anywhere access...', '#fff3cd');
+                const baseUrl = CONFIG.serverUrl.endsWith('/') ? CONFIG.serverUrl : CONFIG.serverUrl + '/';
+                const proxyUrl = CONFIG.proxyUrl;
+
+                // Step 1: Get Token
+                const tokenUrl = proxyUrl + baseUrl + 'API/getToken';
                 
-                // Wait a bit for the user to click the button
-                setTimeout(() => {
-                    connectWithProxy(workingProxyUrl);
-                }, 3000);
-            } catch (error) {
-                console.error('Error opening demo page:', error);
-                connectWithProxy(workingProxyUrl);
-            }
-        }
-
-        // ==================== PROXY FUNCTIONS ====================
-        async function requestCorsAnywhereAccess() {
-            try {
-                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                alert('Please request temporary access on the opened page, then click "Connect with CORS Anywhere" button.');
-            } catch (error) {
-                console.error('Error opening demo page:', error);
-            }
-        }
-
-        async function testDirectConnection() {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            statusEl.textContent = 'Testing direct connection...';
-            statusEl.style.background = '#fff3cd';
-            
-            try {
-                const serverUrl = getServerUrl();
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                const response = await fetch(serverUrl + 'API/getToken', {
+                const tokenResponse = await fetch(tokenUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
+                        'Origin': window.location.origin,
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
+                        username: CONFIG.username,
+                        password: CONFIG.password,
+                        objectid: CONFIG.reportId,
                         type: 'data'
                     })
                 });
-
-                if (response.ok) {
-                    const token = await response.text();
-                    console.log('Token received:', token);
-                    
-                    if (token && !token.includes('error')) {
-                        statusEl.textContent = '✅ Direct connection works!';
-                        statusEl.style.background = '#d4edda';
-                    } else {
-                        statusEl.textContent = '❌ Token invalid: ' + token.substring(0, 50);
-                        statusEl.style.background = '#f8d7da';
-                    }
-                } else {
-                    statusEl.textContent = '❌ Direct connection failed - ' + response.status;
-                    statusEl.style.background = '#f8d7da';
-                }
-            } catch (error) {
-                statusEl.textContent = '❌ Direct connection failed - Need proxy';
-                statusEl.style.background = '#f8d7da';
-            }
-        }
-
-        async function testProxy(proxyUrl) {
-            const serverUrl = getServerUrl();
-            const username = document.getElementById('apiUsername').value;
-            const password = document.getElementById('apiPassword').value;
-            const reportId = document.getElementById('reportId').value;
-
-            const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-            
-            try {
-                let testUrl;
-                let fetchOptions = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    })
-                };
-
-                // Handle different proxy types
-                if (proxyUrl.includes('workers.dev')) {
-                    testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    }).toString());
-                    fetchOptions = {
-                        method: 'GET',
-                        headers: {
-                            'Origin': window.location.origin
-                        }
-                    };
-                } else if (proxyUrl.includes('thingproxy')) {
-                    testUrl = proxyUrl + baseUrl + 'API/getToken';
-                } else {
-                    testUrl = proxyUrl + baseUrl + 'API/getToken';
-                }
-
-                console.log('Testing proxy:', proxyUrl, 'URL:', testUrl);
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-                const response = await fetch(testUrl, fetchOptions);
-                clearTimeout(timeoutId);
-
-                if (response.ok) {
-                    const text = await response.text();
-                    console.log('Proxy response:', text.substring(0, 100));
-                    return { success: true, url: proxyUrl };
-                } else {
-                    return { success: false, url: proxyUrl, status: response.status };
-                }
-            } catch (error) {
-                console.log('Proxy test error:', proxyUrl, error.message);
-                return { success: false, url: proxyUrl, error: error.message };
-            }
-        }
-
-        async function testSelectedProxy() {
-            const proxySelect = document.getElementById('proxySelect');
-            const selectedProxy = proxySelect.value;
-            const resultEl = document.getElementById('proxyTestResult');
-            const proxyName = proxySelect.options[proxySelect.selectedIndex].text;
-            
-            if (selectedProxy.includes('cors-anywhere.herokuapp.com')) {
-                resultEl.innerHTML = '⚠️ <a href="#" onclick="requestCorsAnywhereAccess(); return false;">CORS Anywhere needs temporary access - Click here to request</a>';
-                resultEl.style.color = '#ff9800';
-                return;
-            }
-            
-            resultEl.textContent = 'Testing...';
-            resultEl.style.color = '#666';
-            
-            const result = await testProxy(selectedProxy);
-            
-            if (result.success) {
-                resultEl.textContent = '✅ Proxy working! Click Connect';
-                resultEl.style.color = '#4CAF50';
-                workingProxyUrl = selectedProxy;
-                
-                document.getElementById('workingProxyNote').style.display = 'flex';
-                document.getElementById('workingProxyUrl').textContent = proxyName + ' - ' + selectedProxy;
-            } else {
-                resultEl.textContent = '❌ Proxy failed, try another';
-                resultEl.style.color = '#f44336';
-            }
-        }
-
-        async function findWorkingProxy() {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            const proxyResultEl = document.getElementById('proxyTestResult');
-            
-            statusEl.textContent = 'Testing all proxies...';
-            statusEl.style.background = '#fff3cd';
-            proxyResultEl.textContent = 'Working...';
-
-            const proxiesToTest = PROXIES.filter(p => !p.url.includes('cors-anywhere.herokuapp.com'));
-            
-            for (const proxy of proxiesToTest) {
-                statusEl.textContent = `Testing ${proxy.name}...`;
-                proxyResultEl.textContent = `Testing ${proxy.name}...`;
-                
-                const result = await testProxy(proxy.url);
-                
-                if (result.success) {
-                    statusEl.textContent = `✅ Found working proxy: ${proxy.name}`;
-                    statusEl.style.background = '#d4edda';
-                    proxyResultEl.textContent = `✅ ${proxy.name} works!`;
-                    proxyResultEl.style.color = '#4CAF50';
-                    
-                    workingProxyUrl = proxy.url;
-                    
-                    const select = document.getElementById('proxySelect');
-                    for (let i = 0; i < select.options.length; i++) {
-                        if (select.options[i].value === proxy.url) {
-                            select.selectedIndex = i;
-                            break;
-                        }
-                    }
-                    
-                    document.getElementById('workingProxyNote').style.display = 'flex';
-                    document.getElementById('workingProxyUrl').textContent = proxy.name + ' - ' + proxy.url;
-                    
-                    return;
-                }
-            }
-
-            statusEl.textContent = '❌ No working proxies found. Try CORS Anywhere with temporary access.';
-            statusEl.style.background = '#f8d7da';
-            proxyResultEl.innerHTML = '❌ All proxies failed. <a href="#" onclick="requestCorsAnywhereAccess(); return false;">Click here to request CORS Anywhere access</a>';
-            proxyResultEl.style.color = '#f44336';
-        }
-
-        function useWorkingProxy() {
-            if (workingProxyUrl) {
-                connectWithProxy(workingProxyUrl);
-            }
-        }
-
-        function parseXmlData(xmlString) {
-            if (!xmlString || xmlString.trim() === '') {
-                console.error('XML data is null or empty');
-                return [];
-            }
-
-            console.log('Parsing XML data...');
-            
-            // Join all lines to form complete XML
-            const fullXml = xmlString.split('\n').join('');
-            console.log('Full XML length:', fullXml.length);
-            
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(fullXml, 'text/xml');
-                
-                // Check for parser errors
-                const parseError = xmlDoc.getElementsByTagName('parsererror');
-                if (parseError.length > 0) {
-                    console.error('XML parse error:', parseError[0].textContent);
-                    return fallbackParse(xmlString);
-                }
-                
-                // Find all Row elements
-                const rows = xmlDoc.getElementsByTagName('Row');
-                console.log(`Found ${rows.length} Row elements`);
-                
-                if (rows.length === 0) {
-                    return fallbackParse(xmlString);
-                }
-                
-                const data = [];
-                
-                // Extract headers from first row's Column tags
-                const firstRow = rows[0];
-                const headers = [];
-                const columns = firstRow.getElementsByTagName('Column');
-                
-                for (let col of columns) {
-                    headers.push(col.textContent || col.innerHTML || '');
-                }
-                
-                if (headers.length > 0) {
-                    data.push(headers);
-                    console.log('Headers extracted:', headers);
-                }
-                
-                // Extract all data rows
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    const rowData = [];
-                    const cols = row.getElementsByTagName('Column');
-                    
-                    for (let col of cols) {
-                        let value = col.textContent || col.innerHTML || '';
-                        // Clean up HTML entities
-                        value = value.replace(/&amp;/g, '&')
-                                     .replace(/&lt;/g, '<')
-                                     .replace(/&gt;/g, '>')
-                                     .replace(/&quot;/g, '"')
-                                     .replace(/&#39;/g, "'")
-                                     .trim();
-                        rowData.push(value);
-                    }
-                    
-                    if (rowData.length > 0) {
-                        data.push(rowData);
-                    }
-                }
-                
-                console.log(`Total rows extracted: ${data.length} (including headers)`);
-                if (data.length > 1) {
-                    console.log('First data row (after headers):', data[1]);
-                }
-                
-                return data;
-                
-            } catch (e) {
-                console.error('XML parsing error:', e);
-                return fallbackParse(xmlString);
-            }
-        }
-
-        function fallbackParse(xmlString) {
-            console.log('Using fallback regex parser...');
-            const data = [];
-            
-            // Split into lines
-            const lines = xmlString.split('\n').filter(line => line.trim());
-            
-            // Find where data rows start (after XML declaration and Root)
-            let rowData = [];
-            let inRow = false;
-            
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                
-                if (line.includes('<Row>')) {
-                    inRow = true;
-                    rowData = [];
-                } else if (line.includes('</Row>')) {
-                    inRow = false;
-                    if (rowData.length > 0) {
-                        data.push(rowData);
-                    }
-                } else if (inRow && line.includes('<Column>')) {
-                    // Extract value between <Column> and </Column>
-                    const match = line.match(/<Column[^>]*>(.*?)<\/Column>/);
-                    if (match) {
-                        let value = match[1].trim();
-                        // Decode HTML entities
-                        value = value.replace(/&amp;/g, '&')
-                                     .replace(/&lt;/g, '<')
-                                     .replace(/&gt;/g, '>')
-                                     .replace(/&quot;/g, '"')
-                                     .replace(/&#39;/g, "'");
-                        rowData.push(value);
-                    }
-                }
-            }
-            
-            console.log(`Fallback parser extracted ${data.length} rows`);
-            if (data.length > 0) {
-                console.log('First data row:', data[0]);
-            }
-            
-            return data;
-        }
-
-        async function connectWithProxy(proxyUrl = null) {
-            try {
-                const selectedProxy = proxyUrl || document.getElementById('proxySelect').value;
-                
-                if (!selectedProxy) {
-                    alert('Please select a proxy first');
-                    return;
-                }
-
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('loading').textContent = 'Connecting via proxy...';
-                document.getElementById('error').style.display = 'none';
-
-                const serverUrl = getServerUrl();
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-                
-                // Prepare the token request body
-                const tokenBody = new URLSearchParams({
-                    username: username,
-                    password: password,
-                    objectid: reportId,
-                    type: 'data'
-                });
-
-                let tokenUrl, tokenResponse;
-
-                // Handle different proxy types
-                if (selectedProxy.includes('workers.dev')) {
-                    // Cloudflare Workers
-                    tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken?' + tokenBody.toString());
-                    console.log('Fetching token from:', tokenUrl);
-                    
-                    tokenResponse = await fetch(tokenUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Origin': window.location.origin
-                        }
-                    });
-                } 
-                else if (selectedProxy.includes('thingproxy')) {
-                    tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-                    console.log('Fetching token from:', tokenUrl);
-                    
-                    tokenResponse = await fetch(tokenUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: tokenBody
-                    });
-                }
-                else if (selectedProxy.includes('cors-anywhere')) {
-                    // CORS Anywhere
-                    tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-                    console.log('Fetching token from:', tokenUrl);
-                    
-                    tokenResponse = await fetch(tokenUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Origin': window.location.origin,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: tokenBody
-                    });
-                    
-                    // Check if CORS Anywhere needs demo
-                    if (tokenResponse.status === 403) {
-                        window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                        throw new Error('CORS Anywhere needs temporary access. A new tab opened - click the button, then try again.');
-                    }
-                }
-                else {
-                    // Default for other proxies
-                    tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-                    console.log('Fetching token from:', tokenUrl);
-                    
-                    tokenResponse = await fetch(tokenUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: tokenBody
-                    });
-                }
 
                 if (!tokenResponse.ok) {
+                    if (tokenResponse.status === 403) {
+                        throw new Error('CORS Anywhere needs temporary access. Please click the button in the new tab and try again.');
+                    }
                     throw new Error(`Token fetch failed: ${tokenResponse.status}`);
                 }
 
                 const token = await tokenResponse.text();
-                console.log('Token received, length:', token.length);
 
                 if (!token || token.trim() === '') {
                     throw new Error('Empty token response');
                 }
 
-                // Now fetch the actual data
-                let dataUrl, dataResponse;
+                // Step 2: Get Data
+                const dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
                 
-                if (selectedProxy.includes('workers.dev')) {
-                    dataUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
-                    dataResponse = await fetch(dataUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Origin': window.location.origin
-                        }
-                    });
-                } else {
-                    dataUrl = selectedProxy + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
-                    dataResponse = await fetch(dataUrl, {
-                        headers: {
-                            'Origin': window.location.origin
-                        }
-                    });
-                }
+                const dataResponse = await fetch(dataUrl, {
+                    headers: {
+                        'Origin': window.location.origin,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
 
                 if (!dataResponse.ok) {
                     throw new Error(`Data fetch failed: ${dataResponse.status}`);
                 }
 
                 const responseText = await dataResponse.text();
-                console.log('Data received, length:', responseText.length);
 
                 // Parse the data
                 let reportData = parseXmlData(responseText);
-                console.log('Raw parsed data (first 3 rows):', reportData.slice(0, 3));
 
                 if (!reportData || reportData.length === 0) {
                     throw new Error('No data found in response');
@@ -1369,44 +740,10 @@
 
                 // Store headers and data
                 headers = reportData[0] || [];
-                console.log('Detected headers:', headers);
-
-                // Check if headers look correct
-                if (headers.length === 0) {
-                    console.warn('No headers found, using default mapping');
-                    headers = ['Location', 'BillNo', 'Date', 'Product', 'Type', 'Batch', 'Qty', 'Value', 'SFCode', 'SFName', 'MktBy', 'City', 'State'];
-                }
-
                 reportData = reportData.slice(1);
-                console.log(`Processing ${reportData.length} data rows`);
 
-                // Debug first few rows
-                console.log('First 3 data rows:', reportData.slice(0, 3));
-
-                // Transform data with better error handling
-                try {
-                    allData = transformData(reportData);
-                    console.log('Transformed data sample:', allData.slice(0, 3));
-                } catch (transformError) {
-                    console.error('Transform error:', transformError);
-                    // Fallback: create basic objects
-                    allData = reportData.map((row, idx) => ({
-                        id: `row_${idx}`,
-                        location: row[0] || '',
-                        bill_no: row[1] || '',
-                        bill_date: row[2] || '',
-                        product_name: row[3] || '',
-                        product_type: row[4] || '',
-                        batch_no: row[5] || '',
-                        sale_qty: parseFloat(row[6]) || 0,
-                        basic_value: parseFloat(row[7]) || 0,
-                        sf_code: row[8] || '',
-                        sf_name: row[9] || '',
-                        mkt_by: row[10] || '',
-                        city: row[11] || '',
-                        state: row[12] || ''
-                    }));
-                }
+                // Transform data
+                allData = transformData(reportData);
 
                 if (allData.length === 0) {
                     throw new Error('No valid data after transformation');
@@ -1421,155 +758,179 @@
                 document.getElementById('tabContainers').style.display = 'block';
                 document.getElementById('grandFooter').style.display = 'flex';
                 document.getElementById('apiBadge').style.display = 'inline-block';
-                document.getElementById('autoConnectBadge').style.display = 'none';
+                document.getElementById('statusBar').style.display = 'flex';
                 
                 updateLastUpdateTime(new Date());
                 updateFilterOptions();
                 renderAllTables();
 
-                document.getElementById('globalConnectionStatus').textContent = '✅ Connected via CORS Anywhere';
-                document.getElementById('globalConnectionStatus').style.background = '#d4edda';
-                
-                if (workingProxyUrl) {
-                    document.getElementById('workingProxyNote').style.display = 'flex';
-                }
-
             } catch (error) {
                 console.error('Connection error:', error);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
-                
-                let errorMessage = error.message;
-                let suggestions = '';
-                
-                if (error.message.includes('403') && error.message.includes('CORS Anywhere')) {
-                    suggestions = '<br><br>✅ <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">Click here to request temporary access to CORS Anywhere</a><br><br>After clicking the button, <button onclick="connectWithCorsAnywhere()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Click here to try again</button>';
-                } else if (error.message.includes('Failed to fetch')) {
-                    suggestions = '<br><br>Try the "CORS Anywhere" option - it works best with GitHub Pages.';
-                }
-                
                 document.getElementById('error').innerHTML = `
                     <strong>Error:</strong><br>
-                    ${errorMessage}${suggestions}<br><br>
-                    <button onclick="connectWithCorsAnywhere()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Connect with CORS Anywhere</button>
-                    <button onclick="findWorkingProxy()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Find Working Proxy</button>
+                    ${error.message}<br><br>
+                    <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
                 `;
             }
         }
 
-        function transformData(rows) {
-            if (rows.length === 0) {
-                console.error('No rows to transform');
+        // ==================== XML PARSING ====================
+        function parseXmlData(xmlString) {
+            if (!xmlString || xmlString.trim() === '') {
+                console.error('XML data is null or empty');
                 return [];
             }
+
+            console.log('Parsing XML data...');
             
-            console.log('First row (raw):', rows[0]);
-            console.log('Number of columns:', rows[0].length);
-            
-            // If we have headers, use them
-            if (headers && headers.length > 0) {
-                console.log('Headers from data:', headers);
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
                 
-                // Create a mapping based on header content
-                const columnMap = {};
-                headers.forEach((header, index) => {
-                    const headerLower = (header || '').toString().toLowerCase().trim();
-                    
-                    // Map common header names to our field names
-                    if (headerLower.includes('location') || headerLower.includes('godown')) columnMap.location = index;
-                    else if (headerLower.includes('bill') || headerLower.includes('invoice')) {
-                        if (headerLower.includes('no') || headerLower.includes('num')) columnMap.bill_no = index;
-                        else if (headerLower.includes('date')) columnMap.bill_date = index;
-                    }
-                    else if (headerLower.includes('product') || headerLower.includes('item')) {
-                        if (headerLower.includes('name') || headerLower.includes('desc')) columnMap.product_name = index;
-                        else if (headerLower.includes('type') || headerLower.includes('category')) columnMap.product_type = index;
-                    }
-                    else if (headerLower.includes('batch')) columnMap.batch_no = index;
-                    else if (headerLower.includes('qty') || headerLower.includes('quantity')) columnMap.sale_qty = index;
-                    else if (headerLower.includes('value') || headerLower.includes('amount') || headerLower.includes('price')) columnMap.basic_value = index;
-                    else if (headerLower.includes('sf') || headerLower.includes('salesforce')) {
-                        if (headerLower.includes('code')) columnMap.sf_code = index;
-                        else if (headerLower.includes('name')) columnMap.sf_name = index;
-                    }
-                    else if (headerLower.includes('mkt') || headerLower.includes('market')) columnMap.mkt_by = index;
-                    else if (headerLower.includes('city')) columnMap.city = index;
-                    else if (headerLower.includes('state')) columnMap.state = index;
-                });
-                
-                console.log('Column mapping:', columnMap);
-                
-                // If no mapping found, use sequential indices
-                if (Object.keys(columnMap).length === 0) {
-                    console.log('No mapping found, using sequential indices');
-                    columnMap.location = 0;
-                    columnMap.bill_no = 1;
-                    columnMap.bill_date = 2;
-                    columnMap.product_name = 3;
-                    columnMap.product_type = 4;
-                    columnMap.batch_no = 5;
-                    columnMap.sale_qty = 6;
-                    columnMap.basic_value = 7;
-                    columnMap.sf_code = 8;
-                    columnMap.sf_name = 9;
-                    columnMap.mkt_by = 10;
-                    columnMap.city = 11;
-                    columnMap.state = 12;
+                const parseError = xmlDoc.getElementsByTagName('parsererror');
+                if (parseError.length > 0) {
+                    console.error('XML parse error');
+                    return fallbackParse(xmlString);
                 }
                 
-                // Transform the data
-                const objects = [];
-                rows.forEach((row, idx) => {
-                    if (idx === 0) return; // Skip header row if we used it for mapping
-                    
-                    try {
-                        const obj = {
-                            id: `row_${idx}`,
-                            location: row[columnMap.location] || '',
-                            bill_no: row[columnMap.bill_no] || '',
-                            bill_date: row[columnMap.bill_date] || '',
-                            product_name: row[columnMap.product_name] || '',
-                            product_type: row[columnMap.product_type] || '',
-                            batch_no: row[columnMap.batch_no] || '',
-                            sale_qty: parseFloat((row[columnMap.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                            basic_value: parseFloat((row[columnMap.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                            sf_code: row[columnMap.sf_code] || '',
-                            sf_name: row[columnMap.sf_name] || '',
-                            mkt_by: row[columnMap.mkt_by] || '',
-                            city: row[columnMap.city] || '',
-                            state: row[columnMap.state] || ''
-                        };
-                        
-                        objects.push(obj);
-                    } catch (e) {
-                        console.warn('Error transforming row', idx, e);
-                    }
-                });
+                const rows = xmlDoc.getElementsByTagName('Row');
                 
-                console.log(`Transformed ${objects.length} objects`);
-                if (objects.length > 0) {
-                    console.log('Sample transformed object:', objects[0]);
+                if (rows.length === 0) {
+                    return fallbackParse(xmlString);
                 }
-                return objects;
+                
+                const data = [];
+                
+                // Extract headers
+                const firstRow = rows[0];
+                const headers = [];
+                const columns = firstRow.getElementsByTagName('Column');
+                
+                for (let col of columns) {
+                    headers.push(col.textContent || '');
+                }
+                
+                if (headers.length > 0) {
+                    data.push(headers);
+                }
+                
+                // Extract data rows
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const rowData = [];
+                    const cols = row.getElementsByTagName('Column');
+                    
+                    for (let col of cols) {
+                        let value = col.textContent || '';
+                        value = value.replace(/&amp;/g, '&')
+                                     .replace(/&lt;/g, '<')
+                                     .replace(/&gt;/g, '>')
+                                     .replace(/&quot;/g, '"')
+                                     .replace(/&#39;/g, "'")
+                                     .trim();
+                        rowData.push(value);
+                    }
+                    
+                    if (rowData.length > 0) {
+                        data.push(rowData);
+                    }
+                }
+                
+                return data;
+                
+            } catch (e) {
+                console.error('XML parsing error:', e);
+                return fallbackParse(xmlString);
+            }
+        }
+
+        function fallbackParse(xmlString) {
+            console.log('Using fallback parser...');
+            const data = [];
+            const rows = xmlString.split('</Row>');
+            
+            for (const row of rows) {
+                if (!row.includes('<Row>')) continue;
+                
+                const cols = row.match(/<Column[^>]*>(.*?)<\/Column>/g);
+                if (cols) {
+                    const rowData = cols.map(col => {
+                        let value = col.replace(/<\/?Column[^>]*>/g, '');
+                        value = value.replace(/&amp;/g, '&')
+                                     .replace(/&lt;/g, '<')
+                                     .replace(/&gt;/g, '>')
+                                     .replace(/&quot;/g, '"')
+                                     .replace(/&#39;/g, "'");
+                        return value.trim();
+                    });
+                    data.push(rowData);
+                }
             }
             
-            // If no headers, use default mapping
-            console.log('No headers found, using default mapping');
+            return data;
+        }
+
+        // ==================== DATA TRANSFORMATION ====================
+        function transformData(rows) {
+            if (rows.length === 0) return [];
+            
+            // Create header mapping
+            const headerMap = {};
+            headers.forEach((header, index) => {
+                const headerStr = (header || '').toString().toLowerCase().trim();
+                
+                if (headerStr.includes('location') || headerStr.includes('godown')) headerMap.location = index;
+                else if (headerStr.includes('billno') || headerStr.includes('bill_no')) headerMap.bill_no = index;
+                else if (headerStr.includes('date') || headerStr.includes('txndocdt')) headerMap.bill_date = index;
+                else if (headerStr.includes('product') || headerStr.includes('itemname')) {
+                    if (headerStr.includes('type')) headerMap.product_type = index;
+                    else headerMap.product_name = index;
+                }
+                else if (headerStr.includes('batch')) headerMap.batch_no = index;
+                else if (headerStr.includes('qty') || headerStr.includes('saleqty')) headerMap.sale_qty = index;
+                else if (headerStr.includes('value') || headerStr.includes('basic')) headerMap.basic_value = index;
+                else if (headerStr.includes('sfcode')) headerMap.sf_code = index;
+                else if (headerStr.includes('sfname')) headerMap.sf_name = index;
+                else if (headerStr.includes('mktby')) headerMap.mkt_by = index;
+                else if (headerStr.includes('city')) headerMap.city = index;
+                else if (headerStr.includes('state')) headerMap.state = index;
+            });
+
+            // Default mapping if no headers found
+            if (Object.keys(headerMap).length === 0) {
+                headerMap.location = 0;
+                headerMap.bill_no = 1;
+                headerMap.bill_date = 2;
+                headerMap.product_name = 3;
+                headerMap.product_type = 4;
+                headerMap.batch_no = 5;
+                headerMap.sale_qty = 6;
+                headerMap.basic_value = 7;
+                headerMap.sf_code = 8;
+                headerMap.sf_name = 9;
+                headerMap.mkt_by = 10;
+                headerMap.city = 11;
+                headerMap.state = 12;
+            }
+
+            // Transform rows
             return rows.map((row, idx) => ({
                 id: `row_${idx}`,
-                location: row[0] || '',
-                bill_no: row[1] || '',
-                bill_date: row[2] || '',
-                product_name: row[3] || '',
-                product_type: row[4] || '',
-                batch_no: row[5] || '',
-                sale_qty: parseFloat((row[6] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                basic_value: parseFloat((row[7] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                sf_code: row[8] || '',
-                sf_name: row[9] || '',
-                mkt_by: row[10] || '',
-                city: row[11] || '',
-                state: row[12] || ''
+                location: row[headerMap.location] || '',
+                bill_no: row[headerMap.bill_no] || '',
+                bill_date: row[headerMap.bill_date] || '',
+                product_name: row[headerMap.product_name] || '',
+                product_type: row[headerMap.product_type] || '',
+                batch_no: row[headerMap.batch_no] || '',
+                sale_qty: parseFloat((row[headerMap.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
+                basic_value: parseFloat((row[headerMap.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
+                sf_code: row[headerMap.sf_code] || '',
+                sf_name: row[headerMap.sf_name] || '',
+                mkt_by: row[headerMap.mkt_by] || '',
+                city: row[headerMap.city] || '',
+                state: row[headerMap.state] || ''
             }));
         }
 
@@ -1586,11 +947,7 @@
         }
 
         function refreshData() {
-            if (workingProxyUrl) {
-                connectWithProxy(workingProxyUrl);
-            } else {
-                connectWithCorsAnywhere();
-            }
+            connectWithCorsAnywhere();
         }
 
         // ==================== TAB FUNCTIONS ====================
@@ -2013,7 +1370,7 @@
         function renderAllTables() {
             if (filteredData.length === 0) {
                 document.querySelectorAll('tbody').forEach(body => {
-                    body.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available. Please connect via CORS Anywhere.</td></tr>';
+                    body.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available.</td></tr>';
                 });
                 return;
             }
@@ -2586,17 +1943,7 @@
             applyFilters();
         }
 
-        // ==================== EXPOSE ALL FUNCTIONS TO WINDOW ====================
-        window.testDirectConnection = testDirectConnection;
-        window.testSelectedProxy = testSelectedProxy;
-        window.findWorkingProxy = findWorkingProxy;
-        window.connectWithProxy = connectWithProxy;
-        window.connectWithCorsAnywhere = connectWithCorsAnywhere;
-        window.useWorkingProxy = useWorkingProxy;
-        window.refreshData = refreshData;
-        window.saveConfig = saveConfig;
-        window.loadSavedConfig = loadSavedConfig;
-        window.onServerChange = onServerChange;
+        // Expose functions to window
         window.applyFilters = applyFilters;
         window.sortTable = sortTable;
         window.prevPage = prevPage;
@@ -2605,7 +1952,7 @@
         window.clearAllFilters = clearAllFilters;
         window.removeFilter = removeFilter;
         window.applyDrilldown = applyDrilldown;
-        window.requestCorsAnywhereAccess = requestCorsAnywhereAccess;
+        window.refreshData = refreshData;
     </script>
 </body>
 </html>
