@@ -657,16 +657,12 @@
         <!-- Proxy Selection Panel with Working Proxies -->
         <div class="proxy-panel">
             <span style="font-weight: 700; color: #1e3a5f;">🌐 Test Proxies (if port 43 doesn't work):</span>
-            <select id="proxySelect">
-                <option value="https://cors-anywhere.herokuapp.com/">CORS Anywhere (Heroku)</option>
-                <option value="https://api.allorigins.win/raw?url=">AllOrigins.win</option>
-                <option value="https://cors-proxy.htmldriven.com/?url=">HTMLDriven CORS Proxy</option>
-                <option value="https://thingproxy.freeboard.io/fetch/">ThingProxy</option>
-                <option value="https://corsproxy.io/?">CORSProxy.io</option>
-                <option value="https://cors-anywhere.azm.workers.dev/?">CORS Bypass</option>
-                <option value="https://proxy.cors.sh/">CORS.sh</option>
-                <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">CORS Proxy Worker</option>
-            </select>
+<select id="proxySelect">
+    <option value="https://cors-anywhere.azm.workers.dev/?" selected>✅ CORS Bypass (Worker) - Best for GitHub</option>
+    <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">✅ CORS Proxy Worker - Fast</option>
+    <option value="https://cors-anywhere.herokuapp.com/">⚠️ CORS Anywhere (Needs Demo)</option>
+    <option value="https://thingproxy.freeboard.io/fetch/">🔄 ThingProxy</option>
+</select>
             <button onclick="testSelectedProxy()" class="test-btn">✓ Test Selected</button>
             <button onclick="findWorkingProxy()" class="proxy-btn">🔍 Find Working Proxy</button>
             <button onclick="connectWithProxy()" class="refresh-btn">🚀 Connect via Proxy</button>
@@ -756,16 +752,12 @@
             reportId: 'r17d84895210.rpt'
         };
 
-        const PROXIES = [
-            { name: 'CORS Anywhere (needs demo)', url: 'https://cors-anywhere.herokuapp.com/' },
-            { name: 'AllOrigins', url: 'https://api.allorigins.win/raw?url=' },
-            { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-            { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' },
-            { name: 'CORSProxy.io', url: 'https://corsproxy.io/?' },
-            { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
-            { name: 'CORS.sh', url: 'https://proxy.cors.sh/' },
-            { name: 'CORSfix.com', url: 'https://corsfix.com/?' }
-        ];
+const PROXIES = [
+    { name: 'CORS Bypass (Worker) - Best for GitHub', url: 'https://cors-anywhere.azm.workers.dev/?' },
+    { name: 'CORS Proxy Worker - Fast', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
+    { name: 'CORS Anywhere (Heroku) - Needs Demo', url: 'https://cors-anywhere.herokuapp.com/' },
+    { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' }
+];
 
         let workingProxyUrl = null;
         let allData = [];
