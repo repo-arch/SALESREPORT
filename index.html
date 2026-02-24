@@ -1570,141 +1570,175 @@
             return data;
         }
 
-        // ==================== DATA FETCHING VIA PROXY ====================
-        async function connectWithProxy(proxyUrl = null) {
-            try {
-                const selectedProxy = proxyUrl || document.getElementById('proxySelect').value;
-                
-                if (!selectedProxy) {
-                    alert('Please select or find a working proxy first');
-                    return;
-                }
-
-                if (selectedProxy.includes('cors-anywhere.herokuapp.com')) {
-                    const useAnyway = confirm('CORS Anywhere needs temporary access. Have you requested it from https://cors-anywhere.herokuapp.com/corsdemo ? Click OK if you have, Cancel to request access.');
-                    if (!useAnyway) {
-                        requestCorsAnywhereAccess();
-                        return;
-                    }
-                }
-
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('loading').textContent = 'Fetching data via proxy...';
-                document.getElementById('error').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'none';
-                document.getElementById('grandFooter').style.display = 'none';
-                document.getElementById('apiBadge').style.display = 'none';
-
-                const serverUrl = getServerUrl();
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-
-                // Step 1: Get Token via Proxy
-                let tokenUrl;
-                if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
-                    tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken');
-                } else {
-                    tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-                }
-
-                console.log('Fetching token from:', tokenUrl);
-
-                const tokenResponse = await fetch(tokenUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Origin': window.location.origin,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    })
-                });
-
-                if (!tokenResponse.ok) {
-                    const errorText = await tokenResponse.text();
-                    throw new Error(`Failed to fetch token. Status: ${tokenResponse.status}`);
-                }
-
-                const token = await tokenResponse.text();
-
-                if (!token || token.trim() === '') {
-                    throw new Error('Empty token response');
-                }
-
-                // Step 2: Get Data via Proxy
-                let dataUrl;
-                if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
-                    dataUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
-                } else {
-                    dataUrl = selectedProxy + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
-                }
-
-                console.log('Fetching data from:', dataUrl);
-
-                const dataResponse = await fetch(dataUrl, {
-                    headers: {
-                        'Origin': window.location.origin,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (!dataResponse.ok) {
-                    throw new Error(`Failed to fetch data. Status: ${dataResponse.status}`);
-                }
-
-                const responseText = await dataResponse.text();
-
-                // Parse data
-                let reportData = parseXmlData(responseText);
-                
-                if (reportData.length === 0) {
-                    throw new Error('No data found in response');
-                }
-
-                // Store headers and remove header row
-                headers = reportData[0];
-                reportData = reportData.slice(1);
-                
-                // Transform data
-                allData = transformData(reportData);
-
-                if (allData.length === 0) {
-                    throw new Error('No valid data found after transformation');
-                }
-
-                filteredData = [...allData];
-                
-                rebuildUniqueSets();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'block';
-                document.getElementById('grandFooter').style.display = 'flex';
-                document.getElementById('apiBadge').style.display = 'inline-block';
-                
-                updateLastUpdateTime(new Date());
-                updateFilterOptions();
-                renderAllTables();
-
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = `
-                    <strong>Error loading data:</strong><br>
-                    ${error.message}<br><br>
-                    <strong>Try IT Team Port 43 connection instead:</strong><br>
-                    <button onclick="testITTeamConnection()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Test Port 43</button>
-                    <button onclick="connectITTeamDirect()" style="background: #673ab7; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Connect via Port 43</button>
-                `;
-            }
+async function connectWithProxy(proxyUrl = null) {
+    try {
+        const selectedProxy = proxyUrl || document.getElementById('proxySelect').value;
+        
+        if (!selectedProxy) {
+            alert('Please select or find a working proxy first');
+            return;
         }
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').textContent = 'Fetching data via proxy...';
+        document.getElementById('error').style.display = 'none';
+
+        const serverUrl = getServerUrl();
+        const username = document.getElementById('apiUsername').value;
+        const password = document.getElementById('apiPassword').value;
+        const reportId = document.getElementById('reportId').value;
+
+        const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
+
+        // Step 1: Get Token via Proxy
+        let tokenUrl;
+        if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
+            tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken');
+        } else {
+            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
+        }
+
+        console.log('Fetching token from:', tokenUrl);
+
+        const tokenResponse = await fetch(tokenUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                username: username,
+                password: password,
+                objectid: reportId,
+                type: 'data'
+            })
+        });
+
+        if (!tokenResponse.ok) {
+            const errorText = await tokenResponse.text();
+            console.error('Token response error:', errorText.substring(0, 200));
+            throw new Error(`Failed to fetch token. Status: ${tokenResponse.status}`);
+        }
+
+        const token = await tokenResponse.text();
+        console.log('Token received, length:', token.length);
+        console.log('Token preview:', token.substring(0, 100));
+
+        if (!token || token.trim() === '') {
+            throw new Error('Empty token response');
+        }
+
+        // Check if token looks valid (not HTML, not error message)
+        if (token.toLowerCase().includes('<html') || token.toLowerCase().includes('error')) {
+            console.error('Token appears to be error page:', token.substring(0, 200));
+            throw new Error('Server returned error page instead of token');
+        }
+
+        // Step 2: Get Data via Proxy
+        let dataUrl;
+        if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
+            dataUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
+        } else {
+            dataUrl = selectedProxy + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
+        }
+
+        console.log('Fetching data from:', dataUrl);
+
+        const dataResponse = await fetch(dataUrl, {
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!dataResponse.ok) {
+            throw new Error(`Failed to fetch data. Status: ${dataResponse.status}`);
+        }
+
+        const responseText = await dataResponse.text();
+        console.log('Raw data received, length:', responseText.length);
+        console.log('Data preview (first 500 chars):', responseText.substring(0, 500));
+
+        // Check if we got HTML instead of data
+        if (responseText.toLowerCase().includes('<html')) {
+            console.error('Got HTML instead of data');
+            throw new Error('Server returned HTML page - check if token is valid');
+        }
+
+        // Parse data
+        let reportData = parseXmlData(responseText);
+        console.log('Parsed data rows:', reportData.length);
+        
+        if (reportData.length === 0) {
+            // Try alternative parsing
+            console.log('Trying alternative parsing...');
+            reportData = tryAlternativeParsing(responseText);
+        }
+
+        if (reportData.length === 0) {
+            throw new Error('No data found in response');
+        }
+
+        // Store headers and remove header row
+        headers = reportData[0] || [];
+        reportData = reportData.slice(1);
+        
+        console.log('Headers:', headers);
+        console.log('Data rows after removing header:', reportData.length);
+
+        // Transform data
+        allData = transformData(reportData);
+        console.log('Transformed data records:', allData.length);
+
+        if (allData.length === 0) {
+            throw new Error('No valid data after transformation');
+        }
+
+        filteredData = [...allData];
+        
+        rebuildUniqueSets();
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('tabContainers').style.display = 'block';
+        document.getElementById('grandFooter').style.display = 'flex';
+        document.getElementById('apiBadge').style.display = 'inline-block';
+        
+        updateLastUpdateTime(new Date());
+        updateFilterOptions();
+        renderAllTables();
+
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = `
+            <strong>Error loading data:</strong><br>
+            ${error.message}<br><br>
+            <strong>Debug Info:</strong><br>
+            <pre style="text-align: left; background: #f5f5f5; padding: 10px; margin-top: 10px;">${error.stack}</pre>
+            <button onclick="debugServerResponse()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">Run Debug Test</button>
+        `;
+    }
+}
+
+// Add alternative parsing function
+function tryAlternativeParsing(text) {
+    console.log('Attempting alternative parsing...');
+    const data = [];
+    
+    // Try to extract data assuming it's CSV-like
+    const lines = text.split('\n').filter(line => line.trim());
+    for (const line of lines) {
+        if (line.includes(',')) {
+            data.push(line.split(',').map(cell => cell.trim()));
+        } else if (line.includes('\t')) {
+            data.push(line.split('\t').map(cell => cell.trim()));
+        }
+    }
+    
+    return data;
+}
 
         function transformData(rows) {
             if (rows.length === 0) return [];
