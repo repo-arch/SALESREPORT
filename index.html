@@ -1191,54 +1191,75 @@
             }
         }
 
-        async function testProxy(proxyUrl) {
-            const serverUrl = getServerUrl();
-            const username = document.getElementById('apiUsername').value;
-            const password = document.getElementById('apiPassword').value;
-            const reportId = document.getElementById('reportId').value;
+async function testProxy(proxyUrl) {
+    const serverUrl = getServerUrl();
+    const username = document.getElementById('apiUsername').value;
+    const password = document.getElementById('apiPassword').value;
+    const reportId = document.getElementById('reportId').value;
 
-            const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-            
-            let testUrl;
-            if (proxyUrl.includes('allorigins') || proxyUrl.includes('corsproxy.io')) {
-                testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken');
-            } else if (proxyUrl.includes('thingproxy')) {
-                testUrl = proxyUrl + baseUrl + 'API/getToken';
-            } else {
-                testUrl = proxyUrl + baseUrl + 'API/getToken';
-            }
+    const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
+    
+    try {
+        let testUrl;
+        let fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                username: username,
+                password: password,
+                objectid: reportId,
+                type: 'data'
+            })
+        };
 
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-                const response = await fetch(testUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Origin': window.location.origin,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    }),
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (response.ok) {
-                    return { success: true, url: proxyUrl };
-                } else {
-                    return { success: false, url: proxyUrl, status: response.status };
+        // Handle different proxy types
+        if (proxyUrl.includes('allorigins')) {
+            // AllOrigins needs special handling
+            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken');
+            // AllOrigins doesn't support POST with body well, so we'll use GET with encoded params
+            const params = new URLSearchParams({
+                username: username,
+                password: password,
+                objectid: reportId,
+                type: 'data'
+            });
+            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
+            fetchOptions = {
+                method: 'GET',
+                headers: {
+                    'Origin': window.location.origin
                 }
-            } catch (error) {
-                return { success: false, url: proxyUrl, error: error.message };
-            }
+            };
+        } else if (proxyUrl.includes('corsproxy.io')) {
+            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken');
+        } else if (proxyUrl.includes('thingproxy')) {
+            testUrl = proxyUrl + baseUrl + 'API/getToken';
+        } else {
+            testUrl = proxyUrl + baseUrl + 'API/getToken';
         }
+
+        console.log('Testing proxy:', proxyUrl, 'URL:', testUrl);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        const response = await fetch(testUrl, fetchOptions);
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+            const text = await response.text();
+            console.log('Proxy response:', text.substring(0, 100));
+            return { success: true, url: proxyUrl };
+        } else {
+            return { success: false, url: proxyUrl, status: response.status };
+        }
+    } catch (error) {
+        console.log('Proxy test error:', proxyUrl, error.message);
+        return { success: false, url: proxyUrl, error: error.message };
+    }
+}
 
         async function testSelectedProxy() {
             const proxySelect = document.getElementById('proxySelect');
