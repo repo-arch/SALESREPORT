@@ -1591,20 +1591,23 @@ async function testProxy(proxyUrl) {
             return data;
         }
 
-async function connectWithProxy(proxyUrl = null, retryCount = 0) {
+async function connectWithProxy(proxyUrl = null) {
     try {
         const selectedProxy = proxyUrl || document.getElementById('proxySelect').value;
         
         if (!selectedProxy) {
-            alert('Please select or find a working proxy first');
+            alert('Please select a proxy first');
             return;
         }
 
-        // Show status
+        // Don't use AllOrigins - it doesn't work
+        if (selectedProxy.includes('allorigins')) {
+            alert('AllOrigins proxy does not work with this API. Please select a different proxy like "CORS Bypass" or "CORS Proxy Worker".');
+            return;
+        }
+
         document.getElementById('loading').style.display = 'block';
-        document.getElementById('loading').textContent = retryCount > 0 ? 
-            `⏳ Retry attempt ${retryCount}...` : 
-            'Fetching data via proxy (this may take 30-60 seconds)...';
+        document.getElementById('loading').textContent = 'Connecting via proxy...';
         document.getElementById('error').style.display = 'none';
 
         const serverUrl = getServerUrl();
@@ -1613,55 +1616,81 @@ async function connectWithProxy(proxyUrl = null, retryCount = 0) {
         const reportId = document.getElementById('reportId').value;
 
         const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-
-        // Step 1: Get Token via Proxy with longer timeout
-        let tokenUrl;
-        if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
-            tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken');
-        } else {
-            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-        }
-
-        console.log('Fetching token from:', tokenUrl);
-
-        // Create abort controller for timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
-
-        const tokenResponse = await fetch(tokenUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Origin': window.location.origin,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: new URLSearchParams({
-                username: username,
-                password: password,
-                objectid: reportId,
-                type: 'data'
-            }),
-            signal: controller.signal
-        }).catch(async (error) => {
-            clearTimeout(timeoutId);
-            if (error.name === 'AbortError') {
-                throw new Error('Request timeout - server took too long to respond');
-            }
-            throw error;
+        
+        // Prepare the token request body
+        const tokenBody = new URLSearchParams({
+            username: username,
+            password: password,
+            objectid: reportId,
+            type: 'data'
         });
 
-        clearTimeout(timeoutId);
+        let tokenUrl, tokenResponse;
+
+        // Handle different proxy types
+        if (selectedProxy.includes('workers.dev')) {
+            // Cloudflare Workers - best for GitHub Pages
+            tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken?' + tokenBody.toString());
+            console.log('Fetching token from:', tokenUrl);
+            
+            tokenResponse = await fetch(tokenUrl, {
+                method: 'GET',  // Workers work better with GET
+                headers: {
+                    'Origin': window.location.origin
+                }
+            });
+        } 
+        else if (selectedProxy.includes('thingproxy')) {
+            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
+            console.log('Fetching token from:', tokenUrl);
+            
+            tokenResponse = await fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: tokenBody
+            });
+        }
+        else if (selectedProxy.includes('cors-anywhere')) {
+            // CORS Anywhere - needs demo access
+            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
+            console.log('Fetching token from:', tokenUrl);
+            
+            tokenResponse = await fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Origin': window.location.origin
+                },
+                body: tokenBody
+            });
+            
+            // Check if CORS Anywhere needs demo
+            if (tokenResponse.status === 403) {
+                throw new Error('CORS Anywhere needs temporary access. Click the link to request access.');
+            }
+        }
+        else {
+            // Default for other proxies
+            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
+            console.log('Fetching token from:', tokenUrl);
+            
+            tokenResponse = await fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: tokenBody
+            });
+        }
 
         if (!tokenResponse.ok) {
-            if (tokenResponse.status === 408 || tokenResponse.status === 504) {
-                // Timeout - retry up to 2 times
-                if (retryCount < 2) {
-                    document.getElementById('loading').textContent = `⏳ Timeout, retrying (${retryCount + 1}/3)...`;
-                    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
-                    return connectWithProxy(selectedProxy, retryCount + 1);
-                }
+            if (tokenResponse.status === 403 && selectedProxy.includes('cors-anywhere')) {
+                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
+                throw new Error('CORS Anywhere needs temporary access. A new tab opened - click the button, then try again.');
             }
-            throw new Error(`Failed to fetch token. Status: ${tokenResponse.status}`);
+            throw new Error(`Token fetch failed: ${tokenResponse.status}`);
         }
 
         const token = await tokenResponse.text();
@@ -1671,38 +1700,28 @@ async function connectWithProxy(proxyUrl = null, retryCount = 0) {
             throw new Error('Empty token response');
         }
 
-        // Step 2: Get Data via Proxy
-        let dataUrl;
-        if (selectedProxy.includes('allorigins') || selectedProxy.includes('corsproxy.io')) {
+        // Now fetch the actual data
+        let dataUrl, dataResponse;
+        
+        if (selectedProxy.includes('workers.dev')) {
             dataUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
+            dataResponse = await fetch(dataUrl, {
+                method: 'GET',
+                headers: {
+                    'Origin': window.location.origin
+                }
+            });
         } else {
             dataUrl = selectedProxy + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
+            dataResponse = await fetch(dataUrl, {
+                headers: {
+                    'Origin': window.location.origin
+                }
+            });
         }
 
-        console.log('Fetching data from:', dataUrl);
-
-        // Another timeout for data fetch
-        const dataController = new AbortController();
-        const dataTimeoutId = setTimeout(() => dataController.abort(), 60000); // 60 second timeout
-
-        const dataResponse = await fetch(dataUrl, {
-            headers: {
-                'Origin': window.location.origin,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            signal: dataController.signal
-        }).catch(async (error) => {
-            clearTimeout(dataTimeoutId);
-            if (error.name === 'AbortError') {
-                throw new Error('Data fetch timeout - server took too long');
-            }
-            throw error;
-        });
-
-        clearTimeout(dataTimeoutId);
-
         if (!dataResponse.ok) {
-            throw new Error(`Failed to fetch data. Status: ${dataResponse.status}`);
+            throw new Error(`Data fetch failed: ${dataResponse.status}`);
         }
 
         const responseText = await dataResponse.text();
@@ -1740,43 +1759,32 @@ async function connectWithProxy(proxyUrl = null, retryCount = 0) {
         updateFilterOptions();
         renderAllTables();
 
-        // Update status
         document.getElementById('globalConnectionStatus').textContent = '✅ Connected via Proxy';
         document.getElementById('globalConnectionStatus').style.background = '#d4edda';
+        
+        if (workingProxyUrl) {
+            document.getElementById('workingProxyNote').style.display = 'flex';
+        }
 
     } catch (error) {
         console.error('Connection error:', error);
-        
-        if (retryCount < 2 && error.message.includes('timeout')) {
-            // Retry on timeout
-            document.getElementById('loading').textContent = `⏳ Timeout, retrying (${retryCount + 1}/3)...`;
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            return connectWithProxy(proxyUrl, retryCount + 1);
-        }
-        
         document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
         
         let errorMessage = error.message;
         let suggestions = '';
         
-        if (error.message.includes('408') || error.message.includes('timeout')) {
-            errorMessage = 'Server timeout - the server is taking too long to respond';
-            suggestions = `
-                <br><br>
-                <strong>Suggestions:</strong><br>
-                1. Try a different proxy from the list<br>
-                2. The server might be busy - wait a few minutes and try again<br>
-                3. Try connecting during off-peak hours<br>
-                4. Check if the server IP and port are correct<br>
-            `;
+        if (error.message.includes('403') && error.message.includes('CORS Anywhere')) {
+            suggestions = '<br><br>✅ <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">Click here to request temporary access to CORS Anywhere</a>';
+        } else if (error.message.includes('Failed to fetch')) {
+            suggestions = '<br><br>Try the "CORS Bypass" or "CORS Proxy Worker" options - they work best with GitHub Pages.';
         }
         
         document.getElementById('error').innerHTML = `
-            <strong>Error loading data:</strong><br>
+            <strong>Error:</strong><br>
             ${errorMessage}${suggestions}<br><br>
-            <button onclick="connectWithProxy('${proxyUrl}')" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Retry</button>
-            <button onclick="findWorkingProxy()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Different Proxy</button>
+            <button onclick="useRecommendedProxy()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Use Recommended Proxy</button>
+            <button onclick="findWorkingProxy()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Find Working Proxy</button>
         `;
     }
 }
