@@ -1335,43 +1335,94 @@ async function testProxy(proxyUrl) {
         }
 
         // ==================== ENHANCED XML PARSING ====================
-        function parseXmlData(xmlString) {
-            if (!xmlString || xmlString.trim() === '') {
-                console.error('XML data is null or empty');
-                return [];
-            }
+function parseXmlData(xmlString) {
+    if (!xmlString || xmlString.trim() === '') {
+        console.error('XML data is null or empty');
+        return [];
+    }
 
-            console.log('Parsing response data...');
-
-            // Try to detect the actual format
-            const trimmed = xmlString.trim();
-            
-            // Check if it's JSON
-            if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-                try {
-                    const jsonData = JSON.parse(trimmed);
-                    console.log('Response is JSON');
-                    return extractDataFromJson(jsonData);
-                } catch (e) {
-                    console.log('Not valid JSON');
-                }
-            }
-
-            // Check if it's CSV
-            if (trimmed.includes(',') && trimmed.includes('\n')) {
-                console.log('Response appears to be CSV format');
-                return parseCSV(trimmed);
-            }
-
-            // Check if it's HTML
-            if (trimmed.toLowerCase().includes('<html') || trimmed.toLowerCase().includes('<!doctype')) {
-                console.error('Response is HTML');
-                throw new Error('Received HTML instead of XML');
-            }
-
-            // Try XML parsing
-            return parseXMLWithMultipleStrategies(xmlString);
+    console.log('Parsing XML data...');
+    
+    // Remove any XML declaration if present
+    let cleanXml = xmlString.replace(/<\?xml[^>]*\?>/g, '');
+    
+    // Try to parse as XML
+    try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(cleanXml, 'text/xml');
+        
+        // Check for parser errors
+        const parseError = xmlDoc.getElementsByTagName('parsererror');
+        if (parseError.length > 0) {
+            console.error('XML parse error:', parseError[0].textContent);
+            return extractWithRegex(xmlString);
         }
+        
+        // Look for data rows - common tags in your response
+        const rowTags = ['Row', 'row', 'Record', 'record', 'Data', 'data', 'Table', 'table'];
+        let rows = [];
+        
+        for (const tag of rowTags) {
+            const foundRows = xmlDoc.getElementsByTagName(tag);
+            if (foundRows.length > 0) {
+                rows = foundRows;
+                console.log(`Found ${rows.length} rows with tag: ${tag}`);
+                break;
+            }
+        }
+        
+        if (rows.length === 0) {
+            console.log('No row tags found, trying to extract any data');
+            return extractWithRegex(xmlString);
+        }
+        
+        // Extract data from rows
+        const data = [];
+        
+        // First, try to get headers from first row
+        const firstRow = rows[0];
+        const headers = [];
+        const cells = firstRow.children || firstRow.querySelectorAll('Column, column, Field, field, Cell, cell');
+        
+        for (let cell of cells) {
+            headers.push(cell.textContent || cell.innerHTML || '');
+        }
+        
+        if (headers.length > 0) {
+            data.push(headers);
+        }
+        
+        // Then get all data rows
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const rowData = [];
+            const cells = row.children || row.querySelectorAll('Column, column, Field, field, Cell, cell');
+            
+            for (let cell of cells) {
+                let value = cell.textContent || cell.innerHTML || '';
+                // Clean up the value
+                value = value.replace(/<[^>]*>/g, '').trim();
+                rowData.push(value);
+            }
+            
+            if (rowData.length > 0) {
+                data.push(rowData);
+            }
+        }
+        
+        console.log(`Extracted ${data.length} rows from XML`);
+        if (data.length > 0) {
+            console.log('First row (headers):', data[0]);
+            console.log('Second row (data):', data[1]);
+        }
+        
+        return data;
+        
+    } catch (e) {
+        console.error('XML parsing failed:', e);
+        return extractWithRegex(xmlString);
+    }
+}
 
         function extractDataFromJson(jsonData) {
             const data = [];
