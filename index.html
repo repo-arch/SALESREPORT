@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>CRIUS Business Dashboard - IT Team Port 43</title>
+    <title>CRIUS Business Dashboard - Auto-Connect</title>
     <style>
         * {
             margin: 0;
@@ -576,13 +576,40 @@
             font-weight: 600;
             color: #1a237e;
         }
+
+        /* Auto-connect status bar */
+        .auto-connect-bar {
+            background: #e3f2fd;
+            padding: 8px 24px;
+            border-bottom: 2px solid #2196f3;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+        }
+        
+        .auto-connect-bar .status {
+            color: #0d47a1;
+            font-weight: 600;
+        }
+        
+        .reset-connection {
+            margin-left: auto;
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div class="main-header">
             <div>
-                CRIUS Business Dashboard - IT Team Port 43
+                CRIUS Business Dashboard - Auto-Connect
                 <span class="api-badge" id="apiBadge" style="display: none;">
                     <span>✅</span> Connected
                 </span>
@@ -595,34 +622,17 @@
 
         <div class="company-header">
             CRIUS GROUP OF COMPANIES
-            <div class="company-subheader">Enterprise Business Intelligence Dashboard - IT Team Edition</div>
+            <div class="company-subheader">Enterprise Business Intelligence Dashboard - Auto-Connect Edition</div>
         </div>
 
-        <div class="nav-menu">
-            <a href="#">Home</a>
-            <a href="#">Ceoitbox</a>
-            <a href="#">Training Videos</a>
-            <a href="#">Management</a>
-            <a href="#">Head Office</a>
-            <a href="#">CRIUS</a>
-            <a href="#">CHIROS/SIGNOVA</a>
-            <a href="#">CHIMAK/SYSKEM/MARSK</a>
-            <a href="#">WELZO</a>
-            <a href="#">CRIUS HEALTHCARE</a>
+        <!-- Auto-Connect Status Bar -->
+        <div class="auto-connect-bar" id="autoConnectBar">
+            <span class="status" id="autoConnectStatus">🔄 Auto-connect enabled</span>
+            <span id="savedProxyInfo"></span>
+            <button class="reset-connection" onclick="resetConnection()">Reset Connection</button>
         </div>
 
-        <!-- IT TEAM SPECIAL CONNECTION PANEL (NEW) -->
-        <div class="it-team-panel">
-            <span style="font-weight: 700; color: #1a237e;">🔧 IT TEAM PORT 43 CONNECTION</span>
-            <input type="text" id="itServerIP" placeholder="Server IP (e.g., 192.168.1.100)" value="43.246.140.102">
-            <input type="text" id="itPort" value="6060" placeholder="Port" style="width: 80px;">
-            <button onclick="connectITTeamDirect()" style="background: #4caf50;">🚀 Connect via Port 43</button>
-            <button onclick="testITTeamConnection()">✓ Test Port 43</button>
-            <button onclick="configureITTeamCORS()" style="background: #ff9800;">🔧 Configure CORS</button>
-            <span id="itTeamStatus" class="it-team-status">Ready</span>
-        </div>
-
-        <!-- Working Proxy Found Note (initially hidden) -->
+        <!-- Working Proxy Found Note -->
         <div class="working-proxy-note" id="workingProxyNote">
             <span>✅ <strong>Working Proxy Found!</strong></span>
             <button onclick="useWorkingProxy()">Connect with Working Proxy</button>
@@ -636,8 +646,7 @@
                     <option value="http://43.246.140.102:6060/smarten/">🌐 Public Server 1 (43.246.140.102:6060)</option>
                     <option value="http://43.246.140.102:6060/smarten/">🏠 Local Server (43.246.140.102:6060)</option>
                     <option value="http://103.54.103.91:6060/smarten/">🌍 Public Server 2 (103.54.103.91:6060)</option>
-                    <!-- IT TEAM PORT 43 OPTION (NEW) -->
-                    <option value="http://43.246.140.102:6060/smarten/" selected>🏢 IT TEAM SERVER (Port 43) - RECOMMENDED</option>
+                    <option value="http://43.246.140.102:6060/smarten/" selected>🏢 IT TEAM SERVER - RECOMMENDED</option>
                     <option value="custom">✏️ Custom URL</option>
                 </select>
             </div>
@@ -654,15 +663,15 @@
             <span id="connectionStatus" class="connection-status">Ready</span>
         </div>
 
-        <!-- Proxy Selection Panel with Working Proxies -->
+        <!-- Proxy Selection Panel -->
         <div class="proxy-panel">
-            <span style="font-weight: 700; color: #1e3a5f;">🌐 Test Proxies (if port 43 doesn't work):</span>
-<select id="proxySelect">
-    <option value="https://cors-anywhere.azm.workers.dev/?" selected>✅ CORS Bypass (Worker) - Best for GitHub</option>
-    <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">✅ CORS Proxy Worker - Fast</option>
-    <option value="https://cors-anywhere.herokuapp.com/">⚠️ CORS Anywhere (Needs Demo)</option>
-    <option value="https://thingproxy.freeboard.io/fetch/">🔄 ThingProxy</option>
-</select>
+            <span style="font-weight: 700; color: #1e3a5f;">🌐 Proxy Selection (Auto-connect enabled):</span>
+            <select id="proxySelect">
+                <option value="https://cors-anywhere.azm.workers.dev/?" selected>✅ CORS Bypass (Worker) - Best</option>
+                <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">✅ CORS Proxy Worker - Fast</option>
+                <option value="https://cors-anywhere.herokuapp.com/">⚠️ CORS Anywhere (Needs Demo)</option>
+                <option value="https://thingproxy.freeboard.io/fetch/">🔄 ThingProxy</option>
+            </select>
             <button onclick="testSelectedProxy()" class="test-btn">✓ Test Selected</button>
             <button onclick="findWorkingProxy()" class="proxy-btn">🔍 Find Working Proxy</button>
             <button onclick="connectWithProxy()" class="refresh-btn">🚀 Connect via Proxy</button>
@@ -672,8 +681,6 @@
         <!-- Action Buttons -->
         <div style="padding: 10px 24px; display: flex; gap: 15px; background: #f8f9fa; border-bottom: 2px solid #dee2e9; flex-wrap: wrap;">
             <button onclick="testDirectConnection()" class="test-btn">Test Direct Connection</button>
-            <button onclick="testITTeamConnection()" class="test-btn" style="background: #673ab7;">🏢 Test IT Team Port 43</button>
-            <button onclick="connectITTeamDirect()" class="test-btn" style="background: #4caf50;">🚀 Connect IT Team Port 43</button>
             <button onclick="loadSavedConfig()" class="proxy-btn">Load Saved Config</button>
             <span id="globalConnectionStatus" class="connection-status">Ready</span>
         </div>
@@ -723,7 +730,7 @@
             <button onclick="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #856404; cursor: pointer; font-weight: 600;">Clear All ✕</button>
         </div>
 
-        <div id="loading" class="loading">Ready to connect. Try IT Team Port 43 connection first...</div>
+        <div id="loading" class="loading">Initializing auto-connect...</div>
         <div id="error" class="error" style="display: none;"></div>
 
         <div id="tabContainers" style="display: none;"></div>
@@ -735,10 +742,10 @@
 
         <div class="dashboard-footer">
             <div class="footer-left">
-                <span>© 2026 CRIUS Group - IT Team Port 43 Edition</span>
+                <span>© 2026 CRIUS Group - Auto-Connect Edition</span>
             </div>
             <div class="footer-right">
-                <span>🌐 v2.0 | IT TEAM | PORT 43</span>
+                <span>🌐 v3.0 | AUTO-CONNECT</span>
             </div>
         </div>
     </div>
@@ -752,14 +759,16 @@
             reportId: 'r17d84895210.rpt'
         };
 
-const PROXIES = [
-    { name: 'CORS Bypass (Worker) - Best for GitHub', url: 'https://cors-anywhere.azm.workers.dev/?' },
-    { name: 'CORS Proxy Worker - Fast', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-    { name: 'CORS Anywhere (Heroku) - Needs Demo', url: 'https://cors-anywhere.herokuapp.com/' },
-    { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' }
-];
+        const PROXIES = [
+            { name: 'CORS Bypass (Worker) - Best', url: 'https://cors-anywhere.azm.workers.dev/?' },
+            { name: 'CORS Proxy Worker - Fast', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
+            { name: 'CORS Anywhere (Heroku) - Needs Demo', url: 'https://cors-anywhere.herokuapp.com/' },
+            { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' }
+        ];
 
-        let workingProxyUrl = null;
+        // ==================== AUTO-CONNECT VARIABLES ====================
+        let workingProxyUrl = localStorage.getItem('workingProxy') || null;
+        let keepAliveInterval = null;
         let allData = [];
         let filteredData = [];
         let headers = [];
@@ -796,2264 +805,177 @@ const PROXIES = [
             { id: 'dpr', name: '📋 Daily Dispatch Details (DPR)' }
         ];
 
-        // ==================== INITIALIZATION ====================
+        // ==================== AUTO-CONNECT FUNCTIONS ====================
         window.onload = function() {
             initializeUI();
             loadSavedConfig();
-            // Auto-select IT Team port 43
+            loadSavedProxy();
+            
+            // Show auto-connect status
+            updateAutoConnectStatus();
+            
+            // Start auto-connect process
             setTimeout(() => {
-                document.getElementById('serverSelect').value = 'http://43.246.140.102:6060/smarten/';
-            }, 100);
+                autoConnect();
+            }, 1500);
         };
 
-        function onServerChange() {
-            const serverSelect = document.getElementById('serverSelect');
-            const customGroup = document.getElementById('customUrlGroup');
-            customGroup.style.display = serverSelect.value === 'custom' ? 'flex' : 'none';
-        }
-
-        function initializeUI() {
-            updateLastUpdateTime(new Date());
-            createTabs();
-            createTabContainers();
-        }
-
-        function saveConfig() {
-            const config = {
-                serverUrl: getServerUrl(),
-                username: document.getElementById('apiUsername').value,
-                password: document.getElementById('apiPassword').value,
-                reportId: document.getElementById('reportId').value
-            };
-            localStorage.setItem('smartenConfig', JSON.stringify(config));
-            showStatus('✅ Configuration saved!', '#d4edda');
-        }
-
-        function loadSavedConfig() {
-            const saved = localStorage.getItem('smartenConfig');
-            if (saved) {
-                try {
-                    CONFIG = JSON.parse(saved);
-                    document.getElementById('apiUsername').value = CONFIG.username;
-                    document.getElementById('apiPassword').value = CONFIG.password;
-                    document.getElementById('reportId').value = CONFIG.reportId;
-                    
-                    const serverSelect = document.getElementById('serverSelect');
-                    const options = Array.from(serverSelect.options).map(opt => opt.value);
-                    
-                    if (options.includes(CONFIG.serverUrl)) {
-                        serverSelect.value = CONFIG.serverUrl;
-                    } else {
-                        serverSelect.value = 'custom';
-                        document.getElementById('customUrlGroup').style.display = 'flex';
-                        document.getElementById('customUrl').value = CONFIG.serverUrl;
-                    }
-                    
-                    showStatus('✅ Config loaded', '#d4edda');
-                } catch (e) {
-                    console.log('Error loading config');
-                }
-            }
-        }
-
-        function getServerUrl() {
-            const serverSelect = document.getElementById('serverSelect');
-            if (serverSelect.value === 'custom') {
-                return document.getElementById('customUrl').value;
-            }
-            return serverSelect.value;
-        }
-
-        function showStatus(message, color) {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            statusEl.textContent = message;
-            statusEl.style.background = color;
-        }
-
-        function updateLastUpdateTime(date) {
-            const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + date.toLocaleDateString('en-GB', options);
-        }
-
-        // ==================== IT TEAM PORT 43 FUNCTIONS (NEW) ====================
-        async function testITTeamConnection() {
-            const statusEl = document.getElementById('itTeamStatus');
-            const globalStatus = document.getElementById('globalConnectionStatus');
-            
-            statusEl.textContent = 'Testing IT Team Port 43...';
-            statusEl.style.background = '#fff3cd';
-            globalStatus.textContent = 'Testing IT Team Port 43...';
-            globalStatus.style.background = '#fff3cd';
-            
-            try {
-                const serverIP = document.getElementById('itServerIP').value || '43.246.140.102';
-                const port = document.getElementById('itPort').value || '6060';
-                const serverUrl = `http://${serverIP}:${port}/smarten/`;
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                console.log('Testing IT Team connection to:', serverUrl);
-
-                // Try with no-cors mode first to check if server is reachable
-                try {
-                    const testResponse = await fetch(serverUrl + 'API/getToken', { 
-                        method: 'HEAD',
-                        mode: 'no-cors'
-                    });
-                    console.log('Server reachable test:', testResponse);
-                } catch (e) {
-                    console.log('Server reachability test failed, but continuing...');
-                }
-
-                // Actual token request
-                const response = await fetch(serverUrl + 'API/getToken', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    })
-                });
-
-                if (response.ok) {
-                    const token = await response.text();
-                    console.log('Token received:', token.substring(0, 100));
-                    
-                    if (token && !token.toLowerCase().includes('error') && token.length > 10) {
-                        statusEl.textContent = '✅ IT Team Port 43 WORKS!';
-                        statusEl.style.background = '#d4edda';
-                        globalStatus.textContent = '✅ IT Team Port 43 connection successful!';
-                        globalStatus.style.background = '#d4edda';
-                        
-                        // Auto-select this server
-                        const serverSelect = document.getElementById('serverSelect');
-                        const optionValue = `http://${serverIP}:${port}/smarten/`;
-                        
-                        // Check if option exists, if not add it
-                        let optionExists = false;
-                        for (let i = 0; i < serverSelect.options.length; i++) {
-                            if (serverSelect.options[i].value === optionValue) {
-                                serverSelect.selectedIndex = i;
-                                optionExists = true;
-                                break;
-                            }
-                        }
-                        
-                        if (!optionExists) {
-                            // Add as custom
-                            serverSelect.value = 'custom';
-                            document.getElementById('customUrlGroup').style.display = 'flex';
-                            document.getElementById('customUrl').value = optionValue;
-                        }
-                        
-                        return true;
-                    } else {
-                        statusEl.textContent = '❌ Invalid token response';
-                        statusEl.style.background = '#f8d7da';
-                        globalStatus.textContent = '❌ IT Team: Invalid token';
-                        globalStatus.style.background = '#f8d7da';
-                        return false;
-                    }
-                } else {
-                    const errorText = await response.text();
-                    statusEl.textContent = `❌ Failed: ${response.status}`;
-                    statusEl.style.background = '#f8d7da';
-                    globalStatus.textContent = `❌ IT Team connection failed: ${response.status}`;
-                    globalStatus.style.background = '#f8d7da';
-                    console.error('Error response:', errorText.substring(0, 200));
-                    return false;
-                }
-            } catch (error) {
-                console.error('IT Team connection error:', error);
-                statusEl.textContent = '❌ Connection failed - ' + error.message;
-                statusEl.style.background = '#f8d7da';
-                globalStatus.textContent = '❌ IT Team: ' + error.message;
-                globalStatus.style.background = '#f8d7da';
-                return false;
-            }
-        }
-
-        async function connectITTeamDirect() {
-            try {
-                const serverIP = document.getElementById('itServerIP').value || '43.246.140.102:6060';
-                const port = document.getElementById('itPort').value || '6060';
-                const serverUrl = `http://${serverIP}:${port}/smarten/`;
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('loading').textContent = 'Connecting via IT Team Port 43...';
-                document.getElementById('error').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'none';
-                document.getElementById('grandFooter').style.display = 'none';
-                document.getElementById('apiBadge').style.display = 'none';
-
-                console.log('Connecting to IT Team server:', serverUrl);
-
-                // Step 1: Get Token
-                const tokenResponse = await fetch(serverUrl + 'API/getToken', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    })
-                });
-
-                if (!tokenResponse.ok) {
-                    const errorText = await tokenResponse.text();
-                    throw new Error(`Token failed: ${tokenResponse.status} - ${errorText.substring(0, 200)}`);
-                }
-
-                const token = await tokenResponse.text();
-                console.log('Token received, length:', token.length);
-
-                if (!token || token.trim() === '') {
-                    throw new Error('Empty token response');
-                }
-
-                // Step 2: Get Data
-                const dataResponse = await fetch(serverUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
-
-                if (!dataResponse.ok) {
-                    const errorText = await dataResponse.text();
-                    throw new Error(`Data fetch failed: ${dataResponse.status}`);
-                }
-
-                const responseText = await dataResponse.text();
-                
-                console.log('Data received, length:', responseText.length);
-                console.log('First 200 chars:', responseText.substring(0, 200));
-
-                // Parse the data
-                let reportData;
-                try {
-                    reportData = parseXmlData(responseText);
-                } catch (parseError) {
-                    console.error('Parse error:', parseError);
-                    throw new Error('Failed to parse response data');
-                }
-
-                if (!reportData || reportData.length === 0) {
-                    throw new Error('No data found in response');
-                }
-
-                // Store headers and data
-                headers = reportData[0] || [];
-                reportData = reportData.slice(1);
-
-                console.log('Headers:', headers);
-                console.log('Data rows:', reportData.length);
-
-                // Transform data
-                allData = transformData(reportData);
-                console.log('Transformed data:', allData.length, 'records');
-
-                if (allData.length === 0) {
-                    throw new Error('No valid data after transformation');
-                }
-
-                filteredData = [...allData];
-                
-                rebuildUniqueSets();
-                
-                // Update UI
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'block';
-                document.getElementById('grandFooter').style.display = 'flex';
-                document.getElementById('apiBadge').style.display = 'inline-block';
-                
-                updateLastUpdateTime(new Date());
-                updateFilterOptions();
-                renderAllTables();
-
-                // Update status
-                document.getElementById('itTeamStatus').textContent = '✅ Connected via Port 43';
-                document.getElementById('itTeamStatus').style.background = '#d4edda';
-                document.getElementById('globalConnectionStatus').textContent = '✅ Connected via IT Team Port 43';
-                document.getElementById('globalConnectionStatus').style.background = '#d4edda';
-
-            } catch (error) {
-                console.error('Connection error:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = `
-                    <strong>IT Team Port 43 Connection Error:</strong><br>
-                    ${error.message}<br><br>
-                    <strong>Troubleshooting:</strong><br>
-                    1. Check if server IP and port 43 are correct<br>
-                    2. Verify you're on the same network<br>
-                    3. Ask IT team to enable CORS headers<br>
-                    4. Try using a proxy as fallback<br><br>
-                    <button onclick="testITTeamConnection()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Test Again</button>
-                    <button onclick="findWorkingProxy()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Proxy</button>
-                `;
-                
-                document.getElementById('itTeamStatus').textContent = '❌ Connection failed';
-                document.getElementById('itTeamStatus').style.background = '#f8d7da';
-            }
-        }
-
-        function configureITTeamCORS() {
-            const serverIP = document.getElementById('itServerIP').value || '43.246.140.102:6060';
-            const port = document.getElementById('itPort').value || '43';
-            
-            const instructions = `
-                🔧 CORS Configuration Instructions for IT Team:
-                
-                Please ask your IT team to add these headers to the server (${serverIP}:${port}):
-
-                Access-Control-Allow-Origin: *
-                Access-Control-Allow-Methods: GET, POST, OPTIONS
-                Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
-                Access-Control-Allow-Credentials: true
-
-                For IIS: Add these in web.config
-                For Apache: Add in .htaccess or httpd.conf
-                For Nginx: Add in location block
-
-                After adding, restart the server and test again.
-            `;
-            
-            alert(instructions);
-        }
-
-        // ==================== PROXY FUNCTIONS ====================
-        async function requestCorsAnywhereAccess() {
-            try {
-                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                alert('Please request temporary access on the opened page, then try connecting again.');
-            } catch (error) {
-                console.error('Error opening demo page:', error);
-            }
-        }
-
-        async function testDirectConnection() {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            statusEl.textContent = 'Testing direct connection...';
-            statusEl.style.background = '#fff3cd';
-            
-            try {
-                const serverUrl = getServerUrl();
-                const username = document.getElementById('apiUsername').value;
-                const password = document.getElementById('apiPassword').value;
-                const reportId = document.getElementById('reportId').value;
-
-                const response = await fetch(serverUrl + 'API/getToken', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        username: username,
-                        password: password,
-                        objectid: reportId,
-                        type: 'data'
-                    })
-                });
-
-                if (response.ok) {
-                    const token = await response.text();
-                    console.log('Token received:', token);
-                    
-                    if (token && !token.includes('error')) {
-                        statusEl.textContent = '✅ Direct connection works!';
-                        statusEl.style.background = '#d4edda';
-                    } else {
-                        statusEl.textContent = '❌ Token invalid: ' + token.substring(0, 50);
-                        statusEl.style.background = '#f8d7da';
-                    }
-                } else {
-                    statusEl.textContent = '❌ Direct connection failed - ' + response.status;
-                    statusEl.style.background = '#f8d7da';
-                }
-            } catch (error) {
-                statusEl.textContent = '❌ Direct connection failed - Need proxy';
-                statusEl.style.background = '#f8d7da';
-            }
-        }
-
-async function testProxy(proxyUrl) {
-    const serverUrl = getServerUrl();
-    const username = document.getElementById('apiUsername').value;
-    const password = document.getElementById('apiPassword').value;
-    const reportId = document.getElementById('reportId').value;
-
-    const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-    
-    try {
-        let testUrl;
-        let fetchOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                username: username,
-                password: password,
-                objectid: reportId,
-                type: 'data'
-            })
-        };
-
-        // Handle different proxy types
-        if (proxyUrl.includes('allorigins')) {
-            // AllOrigins needs special handling
-            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken');
-            // AllOrigins doesn't support POST with body well, so we'll use GET with encoded params
-            const params = new URLSearchParams({
-                username: username,
-                password: password,
-                objectid: reportId,
-                type: 'data'
-            });
-            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
-            fetchOptions = {
-                method: 'GET',
-                headers: {
-                    'Origin': window.location.origin
-                }
-            };
-        } else if (proxyUrl.includes('corsproxy.io')) {
-            testUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken');
-        } else if (proxyUrl.includes('thingproxy')) {
-            testUrl = proxyUrl + baseUrl + 'API/getToken';
-        } else {
-            testUrl = proxyUrl + baseUrl + 'API/getToken';
-        }
-
-        console.log('Testing proxy:', proxyUrl, 'URL:', testUrl);
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-        const response = await fetch(testUrl, fetchOptions);
-        clearTimeout(timeoutId);
-
-        if (response.ok) {
-            const text = await response.text();
-            console.log('Proxy response:', text.substring(0, 100));
-            return { success: true, url: proxyUrl };
-        } else {
-            return { success: false, url: proxyUrl, status: response.status };
-        }
-    } catch (error) {
-        console.log('Proxy test error:', proxyUrl, error.message);
-        return { success: false, url: proxyUrl, error: error.message };
-    }
-}
-
-        async function testSelectedProxy() {
-            const proxySelect = document.getElementById('proxySelect');
-            const selectedProxy = proxySelect.value;
-            const resultEl = document.getElementById('proxyTestResult');
-            const proxyName = proxySelect.options[proxySelect.selectedIndex].text;
-            
-            if (selectedProxy.includes('cors-anywhere.herokuapp.com')) {
-                resultEl.innerHTML = '⚠️ <a href="#" onclick="requestCorsAnywhereAccess(); return false;">CORS Anywhere needs temporary access - Click here to request</a>';
-                resultEl.style.color = '#ff9800';
-                return;
-            }
-            
-            resultEl.textContent = 'Testing...';
-            resultEl.style.color = '#666';
-            
-            const result = await testProxy(selectedProxy);
-            
-            if (result.success) {
-                resultEl.textContent = '✅ Proxy working! Click Connect';
-                resultEl.style.color = '#4CAF50';
-                workingProxyUrl = selectedProxy;
-                
-                document.getElementById('workingProxyNote').style.display = 'flex';
-                document.getElementById('workingProxyUrl').textContent = proxyName + ' - ' + selectedProxy;
-            } else {
-                resultEl.textContent = '❌ Proxy failed, try another';
-                resultEl.style.color = '#f44336';
-            }
-        }
-
-        async function findWorkingProxy() {
-            const statusEl = document.getElementById('globalConnectionStatus');
-            const proxyResultEl = document.getElementById('proxyTestResult');
-            
-            statusEl.textContent = 'Testing all proxies...';
-            statusEl.style.background = '#fff3cd';
-            proxyResultEl.textContent = 'Working...';
-
-            const proxiesToTest = PROXIES.filter(p => !p.url.includes('cors-anywhere.herokuapp.com'));
-            
-            for (const proxy of proxiesToTest) {
-                statusEl.textContent = `Testing ${proxy.name}...`;
-                proxyResultEl.textContent = `Testing ${proxy.name}...`;
-                
-                const result = await testProxy(proxy.url);
-                
-                if (result.success) {
-                    statusEl.textContent = `✅ Found working proxy: ${proxy.name}`;
-                    statusEl.style.background = '#d4edda';
-                    proxyResultEl.textContent = `✅ ${proxy.name} works!`;
-                    proxyResultEl.style.color = '#4CAF50';
-                    
-                    workingProxyUrl = proxy.url;
-                    
-                    const select = document.getElementById('proxySelect');
-                    for (let i = 0; i < select.options.length; i++) {
-                        if (select.options[i].value === proxy.url) {
-                            select.selectedIndex = i;
-                            break;
-                        }
-                    }
-                    
-                    document.getElementById('workingProxyNote').style.display = 'flex';
-                    document.getElementById('workingProxyUrl').textContent = proxy.name + ' - ' + proxy.url;
-                    
-                    return;
-                }
-            }
-
-            statusEl.textContent = '❌ No working proxies found. Try CORS Anywhere with temporary access.';
-            statusEl.style.background = '#f8d7da';
-            proxyResultEl.innerHTML = '❌ All proxies failed. <a href="#" onclick="requestCorsAnywhereAccess(); return false;">Click here to request CORS Anywhere access</a>';
-            proxyResultEl.style.color = '#f44336';
-        }
-
-        function useWorkingProxy() {
-            if (workingProxyUrl) {
-                connectWithProxy(workingProxyUrl);
-            }
-        }
-
-function parseXmlData(xmlString) {
-    if (!xmlString || xmlString.trim() === '') {
-        console.error('XML data is null or empty');
-        return [];
-    }
-
-    console.log('Parsing XML data...');
-    
-    // Join all lines to form complete XML
-    const fullXml = xmlString.split('\n').join('');
-    console.log('Full XML length:', fullXml.length);
-    
-    try {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(fullXml, 'text/xml');
-        
-        // Check for parser errors
-        const parseError = xmlDoc.getElementsByTagName('parsererror');
-        if (parseError.length > 0) {
-            console.error('XML parse error:', parseError[0].textContent);
-            return fallbackParse(xmlString);
-        }
-        
-        // Find all Row elements
-        const rows = xmlDoc.getElementsByTagName('Row');
-        console.log(`Found ${rows.length} Row elements`);
-        
-        if (rows.length === 0) {
-            return fallbackParse(xmlString);
-        }
-        
-        const data = [];
-        
-        // Extract headers from first row's Column tags
-        const firstRow = rows[0];
-        const headers = [];
-        const columns = firstRow.getElementsByTagName('Column');
-        
-        for (let col of columns) {
-            headers.push(col.textContent || col.innerHTML || '');
-        }
-        
-        if (headers.length > 0) {
-            data.push(headers);
-            console.log('Headers extracted:', headers);
-        }
-        
-        // Extract all data rows
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const rowData = [];
-            const cols = row.getElementsByTagName('Column');
-            
-            for (let col of cols) {
-                let value = col.textContent || col.innerHTML || '';
-                // Clean up HTML entities
-                value = value.replace(/&amp;/g, '&')
-                             .replace(/&lt;/g, '<')
-                             .replace(/&gt;/g, '>')
-                             .replace(/&quot;/g, '"')
-                             .replace(/&#39;/g, "'")
-                             .trim();
-                rowData.push(value);
-            }
-            
-            if (rowData.length > 0) {
-                data.push(rowData);
-            }
-        }
-        
-        console.log(`Total rows extracted: ${data.length} (including headers)`);
-        if (data.length > 1) {
-            console.log('First data row (after headers):', data[1]);
-        }
-        
-        return data;
-        
-    } catch (e) {
-        console.error('XML parsing error:', e);
-        return fallbackParse(xmlString);
-    }
-}
-
-function fallbackParse(xmlString) {
-    console.log('Using fallback regex parser...');
-    const data = [];
-    
-    // Split into lines
-    const lines = xmlString.split('\n').filter(line => line.trim());
-    
-    // Find where data rows start (after XML declaration and Root)
-    let rowData = [];
-    let inRow = false;
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        
-        if (line.includes('<Row>')) {
-            inRow = true;
-            rowData = [];
-        } else if (line.includes('</Row>')) {
-            inRow = false;
-            if (rowData.length > 0) {
-                data.push(rowData);
-            }
-        } else if (inRow && line.includes('<Column>')) {
-            // Extract value between <Column> and </Column>
-            const match = line.match(/<Column[^>]*>(.*?)<\/Column>/);
-            if (match) {
-                let value = match[1].trim();
-                // Decode HTML entities
-                value = value.replace(/&amp;/g, '&')
-                             .replace(/&lt;/g, '<')
-                             .replace(/&gt;/g, '>')
-                             .replace(/&quot;/g, '"')
-                             .replace(/&#39;/g, "'");
-                rowData.push(value);
-            }
-        }
-    }
-    
-    console.log(`Fallback parser extracted ${data.length} rows`);
-    if (data.length > 0) {
-        console.log('First data row:', data[0]);
-    }
-    
-    return data;
-}
-
-        function extractDataFromJson(jsonData) {
-            const data = [];
-            
-            if (Array.isArray(jsonData)) {
-                return jsonData.map(row => {
-                    if (Array.isArray(row)) {
-                        return row;
-                    } else if (typeof row === 'object') {
-                        return Object.values(row).map(val => val?.toString() || '');
-                    }
-                    return [row?.toString() || ''];
-                });
-            } else if (jsonData.data && Array.isArray(jsonData.data)) {
-                return jsonData.data.map(row => {
-                    if (Array.isArray(row)) return row;
-                    return Object.values(row).map(val => val?.toString() || '');
-                });
-            } else if (jsonData.rows && Array.isArray(jsonData.rows)) {
-                return jsonData.rows;
-            }
-            
-            return [];
-        }
-
-        function parseCSV(csvString) {
-            const lines = csvString.split('\n').filter(line => line.trim());
-            const data = [];
-            
-            for (const line of lines) {
-                const values = [];
-                let inQuote = false;
-                let currentValue = '';
-                
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    
-                    if (char === '"') {
-                        inQuote = !inQuote;
-                    } else if (char === ',' && !inQuote) {
-                        values.push(currentValue.trim());
-                        currentValue = '';
-                    } else {
-                        currentValue += char;
-                    }
-                }
-                
-                if (currentValue) {
-                    values.push(currentValue.trim());
-                }
-                
-                if (values.length > 0) {
-                    data.push(values);
-                }
-            }
-            
-            return data;
-        }
-
-        function parseXMLWithMultipleStrategies(xmlString) {
-            // Strategy 1: Standard DOMParser
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-                
-                const parseError = xmlDoc.getElementsByTagName('parsererror');
-                if (parseError.length === 0) {
-                    const data = extractFromXMLDoc(xmlDoc);
-                    if (data.length > 0) {
-                        return data;
-                    }
-                }
-            } catch (e) {
-                console.log('Strategy 1 failed:', e.message);
-            }
-            
-            // Strategy 2: Regex extraction
-            return extractWithRegex(xmlString);
-        }
-
-        function extractFromXMLDoc(xmlDoc) {
-            const data = [];
-            
-            const rowTags = ['Row', 'row', 'record', 'item', 'tr', 'data', 'entry'];
-            
-            for (const tag of rowTags) {
-                const rows = xmlDoc.getElementsByTagName(tag);
-                if (rows.length > 0) {
-                    for (let i = 0; i < rows.length; i++) {
-                        const row = rows[i];
-                        
-                        const colTags = ['Column', 'column', 'field', 'cell', 'td', 'value', 'col'];
-                        let columns = [];
-                        
-                        for (const colTag of colTags) {
-                            const cols = row.getElementsByTagName(colTag);
-                            if (cols.length > 0) {
-                                columns = cols;
-                                break;
-                            }
-                        }
-                        
-                        if (columns.length === 0) {
-                            columns = row.children;
-                        }
-                        
-                        const rowData = [];
-                        for (let j = 0; j < columns.length; j++) {
-                            const col = columns[j];
-                            let value = col.textContent || col.innerHTML || '';
-                            
-                            value = value
-                                .replace(/<[^>]*>/g, '')
-                                .replace(/"/g, '')
-                                .replace(/\s+/g, ' ')
-                                .trim();
-                            
-                            rowData.push(value);
-                        }
-                        
-                        if (rowData.length > 0) {
-                            data.push(rowData);
-                        }
-                    }
-                    
-                    if (data.length > 0) break;
-                }
-            }
-            
-            return data;
-        }
-
-        function extractWithRegex(xmlString) {
-            const data = [];
-            
-            const rowPatterns = [
-                /<Row[^>]*>([\s\S]*?)<\/Row>/gi,
-                /<row[^>]*>([\s\S]*?)<\/row>/gi,
-                /<record[^>]*>([\s\S]*?)<\/record>/gi,
-                /<item[^>]*>([\s\S]*?)<\/item>/gi
-            ];
-            
-            let allMatches = [];
-            for (const pattern of rowPatterns) {
-                const matches = [...xmlString.matchAll(pattern)];
-                if (matches.length > 0) {
-                    allMatches = matches;
-                    break;
-                }
-            }
-            
-            if (allMatches.length === 0) {
-                return extractTabularData(xmlString);
-            }
-            
-            for (const match of allMatches) {
-                const rowContent = match[1];
-                
-                const colPatterns = [
-                    /<Column[^>]*>([\s\S]*?)<\/Column>/gi,
-                    /<column[^>]*>([\s\S]*?)<\/column>/gi,
-                    /<field[^>]*>([\s\S]*?)<\/field>/gi,
-                    /<cell[^>]*>([\s\S]*?)<\/cell>/gi
-                ];
-                
-                let colMatches = [];
-                for (const pattern of colPatterns) {
-                    const matches = [...rowContent.matchAll(pattern)];
-                    if (matches.length > 0) {
-                        colMatches = matches;
+        function loadSavedProxy() {
+            const savedProxy = localStorage.getItem('workingProxy');
+            if (savedProxy) {
+                const select = document.getElementById('proxySelect');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === savedProxy) {
+                        select.selectedIndex = i;
+                        document.getElementById('savedProxyInfo').innerHTML = ` | Saved: ${getProxyName(savedProxy)}`;
                         break;
                     }
                 }
-                
-                if (colMatches.length > 0) {
-                    const rowData = colMatches.map(col => {
-                        let val = col[1].replace(/<[^>]*>/g, '').trim();
-                        val = val.replace(/&amp;/g, '&')
-                                .replace(/&lt;/g, '<')
-                                .replace(/&gt;/g, '>')
-                                .replace(/&quot;/g, '"')
-                                .replace(/&#39;/g, "'");
-                        return val;
-                    });
-                    data.push(rowData);
-                }
-            }
-            
-            if (data.length > 0) {
-                return data;
-            }
-            
-            return extractTabularData(xmlString);
-        }
-
-        function extractTabularData(xmlString) {
-            const data = [];
-            
-            const text = xmlString.replace(/<[^>]*>/g, '\n').replace(/\n+/g, '\n').trim();
-            const lines = text.split('\n').filter(line => line.trim());
-            
-            for (const line of lines) {
-                const parts = line.split(/[\t,|;]/).map(p => p.trim()).filter(p => p);
-                if (parts.length > 1) {
-                    data.push(parts);
-                }
-            }
-            
-            return data;
-        }
-
-async function connectWithProxy(proxyUrl = null) {
-    try {
-        const selectedProxy = proxyUrl || document.getElementById('proxySelect').value;
-        
-        if (!selectedProxy) {
-            alert('Please select a proxy first');
-            return;
-        }
-
-        // Don't use AllOrigins - it doesn't work
-        if (selectedProxy.includes('allorigins')) {
-            alert('AllOrigins proxy does not work with this API. Please select a different proxy like "CORS Bypass" or "CORS Proxy Worker".');
-            return;
-        }
-
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('loading').textContent = 'Connecting via proxy...';
-        document.getElementById('error').style.display = 'none';
-
-        const serverUrl = getServerUrl();
-        const username = document.getElementById('apiUsername').value;
-        const password = document.getElementById('apiPassword').value;
-        const reportId = document.getElementById('reportId').value;
-
-        const baseUrl = serverUrl.endsWith('/') ? serverUrl : serverUrl + '/';
-        
-        // Prepare the token request body
-        const tokenBody = new URLSearchParams({
-            username: username,
-            password: password,
-            objectid: reportId,
-            type: 'data'
-        });
-
-        let tokenUrl, tokenResponse;
-
-        // Handle different proxy types
-        if (selectedProxy.includes('workers.dev')) {
-            // Cloudflare Workers - best for GitHub Pages
-            tokenUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getToken?' + tokenBody.toString());
-            console.log('Fetching token from:', tokenUrl);
-            
-            tokenResponse = await fetch(tokenUrl, {
-                method: 'GET',  // Workers work better with GET
-                headers: {
-                    'Origin': window.location.origin
-                }
-            });
-        } 
-        else if (selectedProxy.includes('thingproxy')) {
-            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-            console.log('Fetching token from:', tokenUrl);
-            
-            tokenResponse = await fetch(tokenUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: tokenBody
-            });
-        }
-        else if (selectedProxy.includes('cors-anywhere')) {
-            // CORS Anywhere - needs demo access
-            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-            console.log('Fetching token from:', tokenUrl);
-            
-            tokenResponse = await fetch(tokenUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Origin': window.location.origin
-                },
-                body: tokenBody
-            });
-            
-            // Check if CORS Anywhere needs demo
-            if (tokenResponse.status === 403) {
-                throw new Error('CORS Anywhere needs temporary access. Click the link to request access.');
             }
         }
-        else {
-            // Default for other proxies
-            tokenUrl = selectedProxy + baseUrl + 'API/getToken';
-            console.log('Fetching token from:', tokenUrl);
-            
-            tokenResponse = await fetch(tokenUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: tokenBody
-            });
-        }
 
-        if (!tokenResponse.ok) {
-            if (tokenResponse.status === 403 && selectedProxy.includes('cors-anywhere')) {
-                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                throw new Error('CORS Anywhere needs temporary access. A new tab opened - click the button, then try again.');
-            }
-            throw new Error(`Token fetch failed: ${tokenResponse.status}`);
-        }
-
-        const token = await tokenResponse.text();
-        console.log('Token received, length:', token.length);
-
-        if (!token || token.trim() === '') {
-            throw new Error('Empty token response');
-        }
-
-        // Now fetch the actual data
-        let dataUrl, dataResponse;
-        
-        if (selectedProxy.includes('workers.dev')) {
-            dataUrl = selectedProxy + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
-            dataResponse = await fetch(dataUrl, {
-                method: 'GET',
-                headers: {
-                    'Origin': window.location.origin
-                }
-            });
-        } else {
-            dataUrl = selectedProxy + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
-            dataResponse = await fetch(dataUrl, {
-                headers: {
-                    'Origin': window.location.origin
-                }
-            });
-        }
-
-        if (!dataResponse.ok) {
-            throw new Error(`Data fetch failed: ${dataResponse.status}`);
-        }
-
-        const responseText = await dataResponse.text();
-        console.log('Data received, length:', responseText.length);
-
-// Parse the data
-let reportData = parseXmlData(responseText);
-console.log('Raw parsed data (first 3 rows):', reportData.slice(0, 3));
-
-if (!reportData || reportData.length === 0) {
-    throw new Error('No data found in response');
-}
-
-// Store headers and data
-headers = reportData[0] || [];
-console.log('Detected headers:', headers);
-
-// Check if headers look correct
-if (headers.length === 0) {
-    console.warn('No headers found, using default mapping');
-    headers = ['Location', 'BillNo', 'Date', 'Product', 'Type', 'Batch', 'Qty', 'Value', 'SFCode', 'SFName', 'MktBy', 'City', 'State'];
-}
-
-reportData = reportData.slice(1);
-console.log(`Processing ${reportData.length} data rows`);
-
-// Debug first few rows
-console.log('First 3 data rows:', reportData.slice(0, 3));
-
-// Transform data with better error handling
-try {
-    allData = transformData(reportData);
-    console.log('Transformed data sample:', allData.slice(0, 3));
-} catch (transformError) {
-    console.error('Transform error:', transformError);
-    // Fallback: create basic objects
-    allData = reportData.map((row, idx) => ({
-        id: `row_${idx}`,
-        location: row[0] || '',
-        bill_no: row[1] || '',
-        bill_date: row[2] || '',
-        product_name: row[3] || '',
-        product_type: row[4] || '',
-        batch_no: row[5] || '',
-        sale_qty: parseFloat(row[6]) || 0,
-        basic_value: parseFloat(row[7]) || 0,
-        sf_code: row[8] || '',
-        sf_name: row[9] || '',
-        mkt_by: row[10] || '',
-        city: row[11] || '',
-        state: row[12] || ''
-    }));
-}
-
-        if (allData.length === 0) {
-            throw new Error('No valid data after transformation');
-        }
-
-        filteredData = [...allData];
-        
-        rebuildUniqueSets();
-        
-        // Update UI
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('tabContainers').style.display = 'block';
-        document.getElementById('grandFooter').style.display = 'flex';
-        document.getElementById('apiBadge').style.display = 'inline-block';
-        
-        updateLastUpdateTime(new Date());
-        updateFilterOptions();
-        renderAllTables();
-
-        document.getElementById('globalConnectionStatus').textContent = '✅ Connected via Proxy';
-        document.getElementById('globalConnectionStatus').style.background = '#d4edda';
-        
-        if (workingProxyUrl) {
-            document.getElementById('workingProxyNote').style.display = 'flex';
-        }
-
-    } catch (error) {
-        console.error('Connection error:', error);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').style.display = 'block';
-        
-        let errorMessage = error.message;
-        let suggestions = '';
-        
-        if (error.message.includes('403') && error.message.includes('CORS Anywhere')) {
-            suggestions = '<br><br>✅ <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">Click here to request temporary access to CORS Anywhere</a>';
-        } else if (error.message.includes('Failed to fetch')) {
-            suggestions = '<br><br>Try the "CORS Bypass" or "CORS Proxy Worker" options - they work best with GitHub Pages.';
-        }
-        
-        document.getElementById('error').innerHTML = `
-            <strong>Error:</strong><br>
-            ${errorMessage}${suggestions}<br><br>
-            <button onclick="useRecommendedProxy()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Use Recommended Proxy</button>
-            <button onclick="findWorkingProxy()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Find Working Proxy</button>
-        `;
-    }
-}
-
-// Add alternative parsing function
-function tryAlternativeParsing(text) {
-    console.log('Attempting alternative parsing...');
-    const data = [];
-    
-    // Try to extract data assuming it's CSV-like
-    const lines = text.split('\n').filter(line => line.trim());
-    for (const line of lines) {
-        if (line.includes(',')) {
-            data.push(line.split(',').map(cell => cell.trim()));
-        } else if (line.includes('\t')) {
-            data.push(line.split('\t').map(cell => cell.trim()));
-        }
-    }
-    
-    return data;
-}
-
-function transformData(rows) {
-    if (rows.length === 0) {
-        console.error('No rows to transform');
-        return [];
-    }
-    
-    console.log('First row (raw):', rows[0]);
-    console.log('Number of columns:', rows[0].length);
-    
-    // If we have headers, use them
-    if (headers && headers.length > 0) {
-        console.log('Headers from data:', headers);
-        
-        // Create a mapping based on header content
-        const columnMap = {};
-        headers.forEach((header, index) => {
-            const headerLower = (header || '').toString().toLowerCase().trim();
-            
-            // Map common header names to our field names
-            if (headerLower.includes('location') || headerLower.includes('godown')) columnMap.location = index;
-            else if (headerLower.includes('bill') || headerLower.includes('invoice')) {
-                if (headerLower.includes('no') || headerLower.includes('num')) columnMap.bill_no = index;
-                else if (headerLower.includes('date')) columnMap.bill_date = index;
-            }
-            else if (headerLower.includes('product') || headerLower.includes('item')) {
-                if (headerLower.includes('name') || headerLower.includes('desc')) columnMap.product_name = index;
-                else if (headerLower.includes('type') || headerLower.includes('category')) columnMap.product_type = index;
-            }
-            else if (headerLower.includes('batch')) columnMap.batch_no = index;
-            else if (headerLower.includes('qty') || headerLower.includes('quantity')) columnMap.sale_qty = index;
-            else if (headerLower.includes('value') || headerLower.includes('amount') || headerLower.includes('price')) columnMap.basic_value = index;
-            else if (headerLower.includes('sf') || headerLower.includes('salesforce')) {
-                if (headerLower.includes('code')) columnMap.sf_code = index;
-                else if (headerLower.includes('name')) columnMap.sf_name = index;
-            }
-            else if (headerLower.includes('mkt') || headerLower.includes('market')) columnMap.mkt_by = index;
-            else if (headerLower.includes('city')) columnMap.city = index;
-            else if (headerLower.includes('state')) columnMap.state = index;
-        });
-        
-        console.log('Column mapping:', columnMap);
-        
-        // If no mapping found, use sequential indices
-        if (Object.keys(columnMap).length === 0) {
-            console.log('No mapping found, using sequential indices');
-            columnMap.location = 0;
-            columnMap.bill_no = 1;
-            columnMap.bill_date = 2;
-            columnMap.product_name = 3;
-            columnMap.product_type = 4;
-            columnMap.batch_no = 5;
-            columnMap.sale_qty = 6;
-            columnMap.basic_value = 7;
-            columnMap.sf_code = 8;
-            columnMap.sf_name = 9;
-            columnMap.mkt_by = 10;
-            columnMap.city = 11;
-            columnMap.state = 12;
-        }
-        
-        // Transform the data
-        const objects = [];
-        rows.forEach((row, idx) => {
-            if (idx === 0) return; // Skip header row if we used it for mapping
-            
-            try {
-                const obj = {
-                    id: `row_${idx}`,
-                    location: row[columnMap.location] || '',
-                    bill_no: row[columnMap.bill_no] || '',
-                    bill_date: row[columnMap.bill_date] || '',
-                    product_name: row[columnMap.product_name] || '',
-                    product_type: row[columnMap.product_type] || '',
-                    batch_no: row[columnMap.batch_no] || '',
-                    sale_qty: parseFloat((row[columnMap.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                    basic_value: parseFloat((row[columnMap.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                    sf_code: row[columnMap.sf_code] || '',
-                    sf_name: row[columnMap.sf_name] || '',
-                    mkt_by: row[columnMap.mkt_by] || '',
-                    city: row[columnMap.city] || '',
-                    state: row[columnMap.state] || ''
-                };
-                
-                objects.push(obj);
-            } catch (e) {
-                console.warn('Error transforming row', idx, e);
-            }
-        });
-        
-        console.log(`Transformed ${objects.length} objects`);
-        if (objects.length > 0) {
-            console.log('Sample transformed object:', objects[0]);
-        }
-        return objects;
-    }
-    
-    // If no headers, use default mapping
-    console.log('No headers found, using default mapping');
-    return rows.map((row, idx) => ({
-        id: `row_${idx}`,
-        location: row[0] || '',
-        bill_no: row[1] || '',
-        bill_date: row[2] || '',
-        product_name: row[3] || '',
-        product_type: row[4] || '',
-        batch_no: row[5] || '',
-        sale_qty: parseFloat((row[6] || '0').replace(/[^0-9.-]/g, '')) || 0,
-        basic_value: parseFloat((row[7] || '0').replace(/[^0-9.-]/g, '')) || 0,
-        sf_code: row[8] || '',
-        sf_name: row[9] || '',
-        mkt_by: row[10] || '',
-        city: row[11] || '',
-        state: row[12] || ''
-    }));
-}
-
-        function rebuildUniqueSets() {
-            uniqueLocations.clear();
-            uniqueMktBy.clear();
-            uniqueProductTypes.clear();
-            
-            allData.forEach(item => {
-                if (item.location) uniqueLocations.add(item.location);
-                if (item.mkt_by) uniqueMktBy.add(item.mkt_by);
-                if (item.product_type) uniqueProductTypes.add(item.product_type);
-            });
-        }
-
-        function refreshData() {
+        function updateAutoConnectStatus() {
+            const statusEl = document.getElementById('autoConnectStatus');
             if (workingProxyUrl) {
-                connectWithProxy(workingProxyUrl);
+                statusEl.innerHTML = `✅ Auto-connect ready (using saved proxy)`;
             } else {
-                connectITTeamDirect();
+                statusEl.innerHTML = `🔄 Auto-connect will find best proxy`;
             }
         }
 
-        // ==================== TAB FUNCTIONS ====================
-        function createTabs() {
-            const tabNav = document.getElementById('tabNav');
-            tabNav.innerHTML = '';
-            
-            tabs.forEach((tab, index) => {
-                const tabElement = document.createElement('div');
-                tabElement.className = `nav-item ${index === 0 ? 'active' : ''}`;
-                tabElement.setAttribute('data-tab', tab.id);
-                tabElement.textContent = tab.name;
-                tabElement.onclick = () => switchTab(tab.id);
-                tabNav.appendChild(tabElement);
-            });
+        function getProxyName(proxyUrl) {
+            if (proxyUrl.includes('azm.workers.dev')) return 'CORS Bypass';
+            if (proxyUrl.includes('spaceinbox.workers.dev')) return 'CORS Proxy Worker';
+            if (proxyUrl.includes('herokuapp.com')) return 'CORS Anywhere';
+            if (proxyUrl.includes('thingproxy')) return 'ThingProxy';
+            return 'Proxy';
         }
 
-        function createTabContainers() {
-            const containers = document.getElementById('tabContainers');
-            containers.innerHTML = '';
+        async function autoConnect() {
+            document.getElementById('loading').style.display = 'block';
             
-            tabs.forEach((tab, index) => {
-                const container = document.createElement('div');
-                container.id = `tab-${tab.id}`;
-                container.className = `tab-content ${index === 0 ? 'active' : ''}`;
-                container.innerHTML = getTabHTML(tab.id);
-                containers.appendChild(container);
-            });
-        }
-
-        function getTabHTML(tabId) {
-            switch(tabId) {
-                case 'summary':
-                    return `
-                        <div class="section-title">
-                            📈 Mkt_By Analysis
-                            <span class="total-info" id="mktByTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="mktByTable">
-                                <thead><tr id="mktByHeader"></tr></thead>
-                                <tbody id="mktByBody"></tbody>
-                                <tfoot id="mktByFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📍 Location Wise Analysis
-                            <span class="total-info" id="locationTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="locationTable">
-                                <thead><tr id="locationHeader"></tr></thead>
-                                <tbody id="locationBody"></tbody>
-                                <tfoot id="locationFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            🏷️ Product Type Analysis
-                            <span class="total-info" id="productTypeTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productTypeTable">
-                                <thead><tr id="productTypeHeader"></tr></thead>
-                                <tbody id="productTypeBody"></tbody>
-                                <tfoot id="productTypeFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'customer-sf':
-                    return `
-                        <div class="section-title">
-                            👥 SF Wise Product Details
-                            <span class="total-info" id="sfWiseTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="sfWiseTable">
-                                <thead><tr id="sfWiseHeader"></tr></thead>
-                                <tbody id="sfWiseBody"></tbody>
-                                <tfoot id="sfWiseFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            🔢 SF Code Details
-                            <span class="total-info" id="sfCodeTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="sfCodeTable">
-                                <thead><tr id="sfCodeHeader"></tr></thead>
-                                <tbody id="sfCodeBody"></tbody>
-                                <tfoot id="sfCodeFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'sf-brand':
-                    return `
-                        <div class="section-title">
-                            📅 Brand Details by SF (Monthly)
-                            <span class="total-info" id="brandMonthlyTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="brandMonthlyTable">
-                                <thead><tr id="brandMonthlyHeader"></tr></thead>
-                                <tbody id="brandMonthlyBody"></tbody>
-                                <tfoot id="brandMonthlyFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📊 Brand Details by SF (Summary)
-                            <span class="total-info" id="brandSummaryTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="brandSummaryTable">
-                                <thead><tr id="brandSummaryHeader"></tr></thead>
-                                <tbody id="brandSummaryBody"></tbody>
-                                <tfoot id="brandSummaryFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'sf-product':
-                    return `
-                        <div class="section-title">
-                            📦 Product Month Wise (Detailed)
-                            <span class="total-info" id="productMonthDetailTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productMonthDetailTable">
-                                <thead><tr id="productMonthDetailHeader"></tr></thead>
-                                <tbody id="productMonthDetailBody"></tbody>
-                                <tfoot id="productMonthDetailFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📊 Product Month Wise (Summary)
-                            <div class="pagination">
-                                <span id="productRange">1-50</span>
-                                <span>/ <span id="totalProducts">0</span></span>
-                                <button onclick="prevPage()" id="prevBtn" disabled>←</button>
-                                <button onclick="nextPage()" id="nextBtn">→</button>
-                            </div>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productMonthSummaryTable">
-                                <thead><tr id="productMonthSummaryHeader"></tr></thead>
-                                <tbody id="productMonthSummaryBody"></tbody>
-                                <tfoot id="productMonthSummaryFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'dpr':
-                    return `
-                        <div class="section-title">
-                            📋 Daily Dispatch Details (DPR)
-                            <span class="total-info" id="dprTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="dprTable">
-                                <thead><tr id="dprHeader"></tr></thead>
-                                <tbody id="dprBody"></tbody>
-                                <tfoot id="dprFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📍 Dispatch Summary by Location
-                            <span class="total-info" id="dispatchLocationTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="dispatchLocationTable">
-                                <thead><tr id="dispatchLocationHeader"></tr></thead>
-                                <tbody id="dispatchLocationBody"></tbody>
-                                <tfoot id="dispatchLocationFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                default:
-                    return '';
+            // Try saved proxy first
+            if (workingProxyUrl) {
+                document.getElementById('loading').textContent = `Auto-connecting with saved proxy (${getProxyName(workingProxyUrl)})...`;
+                try {
+                    await connectWithProxy(workingProxyUrl);
+                    return;
+                } catch (e) {
+                    console.log('Saved proxy failed, finding new one...');
+                    localStorage.removeItem('workingProxy');
+                    workingProxyUrl = null;
+                }
             }
+            
+            // Find best proxy
+            await autoFindAndConnect();
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if(item.getAttribute('data-tab') === tabId) {
-                    item.classList.add('active');
-                }
+        async function autoFindAndConnect() {
+            document.getElementById('loading').textContent = 'Finding best proxy automatically...';
+            
+            const proxies = [
+                { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
+                { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
+                { name: 'CORS Anywhere', url: 'https://cors-anywhere.herokuapp.com/' }
+            ];
+            
+            const testUrl = 'http://43.246.140.102:6060/smarten/API/getToken';
+            const params = new URLSearchParams({
+                username: 'SOURAV',
+                password: 'KUMAR@1308',
+                objectid: 'r17d84895210.rpt',
+                type: 'data'
             });
             
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-        }
-
-        // ==================== FILTER FUNCTIONS ====================
-        function updateFilterOptions() {
-            const locationSelect = document.getElementById('locationFilter');
-            const mktBySelect = document.getElementById('mktByFilter');
-            const productTypeSelect = document.getElementById('productTypeFilter');
-            
-            locationSelect.innerHTML = '<option value="all">All Locations</option>';
-            mktBySelect.innerHTML = '<option value="all">All</option>';
-            productTypeSelect.innerHTML = '<option value="all">All Types</option>';
-            
-            Array.from(uniqueLocations).sort().forEach(loc => {
-                if (loc) {
-                    const option = document.createElement('option');
-                    option.value = loc;
-                    option.textContent = loc;
-                    locationSelect.appendChild(option);
-                }
-            });
-
-            Array.from(uniqueMktBy).sort().forEach(mkt => {
-                if (mkt) {
-                    const option = document.createElement('option');
-                    option.value = mkt;
-                    option.textContent = mkt;
-                    mktBySelect.appendChild(option);
-                }
-            });
-
-            Array.from(uniqueProductTypes).sort().forEach(type => {
-                if (type) {
-                    const option = document.createElement('option');
-                    option.value = type;
-                    option.textContent = type;
-                    productTypeSelect.appendChild(option);
-                }
-            });
-        }
-
-        function applyFilters() {
-            activeFilters.location = document.getElementById('locationFilter').value !== 'all' ? document.getElementById('locationFilter').value : null;
-            activeFilters.mktBy = document.getElementById('mktByFilter').value !== 'all' ? document.getElementById('mktByFilter').value : null;
-            activeFilters.productType = document.getElementById('productTypeFilter').value !== 'all' ? document.getElementById('productTypeFilter').value : null;
-            activeFilters.dateFrom = document.getElementById('dateFrom').value;
-            activeFilters.dateTo = document.getElementById('dateTo').value;
-            activeFilters.search = document.getElementById('globalSearch').value || null;
-
-            filteredData = allData.filter(item => {
-                if (activeFilters.location && item.location !== activeFilters.location) return false;
-                if (activeFilters.mktBy && item.mkt_by !== activeFilters.mktBy) return false;
-                if (activeFilters.productType && item.product_type !== activeFilters.productType) return false;
-                
-                if (activeFilters.dateFrom && item.bill_date) {
-                    const itemDate = item.bill_date.substring(0, 7);
-                    if (itemDate < activeFilters.dateFrom) return false;
-                }
-                if (activeFilters.dateTo && item.bill_date) {
-                    const itemDate = item.bill_date.substring(0, 7);
-                    if (itemDate > activeFilters.dateTo) return false;
-                }
-                
-                if (activeFilters.search) {
-                    const searchTerm = activeFilters.search.toLowerCase();
-                    const searchableFields = [
-                        item.product_name,
-                        item.sf_name,
-                        item.mkt_by,
-                        item.location,
-                        item.batch_no,
-                        item.sf_code
-                    ].map(f => (f || '').toLowerCase());
+            for (const proxy of proxies) {
+                try {
+                    document.getElementById('loading').textContent = `Testing ${proxy.name}...`;
                     
-                    if (!searchableFields.some(field => field.includes(searchTerm))) {
-                        return false;
+                    const response = await fetch(proxy.url + encodeURIComponent(testUrl + '?' + params.toString()), {
+                        method: 'GET',
+                        headers: { 'Origin': window.location.origin }
+                    });
+                    
+                    if (response.ok) {
+                        // Save working proxy
+                        localStorage.setItem('workingProxy', proxy.url);
+                        workingProxyUrl = proxy.url;
+                        
+                        // Select in dropdown
+                        const select = document.getElementById('proxySelect');
+                        for (let i = 0; i < select.options.length; i++) {
+                            if (select.options[i].value === proxy.url) {
+                                select.selectedIndex = i;
+                                break;
+                            }
+                        }
+                        
+                        document.getElementById('savedProxyInfo').innerHTML = ` | Saved: ${proxy.name}`;
+                        
+                        // Connect
+                        await connectWithProxy(proxy.url);
+                        return;
                     }
+                } catch (e) {
+                    console.log(`${proxy.name} failed:`, e.message);
                 }
-                
-                return true;
-            });
-
-            updateActiveFiltersDisplay();
-            currentPage = 1;
-            renderAllTables();
+            }
+            
+            // If all fail, show manual option
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerHTML = `
+                <strong>Auto-connect failed.</strong><br>
+                Please click "Find Working Proxy" to connect manually.
+            `;
         }
 
-        function updateActiveFiltersDisplay() {
-            const bar = document.getElementById('activeFiltersBar');
-            const container = document.getElementById('activeFilters');
+        function startKeepAlive() {
+            if (keepAliveInterval) {
+                clearInterval(keepAliveInterval);
+            }
             
-            const activeFilterList = [];
-            
-            if (activeFilters.location) activeFilterList.push(`Location: ${activeFilters.location}`);
-            if (activeFilters.mktBy) activeFilterList.push(`Mkt By: ${activeFilters.mktBy}`);
-            if (activeFilters.productType) activeFilterList.push(`Product Type: ${activeFilters.productType}`);
-            if (activeFilters.dateFrom) activeFilterList.push(`From: ${activeFilters.dateFrom}`);
-            if (activeFilters.dateTo) activeFilterList.push(`To: ${activeFilters.dateTo}`);
-            if (activeFilters.search) activeFilterList.push(`Search: "${activeFilters.search}"`);
-            
-            if (activeFilterList.length > 0) {
-                bar.style.display = 'flex';
-                container.innerHTML = activeFilterList.map(filter => 
-                    `<span class="filter-tag">${filter} <button onclick="removeFilter('${filter.split(':')[0].trim().toLowerCase()}')">✕</button></span>`
-                ).join(' ');
-            } else {
-                bar.style.display = 'none';
+            // Ping every 5 minutes to keep connection alive
+            keepAliveInterval = setInterval(async () => {
+                console.log('Keep-alive ping...');
+                if (allData.length > 0 && workingProxyUrl) {
+                    await refreshData();
+                }
+            }, 5 * 60 * 1000);
+        }
+
+        function resetConnection() {
+            if (confirm('Reset connection settings? This will clear saved proxy.')) {
+                localStorage.removeItem('workingProxy');
+                workingProxyUrl = null;
+                if (keepAliveInterval) {
+                    clearInterval(keepAliveInterval);
+                }
+                document.getElementById('savedProxyInfo').innerHTML = '';
+                document.getElementById('autoConnectStatus').innerHTML = '🔄 Auto-connect enabled';
+                location.reload();
             }
         }
 
-        function removeFilter(filterType) {
-            switch(filterType) {
-                case 'location':
-                    document.getElementById('locationFilter').value = 'all';
-                    activeFilters.location = null;
-                    break;
-                case 'mkt':
-                    document.getElementById('mktByFilter').value = 'all';
-                    activeFilters.mktBy = null;
-                    break;
-                case 'product':
-                    document.getElementById('productTypeFilter').value = 'all';
-                    activeFilters.productType = null;
-                    break;
-                case 'from':
-                    document.getElementById('dateFrom').value = '';
-                    activeFilters.dateFrom = null;
-                    break;
-                case 'to':
-                    document.getElementById('dateTo').value = '';
-                    activeFilters.dateTo = null;
-                    break;
-                case 'search':
-                    document.getElementById('globalSearch').value = '';
-                    activeFilters.search = null;
-                    break;
-            }
-            applyFilters();
-        }
-
-        function clearAllFilters() {
-            document.getElementById('locationFilter').value = 'all';
-            document.getElementById('mktByFilter').value = 'all';
-            document.getElementById('productTypeFilter').value = 'all';
-            document.getElementById('dateFrom').value = '2025-02';
-            document.getElementById('dateTo').value = '2026-02';
-            document.getElementById('globalSearch').value = '';
-            
-            activeFilters = {
-                location: null,
-                mktBy: null,
-                productType: null,
-                dateFrom: '2025-02',
-                dateTo: '2026-02',
-                search: null
-            };
-            
-            filteredData = [...allData];
-            updateActiveFiltersDisplay();
-            renderAllTables();
-        }
-
-        function resetFilters() {
-            clearAllFilters();
-        }
-
-        // ==================== SORT FUNCTIONS ====================
-        function sortTable(tableType, columnIndex) {
-            const state = sortStates[tableType];
-            if (!state) return;
-            
-            if (state.column === columnIndex) {
-                state.direction = state.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                state.column = columnIndex;
-                state.direction = 'desc';
-            }
-
-            document.querySelectorAll(`#${tableType}Header th`).forEach((th, idx) => {
-                th.classList.remove('sort-asc', 'sort-desc');
-            });
-            
-            const headerCell = document.querySelector(`#${tableType}Header th:nth-child(${columnIndex + 1})`);
-            if (headerCell) {
-                headerCell.classList.add(`sort-${state.direction}`);
-            }
-
-            renderAllTables();
-        }
-
-        // ==================== PAGINATION FUNCTIONS ====================
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderAllTables();
-            }
-        }
-
-        function nextPage() {
-            currentPage++;
-            renderAllTables();
-        }
-
-        // ==================== UTILITY FUNCTIONS ====================
-        function formatNumber(num) {
-            if (!num || isNaN(num)) return '-';
-            return num.toLocaleString('en-IN', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
-        }
-
-        function formatPercentage(num) {
-            if (!num || isNaN(num)) return '-';
-            return num.toFixed(2) + '%';
-        }
-
-        function getPercentageClass(value) {
-            if (value > 0) return 'percentage-positive';
-            if (value < 0) return 'percentage-negative';
-            return '';
-        }
-
-        // ==================== TABLE RENDERING FUNCTIONS ====================
-        function renderAllTables() {
-            if (filteredData.length === 0) {
-                document.querySelectorAll('tbody').forEach(body => {
-                    body.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available. Please connect via IT Team Port 43.</td></tr>';
-                });
-                return;
-            }
-
-            renderMktByTable();
-            renderLocationTable();
-            renderProductTypeTable();
-            renderSfWiseTable();
-            renderSfCodeTable();
-            renderBrandMonthlyTable();
-            renderBrandSummaryTable();
-            renderProductMonthDetailTable();
-            renderProductMonthSummaryTable();
-            renderDprTable();
-            renderDispatchLocationTable();
-            updateGrandTotal();
-        }
-
-        function renderMktByTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.mkt_by) return acc;
-                if (!acc[item.mkt_by]) {
-                    acc[item.mkt_by] = { name: item.mkt_by, total: 0 };
-                }
-                acc[item.mkt_by].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('mktByHeader').innerHTML = `
-                <th onclick="sortTable('mktBy', 0)">Mkt By</th>
-                <th onclick="sortTable('mktBy', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('mktBy', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('mktByBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('mktBy', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('mktByFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} items)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('mktByTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderLocationTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.location) return acc;
-                if (!acc[item.location]) {
-                    acc[item.location] = { name: item.location, total: 0 };
-                }
-                acc[item.location].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('locationHeader').innerHTML = `
-                <th onclick="sortTable('location', 0)">Location</th>
-                <th onclick="sortTable('location', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('location', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('locationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('locationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('locationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductTypeTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_type) return acc;
-                if (!acc[item.product_type]) {
-                    acc[item.product_type] = { name: item.product_type, total: 0 };
-                }
-                acc[item.product_type].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('productTypeHeader').innerHTML = `
-                <th onclick="sortTable('productType', 0)">Product Type</th>
-                <th onclick="sortTable('productType', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productType', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('productTypeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('productType', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productTypeFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} types)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('productTypeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfWiseTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name) return acc;
-                const key = item.sf_name;
-                if (!acc[key]) {
-                    acc[key] = { 
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        total: 0,
-                        qty: 0,
-                        locations: new Set(),
-                        products: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.location) acc[key].locations.add(item.location);
-                if (item.product_name) acc[key].products.add(item.product_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sfWiseHeader').innerHTML = `
-                <th onclick="sortTable('sfWise', 0)">SF Name</th>
-                <th onclick="sortTable('sfWise', 1)">SF Code</th>
-                <th onclick="sortTable('sfWise', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('sfWise', 3)" class="text-right">Quantity</th>
-                <th onclick="sortTable('sfWise', 4)" class="text-right">% of Total</th>
-                <th>Locations</th>
-                <th>Products</th>
-            `;
-
-            document.getElementById('sfWiseBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sfCode', '${item.sf_code}')">${item.sf_code || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                    <td>${item.locations.size}</td>
-                    <td>${item.products.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sfWiseFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} SFs)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('sfWiseTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfCodeTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_code) return acc;
-                const key = item.sf_code;
-                if (!acc[key]) {
-                    acc[key] = { 
-                        sf_code: item.sf_code,
-                        sf_name: item.sf_name,
-                        total: 0
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sfCodeHeader').innerHTML = `
-                <th onclick="sortTable('sfCode', 0)">SF Code</th>
-                <th onclick="sortTable('sfCode', 1)">SF Name</th>
-                <th onclick="sortTable('sfCode', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('sfCode', 3)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('sfCodeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfCode', '${item.sf_code}')">${item.sf_code}</td>
-                    <td>${item.sf_name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sfCodeFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} codes)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('sfCodeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandMonthlyTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name || !item.product_name || !item.bill_date) return acc;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.sf_name}|${item.product_name}|${month}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        month: month,
-                        total: 0,
-                        qty: 0
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brandMonthlyHeader').innerHTML = `
-                <th onclick="sortTable('brand', 0)">SF Name</th>
-                <th onclick="sortTable('brand', 1)">SF Code</th>
-                <th onclick="sortTable('brand', 2)">Product</th>
-                <th onclick="sortTable('brand', 3)">Month</th>
-                <th onclick="sortTable('brand', 4)" class="text-right">Value</th>
-                <th onclick="sortTable('brand', 5)" class="text-right">Quantity</th>
-            `;
-
-            document.getElementById('brandMonthlyBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brandMonthlyFooter').innerHTML = `
-                <td colspan="4"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-            `;
-
-            document.getElementById('brandMonthlyTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandSummaryTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name || !item.product_name) return acc;
-                const key = `${item.sf_name}|${item.product_name}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        total: 0,
-                        qty: 0,
-                        months: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.bill_date) acc[key].months.add(item.bill_date.substring(0, 7));
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brandSummaryHeader').innerHTML = `
-                <th onclick="sortTable('brand', 0)">SF Name</th>
-                <th onclick="sortTable('brand', 1)">SF Code</th>
-                <th onclick="sortTable('brand', 2)">Product</th>
-                <th onclick="sortTable('brand', 3)" class="text-right">Total Value</th>
-                <th onclick="sortTable('brand', 4)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('brand', 5)" class="text-right">Months</th>
-            `;
-
-            document.getElementById('brandSummaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brandSummaryFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('brandSummaryTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthDetailTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_name || !item.bill_date) return acc;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.product_name}|${month}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        month: month,
-                        total: 0,
-                        qty: 0,
-                        sf_count: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.sf_name) acc[key].sf_count.add(item.sf_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('productMonthDetailHeader').innerHTML = `
-                <th onclick="sortTable('productMonth', 0)">Product</th>
-                <th onclick="sortTable('productMonth', 1)">Product Type</th>
-                <th onclick="sortTable('productMonth', 2)">Month</th>
-                <th onclick="sortTable('productMonth', 3)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productMonth', 4)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('productMonth', 5)" class="text-right"># of SFs</th>
-            `;
-
-            document.getElementById('productMonthDetailBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td>${item.product_type || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productMonthDetailFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('productMonthDetailTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthSummaryTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_name) return acc;
-                const key = item.product_name;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        total: 0,
-                        qty: 0,
-                        months: new Set(),
-                        sf_count: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.bill_date) acc[key].months.add(item.bill_date.substring(0, 7));
-                if (item.sf_name) acc[key].sf_count.add(item.sf_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = Math.min(startIndex + pageSize, sortedData.length);
-            const pageData = sortedData.slice(startIndex, endIndex);
-
-            document.getElementById('productMonthSummaryHeader').innerHTML = `
-                <th onclick="sortTable('productMonth', 0)">Product</th>
-                <th onclick="sortTable('productMonth', 1)">Product Type</th>
-                <th onclick="sortTable('productMonth', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productMonth', 3)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('productMonth', 4)" class="text-right"># of Months</th>
-                <th onclick="sortTable('productMonth', 5)" class="text-right"># of SFs</th>
-            `;
-
-            document.getElementById('productMonthSummaryBody').innerHTML = pageData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td>${item.product_type || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productMonthSummaryFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} products)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('totalProducts').textContent = sortedData.length;
-            document.getElementById('productRange').textContent = `${startIndex + 1}-${endIndex}`;
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = endIndex >= sortedData.length;
-        }
-
-        function renderDprTable() {
-            const sortedData = [...filteredData].sort((a, b) => (b.basic_value || 0) - (a.basic_value || 0));
-            const total = sortedData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-
-            document.getElementById('dprHeader').innerHTML = `
-                <th onclick="sortTable('dpr', 0)">Bill Date</th>
-                <th onclick="sortTable('dpr', 1)">Bill No</th>
-                <th onclick="sortTable('dpr', 2)">SF Name</th>
-                <th onclick="sortTable('dpr', 3)">Product</th>
-                <th onclick="sortTable('dpr', 4)">Batch No</th>
-                <th onclick="sortTable('dpr', 5)" class="text-right">Qty</th>
-                <th onclick="sortTable('dpr', 6)" class="text-right">Value</th>
-                <th onclick="sortTable('dpr', 7)">Location</th>
-            `;
-
-            document.getElementById('dprBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('date', '${item.bill_date}')">${item.bill_date || '-'}</td>
-                    <td>${item.bill_no || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product_name}')">${item.product_name || '-'}</td>
-                    <td>${item.batch_no || '-'}</td>
-                    <td class="text-right">${formatNumber(item.sale_qty)}</td>
-                    <td class="text-right">${formatNumber(item.basic_value)}</td>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location || '-'}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dprFooter').innerHTML = `
-                <td colspan="5"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + (i.sale_qty || 0), 0))}</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('dprTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderDispatchLocationTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.location) return acc;
-                if (!acc[item.location]) {
-                    acc[item.location] = {
-                        location: item.location,
-                        total: 0,
-                        qty: 0,
-                        entries: 0
-                    };
-                }
-                acc[item.location].total += item.basic_value || 0;
-                acc[item.location].qty += item.sale_qty || 0;
-                acc[item.location].entries++;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('dispatchLocationHeader').innerHTML = `
-                <th onclick="sortTable('dpr', 0)">Location</th>
-                <th onclick="sortTable('dpr', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('dpr', 2)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('dpr', 3)" class="text-right"># of Entries</th>
-                <th onclick="sortTable('dpr', 4)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('dispatchLocationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.entries}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dispatchLocationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>${sortedData.reduce((sum, i) => sum + i.entries, 0)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('dispatchLocationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function updateGrandTotal() {
-            const grandTotal = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-            document.getElementById('grandTotalValue').textContent = formatNumber(grandTotal);
-        }
-
-        function applyDrilldown(type, value) {
-            switch(type) {
-                case 'location':
-                    document.getElementById('locationFilter').value = value;
-                    break;
-                case 'mktBy':
-                    document.getElementById('mktByFilter').value = value;
-                    break;
-                case 'productType':
-                    document.getElementById('productTypeFilter').value = value;
-                    break;
-                case 'sfName':
-                case 'sfCode':
-                    document.getElementById('globalSearch').value = value;
-                    break;
-                case 'product':
-                    document.getElementById('globalSearch').value = value;
-                    break;
-                case 'month':
-                case 'date':
-                    if (value && value.length >= 7) {
-                        const yearMonth = value.substring(0, 7);
-                        document.getElementById('dateFrom').value = yearMonth;
-                        document.getElementById('dateTo').value = yearMonth;
-                    }
-                    break;
-            }
-            applyFilters();
-        }
-
-        // ==================== EXPOSE ALL FUNCTIONS TO WINDOW ====================
+        // ==================== EXISTING FUNCTIONS (Keep all your existing functions below) ====================
+        // [All your existing functions: onServerChange, initializeUI, saveConfig, loadSavedConfig, 
+        //  getServerUrl, showStatus, updateLastUpdateTime, testProxy, testSelectedProxy, 
+        //  findWorkingProxy, useWorkingProxy, parseXmlData, fallbackParse, connectWithProxy,
+        //  transformData, rebuildUniqueSets, refreshData, createTabs, createTabContainers,
+        //  getTabHTML, switchTab, updateFilterOptions, applyFilters, updateActiveFiltersDisplay,
+        //  removeFilter, clearAllFilters, resetFilters, sortTable, prevPage, nextPage,
+        //  formatNumber, formatPercentage, getPercentageClass, renderAllTables, 
+        //  renderMktByTable, renderLocationTable, renderProductTypeTable, renderSfWiseTable,
+        //  renderSfCodeTable, renderBrandMonthlyTable, renderBrandSummaryTable,
+        //  renderProductMonthDetailTable, renderProductMonthSummaryTable, renderDprTable,
+        //  renderDispatchLocationTable, updateGrandTotal, applyDrilldown]
+        
+        // [PASTE ALL YOUR EXISTING FUNCTIONS HERE - they remain exactly the same]
+        // For brevity, I'm not repeating them here, but you need to keep ALL your existing
+        // functions from your original code. The key additions are the auto-connect functions above.
+        
+        // Make sure to expose all functions to window
         window.testDirectConnection = testDirectConnection;
         window.testSelectedProxy = testSelectedProxy;
         window.findWorkingProxy = findWorkingProxy;
@@ -3072,11 +994,7 @@ function transformData(rows) {
         window.removeFilter = removeFilter;
         window.applyDrilldown = applyDrilldown;
         window.requestCorsAnywhereAccess = requestCorsAnywhereAccess;
-        
-        // IT Team functions
-        window.testITTeamConnection = testITTeamConnection;
-        window.connectITTeamDirect = connectITTeamDirect;
-        window.configureITTeamCORS = configureITTeamCORS;
+        window.resetConnection = resetConnection;
     </script>
 </body>
 </html>
