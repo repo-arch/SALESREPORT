@@ -1719,19 +1719,54 @@ async function connectWithProxy(proxyUrl = null) {
         const responseText = await dataResponse.text();
         console.log('Data received, length:', responseText.length);
 
-        // Parse the data
-        let reportData = parseXmlData(responseText);
-        
-        if (!reportData || reportData.length === 0) {
-            throw new Error('No data found in response');
-        }
+// Parse the data
+let reportData = parseXmlData(responseText);
+console.log('Raw parsed data (first 3 rows):', reportData.slice(0, 3));
 
-        // Store headers and data
-        headers = reportData[0] || [];
-        reportData = reportData.slice(1);
+if (!reportData || reportData.length === 0) {
+    throw new Error('No data found in response');
+}
 
-        // Transform data
-        allData = transformData(reportData);
+// Store headers and data
+headers = reportData[0] || [];
+console.log('Detected headers:', headers);
+
+// Check if headers look correct
+if (headers.length === 0) {
+    console.warn('No headers found, using default mapping');
+    headers = ['Location', 'BillNo', 'Date', 'Product', 'Type', 'Batch', 'Qty', 'Value', 'SFCode', 'SFName', 'MktBy', 'City', 'State'];
+}
+
+reportData = reportData.slice(1);
+console.log(`Processing ${reportData.length} data rows`);
+
+// Debug first few rows
+console.log('First 3 data rows:', reportData.slice(0, 3));
+
+// Transform data with better error handling
+try {
+    allData = transformData(reportData);
+    console.log('Transformed data sample:', allData.slice(0, 3));
+} catch (transformError) {
+    console.error('Transform error:', transformError);
+    // Fallback: create basic objects
+    allData = reportData.map((row, idx) => ({
+        id: `row_${idx}`,
+        location: row[0] || '',
+        bill_no: row[1] || '',
+        bill_date: row[2] || '',
+        product_name: row[3] || '',
+        product_type: row[4] || '',
+        batch_no: row[5] || '',
+        sale_qty: parseFloat(row[6]) || 0,
+        basic_value: parseFloat(row[7]) || 0,
+        sf_code: row[8] || '',
+        sf_name: row[9] || '',
+        mkt_by: row[10] || '',
+        city: row[11] || '',
+        state: row[12] || ''
+    }));
+}
 
         if (allData.length === 0) {
             throw new Error('No valid data after transformation');
@@ -1799,57 +1834,81 @@ function tryAlternativeParsing(text) {
     return data;
 }
 
-        function transformData(rows) {
-            if (rows.length === 0) return [];
-            
-            const headerMap = {};
-            headers.forEach((header, index) => {
-                const headerStr = (header || '').toString().trim().toLowerCase();
-                
-                if (headerStr.includes('location')) headerMap.location = index;
-                else if (headerStr.includes('billno') || headerStr.includes('bill_no')) headerMap.bill_no = index;
-                else if (headerStr.includes('txndocdt') || headerStr.includes('date')) headerMap.bill_date = index;
-                else if (headerStr.includes('itemname') || headerStr.includes('product')) headerMap.product_name = index;
-                else if (headerStr.includes('producttype') || headerStr.includes('type')) headerMap.product_type = index;
-                else if (headerStr.includes('batchno') || headerStr.includes('batch')) headerMap.batch_no = index;
-                else if (headerStr.includes('saleqty') || headerStr.includes('qty')) headerMap.sale_qty = index;
-                else if (headerStr.includes('basic') || headerStr.includes('value')) headerMap.basic_value = index;
-                else if (headerStr.includes('sfcode') || headerStr.includes('sf_code')) headerMap.sf_code = index;
-                else if (headerStr.includes('sfname') || headerStr.includes('sf_name')) headerMap.sf_name = index;
-                else if (headerStr.includes('mktby') || headerStr.includes('mkt')) headerMap.mkt_by = index;
-                else if (headerStr.includes('city')) headerMap.city = index;
-                else if (headerStr.includes('state')) headerMap.state = index;
-            });
+function transformData(rows) {
+    if (rows.length === 0) return [];
+    
+    // Try to intelligently map columns
+    const headerMap = {};
+    
+    // Common column name variations
+    const columnMappings = {
+        location: ['location', 'loc', 'branch', 'godown'],
+        bill_no: ['billno', 'bill_no', 'invoiceno', 'invoice_no', 'docno'],
+        bill_date: ['billdate', 'bill_date', 'txndocdt', 'date', 'docdate'],
+        product_name: ['itemname', 'product', 'productname', 'item', 'material'],
+        product_type: ['producttype', 'type', 'category', 'itemtype'],
+        batch_no: ['batchno', 'batch', 'batch_no', 'lotno'],
+        sale_qty: ['saleqty', 'qty', 'quantity', 'soldqty'],
+        basic_value: ['basic', 'value', 'amount', 'total', 'price', 'basicvalue'],
+        sf_code: ['sfcode', 'sf_code', 'salesforcecode', 'sfid'],
+        sf_name: ['sfname', 'sf_name', 'salesforcename', 'sf'],
+        mkt_by: ['mktby', 'mkt_by', 'marketedby', 'marketer'],
+        city: ['city', 'town'],
+        state: ['state', 'province']
+    };
 
-            const objects = [];
-            
-            rows.forEach((row, rowIndex) => {
-                const obj = {
-                    id: `row_${rowIndex + 1}`,
-                    mkt_by: row[headerMap.mkt_by] || '',
-                    location: row[headerMap.location] || '',
-                    basic_value: parseFloat((row[headerMap.basic_value] || '0').replace(/,/g, '')) || 0,
-                    percentage: 0,
-                    difference: 0,
-                    sf_code: row[headerMap.sf_code] || '',
-                    sf_name: row[headerMap.sf_name] || '',
-                    product_name: row[headerMap.product_name] || '',
-                    product_type: row[headerMap.product_type] || '',
-                    sale_qty: parseFloat((row[headerMap.sale_qty] || '0').replace(/,/g, '')) || 0,
-                    bill_date: row[headerMap.bill_date] || '',
-                    bill_no: row[headerMap.bill_no] || '',
-                    batch_no: row[headerMap.batch_no] || '',
-                    city: row[headerMap.city] || '',
-                    state: row[headerMap.state] || ''
-                };
-                
-                if (obj.basic_value > 0 || obj.sale_qty > 0 || obj.product_name) {
-                    objects.push(obj);
-                }
-            });
-            
-            return objects;
+    // Build header map based on actual headers
+    headers.forEach((header, index) => {
+        if (!header) return;
+        const headerLower = header.toString().toLowerCase().trim();
+        
+        // Try to match header to known fields
+        for (const [field, patterns] of Object.entries(columnMappings)) {
+            if (patterns.some(pattern => headerLower.includes(pattern))) {
+                headerMap[field] = index;
+                console.log(`Mapped "${header}" to field "${field}" at index ${index}`);
+                break;
+            }
         }
+    });
+
+    console.log('Final header map:', headerMap);
+
+    const objects = [];
+    
+    rows.forEach((row, rowIndex) => {
+        if (!row || row.length === 0) return;
+        
+        try {
+            const obj = {
+                id: `row_${rowIndex + 1}`,
+                location: row[headerMap.location] || row[0] || '',
+                bill_no: row[headerMap.bill_no] || row[1] || '',
+                bill_date: row[headerMap.bill_date] || row[2] || '',
+                product_name: row[headerMap.product_name] || row[3] || '',
+                product_type: row[headerMap.product_type] || row[4] || '',
+                batch_no: row[headerMap.batch_no] || row[5] || '',
+                sale_qty: parseFloat((row[headerMap.sale_qty] || row[6] || '0').replace(/,/g, '')) || 0,
+                basic_value: parseFloat((row[headerMap.basic_value] || row[7] || '0').replace(/,/g, '')) || 0,
+                sf_code: row[headerMap.sf_code] || row[8] || '',
+                sf_name: row[headerMap.sf_name] || row[9] || '',
+                mkt_by: row[headerMap.mkt_by] || row[10] || '',
+                city: row[headerMap.city] || row[11] || '',
+                state: row[headerMap.state] || row[12] || ''
+            };
+            
+            // Only include rows with meaningful data
+            if (obj.basic_value > 0 || obj.sale_qty > 0 || obj.product_name) {
+                objects.push(obj);
+            }
+        } catch (rowError) {
+            console.warn('Error processing row:', rowIndex, rowError);
+        }
+    });
+    
+    console.log(`Transformed ${objects.length} valid records from ${rows.length} rows`);
+    return objects;
+}
 
         function rebuildUniqueSets() {
             uniqueLocations.clear();
