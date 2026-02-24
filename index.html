@@ -664,17 +664,52 @@
             await autoFindAndConnect();
         }
 
+// Replace your autoFindAndConnect function with this comprehensive version
+
 async function autoFindAndConnect() {
     document.getElementById('loading').textContent = 'Finding best proxy...';
     
-    // Expanded proxy list with more reliable options
-    const proxies = [
-        { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
-        { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-        { name: 'CORS Anywhere', url: 'https://cors-anywhere.herokuapp.com/' },
-        { name: 'All Origins', url: 'https://api.allorigins.win/raw?url=' },
-        { name: 'CORS Proxy 2', url: 'https://crossorigin.me/' },
-        { name: 'CORS Proxy 3', url: 'https://cors.io/?' }
+    // Multiple proxy layers with different approaches
+    const proxyLayers = [
+        // Layer 1: Working proxies (tier 1)
+        {
+            name: 'All Origins',
+            url: 'https://api.allorigins.win/raw?url=',
+            type: 'get',
+            encoding: 'full'
+        },
+        {
+            name: 'CORS Bypass',
+            url: 'https://cors-anywhere.azm.workers.dev/?',
+            type: 'get',
+            encoding: 'full'
+        },
+        // Layer 2: Alternative proxies
+        {
+            name: 'CORS Proxy Worker',
+            url: 'https://cors-proxy.spaceinbox.workers.dev/?url=',
+            type: 'get',
+            encoding: 'full'
+        },
+        {
+            name: 'ThingProxy',
+            url: 'https://thingproxy.freeboard.io/fetch/',
+            type: 'get',
+            encoding: 'direct'
+        },
+        // Layer 3: JSONP-style proxies
+        {
+            name: 'JSONP Proxy',
+            url: 'https://jsonp.afeld.me/?url=',
+            type: 'jsonp',
+            encoding: 'full'
+        },
+        {
+            name: 'Whatever Origin',
+            url: 'https://whateverorigin.org/get?url=',
+            type: 'jsonp',
+            encoding: 'full'
+        }
     ];
     
     const baseUrl = 'http://43.246.140.102:6060/smarten/';
@@ -685,45 +720,64 @@ async function autoFindAndConnect() {
         type: 'data'
     });
     
-    const testUrl = baseUrl + 'API/getToken?' + params.toString();
+    const tokenPath = 'API/getToken?' + params.toString();
     
-    for (const proxy of proxies) {
+    for (const proxy of proxyLayers) {
         try {
             document.getElementById('loading').textContent = `Testing ${proxy.name}...`;
             
-            // Construct proxy URL properly
             let fullUrl;
-            if (proxy.url.includes('allorigins')) {
-                fullUrl = proxy.url + encodeURIComponent(testUrl);
+            if (proxy.encoding === 'full') {
+                fullUrl = proxy.url + encodeURIComponent(baseUrl + tokenPath);
             } else {
-                fullUrl = proxy.url + encodeURIComponent(testUrl);
+                fullUrl = proxy.url + baseUrl + tokenPath;
             }
             
             console.log(`Testing ${proxy.name}:`, fullUrl);
             
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
             
-            const response = await fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    'Origin': window.location.origin,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                signal: controller.signal
-            });
+            let response;
+            if (proxy.type === 'jsonp') {
+                // For JSONP proxies, we need to use a different approach
+                response = await fetch(fullUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+            } else {
+                response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+            }
             
             clearTimeout(timeoutId);
             
             if (response.ok) {
-                const text = await response.text();
-                // Check if we got a valid token (not HTML error page)
-                if (text && text.length > 10 && !text.toLowerCase().includes('html')) {
+                let text;
+                if (proxy.type === 'jsonp') {
+                    const json = await response.json();
+                    text = json.contents || json.data || JSON.stringify(json);
+                } else {
+                    text = await response.text();
+                }
+                
+                // Validate response
+                if (text && text.length > 20 && !text.toLowerCase().includes('error') && !text.toLowerCase().includes('html')) {
                     console.log(`✅ ${proxy.name} works!`);
                     localStorage.setItem('workingProxy', proxy.url);
+                    localStorage.setItem('proxyType', proxy.type);
+                    localStorage.setItem('proxyEncoding', proxy.encoding);
                     workingProxyUrl = proxy.url;
                     
-                    await connectWithProxy(proxy.url);
+                    await connectWithProxy(proxy.url, proxy.type, proxy.encoding);
                     return;
                 }
             }
@@ -732,43 +786,76 @@ async function autoFindAndConnect() {
         }
     }
     
-    // If all proxies fail, try direct connection with CORS Anywhere demo
-    document.getElementById('loading').textContent = 'Trying CORS Anywhere demo...';
-    try {
-        window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-        document.getElementById('error').innerHTML = `
-            <strong>All proxies failed.</strong><br><br>
-            Please try:<br>
-            1. Click "Request temporary access" in the new tab<br>
-            2. Wait 2 seconds<br>
-            3. Click the button below<br><br>
-            <button onclick="retryCorsAnywhere()" style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Retry CORS Anywhere</button>
-        `;
-        document.getElementById('error').style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
-    } catch (e) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').style.display = 'block';
-        document.getElementById('error').innerHTML = 'All proxies failed. Please try again later.';
-    }
+    // If all proxies fail, show comprehensive error with options
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').innerHTML = `
+        <strong>⚠️ Connection Failed</strong><br><br>
+        <div style="text-align: left; background: #fff; padding: 15px; border-radius: 4px;">
+            <p><strong>Try these solutions:</strong></p>
+            
+            <div style="margin: 15px 0;">
+                <strong>1️⃣ CORS Anywhere (Recommended)</strong><br>
+                <button onclick="corsAnywhereWorkflow()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px 0; cursor: pointer;">
+                    🔗 Request CORS Anywhere Access
+                </button>
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <strong>2️⃣ Try Different Proxy</strong><br>
+                <select id="manualProxySelect" style="padding: 8px; width: 100%; margin: 5px 0;">
+                    <option value="https://api.allorigins.win/raw?url=">All Origins (was working)</option>
+                    <option value="https://cors-anywhere.azm.workers.dev/?">CORS Bypass</option>
+                    <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">CORS Proxy Worker</option>
+                    <option value="https://thingproxy.freeboard.io/fetch/">ThingProxy</option>
+                </select>
+                <button onclick="manualProxyConnect()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px 0; cursor: pointer;">
+                    🔌 Connect with Selected Proxy
+                </button>
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <strong>3️⃣ Browser Extension</strong><br>
+                <p style="font-size: 12px; color: #666;">Install a CORS extension temporarily:</p>
+                <a href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf" target="_blank" style="color: #2196f3;">Chrome: Allow CORS</a><br>
+                <a href="https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/" target="_blank" style="color: #2196f3;">Firefox: CORS Everywhere</a>
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <strong>4️⃣ Direct Connection Test</strong><br>
+                <button onclick="testDirectAPI()" style="background: #2196f3; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px 0; cursor: pointer;">
+                    🧪 Test API Directly
+                </button>
+            </div>
+        </div>
+    `;
 }
 
-        // Add this retry function
-window.retryCorsAnywhere = async function() {
+// Add these helper functions
+
+window.corsAnywhereWorkflow = function() {
+    window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
+    alert('1. Click the button to request temporary access\n2. Wait 2 seconds\n3. Click OK to retry');
+    setTimeout(() => {
+        retryWithCorsAnywhere();
+    }, 3000);
+};
+
+window.retryWithCorsAnywhere = async function() {
     document.getElementById('error').style.display = 'none';
     document.getElementById('loading').style.display = 'block';
-    document.getElementById('loading').textContent = 'Retrying CORS Anywhere...';
-    
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const baseUrl = 'http://43.246.140.102:6060/smarten/';
-    const params = new URLSearchParams({
-        username: 'SOURAV',
-        password: 'KUMAR@1308',
-        objectid: 'r17d84895210.rpt',
-        type: 'data'
-    });
+    document.getElementById('loading').textContent = 'Trying CORS Anywhere...';
     
     try {
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const baseUrl = 'http://43.246.140.102:6060/smarten/';
+        const params = new URLSearchParams({
+            username: 'SOURAV',
+            password: 'KUMAR@1308',
+            objectid: 'r17d84895210.rpt',
+            type: 'data'
+        });
+        
         const response = await fetch(proxyUrl + baseUrl + 'API/getToken?' + params.toString(), {
             method: 'GET',
             headers: {
@@ -779,7 +866,7 @@ window.retryCorsAnywhere = async function() {
         
         if (response.ok) {
             const text = await response.text();
-            if (text && text.length > 10) {
+            if (text && text.length > 20) {
                 localStorage.setItem('workingProxy', proxyUrl);
                 workingProxyUrl = proxyUrl;
                 await connectWithProxy(proxyUrl);
@@ -790,7 +877,73 @@ window.retryCorsAnywhere = async function() {
     } catch (e) {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
-        document.getElementById('error').innerHTML = 'Still failed. Please try manual connection.';
+        document.getElementById('error').innerHTML = 'CORS Anywhere failed. Please try another option.';
+    }
+};
+
+window.manualProxyConnect = async function() {
+    const select = document.getElementById('manualProxySelect');
+    const proxyUrl = select.value;
+    
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('loading').textContent = 'Connecting manually...';
+    
+    try {
+        const baseUrl = 'http://43.246.140.102:6060/smarten/';
+        const params = new URLSearchParams({
+            username: 'SOURAV',
+            password: 'KUMAR@1308',
+            objectid: 'r17d84895210.rpt',
+            type: 'data'
+        });
+        
+        const tokenUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
+        
+        const response = await fetch(tokenUrl, {
+            method: 'GET',
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (response.ok) {
+            const text = await response.text();
+            if (text && text.length > 20) {
+                localStorage.setItem('workingProxy', proxyUrl);
+                workingProxyUrl = proxyUrl;
+                await connectWithProxy(proxyUrl);
+            }
+        } else {
+            throw new Error('Proxy failed');
+        }
+    } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = 'Manual connection failed. Try another proxy.';
+    }
+};
+
+window.testDirectAPI = async function() {
+    const baseUrl = 'http://43.246.140.102:6060/smarten/';
+    const params = new URLSearchParams({
+        username: 'SOURAV',
+        password: 'KUMAR@1308',
+        objectid: 'r17d84895210.rpt',
+        type: 'data'
+    });
+    
+    try {
+        const response = await fetch(baseUrl + 'API/getToken?' + params.toString(), {
+            method: 'GET',
+            mode: 'no-cors'
+        });
+        console.log('Direct test:', response);
+        alert('Check console for result. If you see "opaque", CORS is blocking.');
+    } catch (e) {
+        console.log('Direct test error:', e);
+        alert('Direct connection failed: ' + e.message);
     }
 };
 
@@ -804,8 +957,7 @@ window.retryCorsAnywhere = async function() {
             }, 5 * 60 * 1000);
         }
 
-// Update your connectWithProxy function to handle different proxy types better
-async function connectWithProxy(proxyUrl) {
+async function connectWithProxy(proxyUrl, proxyType = 'get', encoding = 'full') {
     try {
         document.getElementById('loading').style.display = 'block';
         document.getElementById('loading').textContent = 'Loading data...';
@@ -819,15 +971,13 @@ async function connectWithProxy(proxyUrl) {
             type: 'data'
         });
 
-        // Get token with proper encoding
+        // Get token
         let tokenUrl;
-        if (proxyUrl.includes('allorigins')) {
+        if (encoding === 'full') {
             tokenUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
         } else {
             tokenUrl = proxyUrl + baseUrl + 'API/getToken?' + params.toString();
         }
-
-        console.log('Fetching token from:', tokenUrl);
 
         const tokenResponse = await fetch(tokenUrl, {
             method: 'GET',
@@ -837,26 +987,21 @@ async function connectWithProxy(proxyUrl) {
             }
         });
 
-        if (!tokenResponse.ok) {
-            throw new Error(`Token fetch failed: ${tokenResponse.status}`);
-        }
-
-        const token = await tokenResponse.text();
-        console.log('Token received, length:', token.length);
-
-        if (!token || token.length < 10) {
-            throw new Error('Invalid token');
+        let token;
+        if (proxyType === 'jsonp') {
+            const json = await tokenResponse.json();
+            token = json.contents || json.data || JSON.stringify(json);
+        } else {
+            token = await tokenResponse.text();
         }
 
         // Get data
         let dataUrl;
-        if (proxyUrl.includes('allorigins')) {
+        if (encoding === 'full') {
             dataUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
         } else {
             dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
         }
-
-        console.log('Fetching data from:', dataUrl);
 
         const dataResponse = await fetch(dataUrl, {
             headers: {
@@ -865,8 +1010,13 @@ async function connectWithProxy(proxyUrl) {
             }
         });
 
-        const responseText = await dataResponse.text();
-        console.log('Data received, length:', responseText.length);
+        let responseText;
+        if (proxyType === 'jsonp') {
+            const json = await dataResponse.json();
+            responseText = json.contents || json.data || JSON.stringify(json);
+        } else {
+            responseText = await dataResponse.text();
+        }
 
         // Parse XML
         let reportData = parseXmlData(responseText);
