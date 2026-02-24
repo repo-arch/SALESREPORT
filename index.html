@@ -664,48 +664,136 @@
             await autoFindAndConnect();
         }
 
-        async function autoFindAndConnect() {
-            document.getElementById('loading').textContent = 'Finding best proxy...';
+async function autoFindAndConnect() {
+    document.getElementById('loading').textContent = 'Finding best proxy...';
+    
+    // Expanded proxy list with more reliable options
+    const proxies = [
+        { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
+        { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
+        { name: 'CORS Anywhere', url: 'https://cors-anywhere.herokuapp.com/' },
+        { name: 'All Origins', url: 'https://api.allorigins.win/raw?url=' },
+        { name: 'CORS Proxy 2', url: 'https://crossorigin.me/' },
+        { name: 'CORS Proxy 3', url: 'https://cors.io/?' }
+    ];
+    
+    const baseUrl = 'http://43.246.140.102:6060/smarten/';
+    const params = new URLSearchParams({
+        username: 'SOURAV',
+        password: 'KUMAR@1308',
+        objectid: 'r17d84895210.rpt',
+        type: 'data'
+    });
+    
+    const testUrl = baseUrl + 'API/getToken?' + params.toString();
+    
+    for (const proxy of proxies) {
+        try {
+            document.getElementById('loading').textContent = `Testing ${proxy.name}...`;
             
-            const testUrl = 'http://43.246.140.102:6060/smarten/API/getToken';
-            const params = new URLSearchParams({
-                username: 'SOURAV',
-                password: 'KUMAR@1308',
-                objectid: 'r17d84895210.rpt',
-                type: 'data'
-            });
-            
-            for (const proxy of PROXIES) {
-                try {
-                    document.getElementById('loading').textContent = `Testing ${proxy.name}...`;
-                    
-                    const response = await fetch(proxy.url + encodeURIComponent(testUrl + '?' + params.toString()), {
-                        method: 'GET',
-                        headers: { 'Origin': window.location.origin }
-                    });
-                    
-                    if (response.ok) {
-                        localStorage.setItem('workingProxy', proxy.url);
-                        workingProxyUrl = proxy.url;
-                        
-                        const select = document.getElementById('proxySelect');
-                        for (let i = 0; i < select.options.length; i++) {
-                            if (select.options[i].value === proxy.url) {
-                                select.selectedIndex = i;
-                                break;
-                            }
-                        }
-                        
-                        await connectWithProxy(proxy.url);
-                        return;
-                    }
-                } catch (e) {}
+            // Construct proxy URL properly
+            let fullUrl;
+            if (proxy.url.includes('allorigins')) {
+                fullUrl = proxy.url + encodeURIComponent(testUrl);
+            } else {
+                fullUrl = proxy.url + encodeURIComponent(testUrl);
             }
             
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error').innerHTML = 'Auto-connect failed. Please refresh.';
+            console.log(`Testing ${proxy.name}:`, fullUrl);
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            
+            const response = await fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    'Origin': window.location.origin,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                const text = await response.text();
+                // Check if we got a valid token (not HTML error page)
+                if (text && text.length > 10 && !text.toLowerCase().includes('html')) {
+                    console.log(`✅ ${proxy.name} works!`);
+                    localStorage.setItem('workingProxy', proxy.url);
+                    workingProxyUrl = proxy.url;
+                    
+                    await connectWithProxy(proxy.url);
+                    return;
+                }
+            }
+        } catch (e) {
+            console.log(`${proxy.name} failed:`, e.message);
         }
+    }
+    
+    // If all proxies fail, try direct connection with CORS Anywhere demo
+    document.getElementById('loading').textContent = 'Trying CORS Anywhere demo...';
+    try {
+        window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
+        document.getElementById('error').innerHTML = `
+            <strong>All proxies failed.</strong><br><br>
+            Please try:<br>
+            1. Click "Request temporary access" in the new tab<br>
+            2. Wait 2 seconds<br>
+            3. Click the button below<br><br>
+            <button onclick="retryCorsAnywhere()" style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Retry CORS Anywhere</button>
+        `;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = 'All proxies failed. Please try again later.';
+    }
+}
+
+        // Add this retry function
+window.retryCorsAnywhere = async function() {
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('loading').textContent = 'Retrying CORS Anywhere...';
+    
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const baseUrl = 'http://43.246.140.102:6060/smarten/';
+    const params = new URLSearchParams({
+        username: 'SOURAV',
+        password: 'KUMAR@1308',
+        objectid: 'r17d84895210.rpt',
+        type: 'data'
+    });
+    
+    try {
+        const response = await fetch(proxyUrl + baseUrl + 'API/getToken?' + params.toString(), {
+            method: 'GET',
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (response.ok) {
+            const text = await response.text();
+            if (text && text.length > 10) {
+                localStorage.setItem('workingProxy', proxyUrl);
+                workingProxyUrl = proxyUrl;
+                await connectWithProxy(proxyUrl);
+            }
+        } else {
+            throw new Error('Failed');
+        }
+    } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = 'Still failed. Please try manual connection.';
+    }
+};
+
 
         function startKeepAlive() {
             if (keepAliveInterval) clearInterval(keepAliveInterval);
@@ -716,78 +804,109 @@
             }, 5 * 60 * 1000);
         }
 
-        // ==================== PROXY CONNECTION ====================
-        async function connectWithProxy(proxyUrl) {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('loading').textContent = 'Loading data...';
-                document.getElementById('error').style.display = 'none';
+// Update your connectWithProxy function to handle different proxy types better
+async function connectWithProxy(proxyUrl) {
+    try {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').textContent = 'Loading data...';
+        document.getElementById('error').style.display = 'none';
 
-                const baseUrl = 'http://43.246.140.102:6060/smarten/';
-                const params = new URLSearchParams({
-                    username: 'SOURAV',
-                    password: 'KUMAR@1308',
-                    objectid: 'r17d84895210.rpt',
-                    type: 'data'
-                });
+        const baseUrl = 'http://43.246.140.102:6060/smarten/';
+        const params = new URLSearchParams({
+            username: 'SOURAV',
+            password: 'KUMAR@1308',
+            objectid: 'r17d84895210.rpt',
+            type: 'data'
+        });
 
-                // Get token
-                const tokenUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
-                const tokenResponse = await fetch(tokenUrl, {
-                    method: 'GET',
-                    headers: { 'Origin': window.location.origin }
-                });
-
-                if (!tokenResponse.ok) throw new Error('Token fetch failed');
-                
-                const token = await tokenResponse.text();
-
-                // Get data
-                const dataUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
-                const dataResponse = await fetch(dataUrl, {
-                    headers: { 'Origin': window.location.origin }
-                });
-
-                const responseText = await dataResponse.text();
-
-                // Parse XML
-                let reportData = parseXmlData(responseText);
-                
-                if (!reportData || reportData.length === 0) {
-                    throw new Error('No data found');
-                }
-
-                headers = reportData[0] || [];
-                reportData = reportData.slice(1);
-                
-                allData = transformData(reportData);
-                
-                if (allData.length === 0) {
-                    throw new Error('No valid data');
-                }
-
-                filteredData = [...allData];
-                
-                rebuildUniqueSets();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'block';
-                document.getElementById('grandFooter').style.display = 'flex';
-                document.getElementById('apiBadge').style.display = 'inline-block';
-                document.getElementById('autoConnectStatus').innerHTML = '✅ Connected';
-                
-                updateLastUpdateTime(new Date());
-                updateFilterOptions();
-                renderAllTables();
-                
-                startKeepAlive();
-
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = 'Connection error: ' + error.message;
-            }
+        // Get token with proper encoding
+        let tokenUrl;
+        if (proxyUrl.includes('allorigins')) {
+            tokenUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
+        } else {
+            tokenUrl = proxyUrl + baseUrl + 'API/getToken?' + params.toString();
         }
+
+        console.log('Fetching token from:', tokenUrl);
+
+        const tokenResponse = await fetch(tokenUrl, {
+            method: 'GET',
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!tokenResponse.ok) {
+            throw new Error(`Token fetch failed: ${tokenResponse.status}`);
+        }
+
+        const token = await tokenResponse.text();
+        console.log('Token received, length:', token.length);
+
+        if (!token || token.length < 10) {
+            throw new Error('Invalid token');
+        }
+
+        // Get data
+        let dataUrl;
+        if (proxyUrl.includes('allorigins')) {
+            dataUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
+        } else {
+            dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
+        }
+
+        console.log('Fetching data from:', dataUrl);
+
+        const dataResponse = await fetch(dataUrl, {
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const responseText = await dataResponse.text();
+        console.log('Data received, length:', responseText.length);
+
+        // Parse XML
+        let reportData = parseXmlData(responseText);
+
+        if (!reportData || reportData.length === 0) {
+            throw new Error('No data found');
+        }
+
+        headers = reportData[0] || [];
+        reportData = reportData.slice(1);
+
+        allData = transformData(reportData);
+
+        if (allData.length === 0) {
+            throw new Error('No valid data');
+        }
+
+        filteredData = [...allData];
+
+        rebuildUniqueSets();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('tabContainers').style.display = 'block';
+        document.getElementById('grandFooter').style.display = 'flex';
+        document.getElementById('apiBadge').style.display = 'inline-block';
+        document.getElementById('autoConnectStatus').innerHTML = '✅ Connected';
+
+        updateLastUpdateTime(new Date());
+        updateFilterOptions();
+        renderAllTables();
+
+        startKeepAlive();
+
+    } catch (error) {
+        console.error('Connection error:', error);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').innerHTML = 'Connection error: ' + error.message + '<br><br><button onclick="location.reload()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Retry</button>';
+    }
+}
 
         // ==================== XML PARSING ====================
         function parseXmlData(xmlString) {
