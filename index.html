@@ -1334,7 +1334,6 @@ async function testProxy(proxyUrl) {
             }
         }
 
-        // ==================== ENHANCED XML PARSING ====================
 function parseXmlData(xmlString) {
     if (!xmlString || xmlString.trim() === '') {
         console.error('XML data is null or empty');
@@ -1343,65 +1342,60 @@ function parseXmlData(xmlString) {
 
     console.log('Parsing XML data...');
     
-    // Remove any XML declaration if present
-    let cleanXml = xmlString.replace(/<\?xml[^>]*\?>/g, '');
+    // The data might be split into lines, so join it back
+    const fullXml = xmlString.split('\n').join('');
+    console.log('Full XML length:', fullXml.length);
     
-    // Try to parse as XML
     try {
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(cleanXml, 'text/xml');
+        const xmlDoc = parser.parseFromString(fullXml, 'text/xml');
         
         // Check for parser errors
         const parseError = xmlDoc.getElementsByTagName('parsererror');
         if (parseError.length > 0) {
             console.error('XML parse error:', parseError[0].textContent);
-            return extractWithRegex(xmlString);
+            return fallbackParse(xmlString);
         }
         
-        // Look for data rows - common tags in your response
-        const rowTags = ['Row', 'row', 'Record', 'record', 'Data', 'data', 'Table', 'table'];
-        let rows = [];
-        
-        for (const tag of rowTags) {
-            const foundRows = xmlDoc.getElementsByTagName(tag);
-            if (foundRows.length > 0) {
-                rows = foundRows;
-                console.log(`Found ${rows.length} rows with tag: ${tag}`);
-                break;
-            }
-        }
+        // Look for rows - based on your structure, rows are in <Row> tags
+        const rows = xmlDoc.getElementsByTagName('Row');
+        console.log(`Found ${rows.length} <Row> elements`);
         
         if (rows.length === 0) {
-            console.log('No row tags found, trying to extract any data');
-            return extractWithRegex(xmlString);
+            return fallbackParse(xmlString);
         }
         
-        // Extract data from rows
         const data = [];
         
-        // First, try to get headers from first row
+        // First, extract headers from the first row's column tags
         const firstRow = rows[0];
         const headers = [];
-        const cells = firstRow.children || firstRow.querySelectorAll('Column, column, Field, field, Cell, cell');
+        const columns = firstRow.getElementsByTagName('Column');
         
-        for (let cell of cells) {
-            headers.push(cell.textContent || cell.innerHTML || '');
+        for (let col of columns) {
+            headers.push(col.textContent || col.innerHTML || '');
         }
         
         if (headers.length > 0) {
             data.push(headers);
+            console.log('Headers extracted:', headers);
         }
         
-        // Then get all data rows
+        // Then extract all data rows
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             const rowData = [];
-            const cells = row.children || row.querySelectorAll('Column, column, Field, field, Cell, cell');
+            const cols = row.getElementsByTagName('Column');
             
-            for (let cell of cells) {
-                let value = cell.textContent || cell.innerHTML || '';
+            for (let col of cols) {
+                let value = col.textContent || col.innerHTML || '';
                 // Clean up the value
-                value = value.replace(/<[^>]*>/g, '').trim();
+                value = value.replace(/&amp;/g, '&')
+                             .replace(/&lt;/g, '<')
+                             .replace(/&gt;/g, '>')
+                             .replace(/&quot;/g, '"')
+                             .replace(/&#39;/g, "'")
+                             .trim();
                 rowData.push(value);
             }
             
@@ -1410,18 +1404,72 @@ function parseXmlData(xmlString) {
             }
         }
         
-        console.log(`Extracted ${data.length} rows from XML`);
-        if (data.length > 0) {
-            console.log('First row (headers):', data[0]);
-            console.log('Second row (data):', data[1]);
+        console.log(`Total rows extracted: ${data.length} (including headers)`);
+        if (data.length > 1) {
+            console.log('First data row (after headers):', data[1]);
         }
         
         return data;
         
     } catch (e) {
-        console.error('XML parsing failed:', e);
-        return extractWithRegex(xmlString);
+        console.error('XML parsing error:', e);
+        return fallbackParse(xmlString);
     }
+}
+
+function fallbackParse(xmlString) {
+    console.log('Using fallback regex parser...');
+    const data = [];
+    
+    // Split into lines and process
+    const lines = xmlString.split('\n').filter(line => line.trim());
+    
+    // Find where the actual data starts (after XML declaration and Root tag)
+    let startIndex = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes('<Row>')) {
+            startIndex = i;
+            break;
+        }
+    }
+    
+    // Collect all rows
+    let currentRow = [];
+    let inRow = false;
+    
+    for (let i = startIndex; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (line.includes('<Row>')) {
+            inRow = true;
+            currentRow = [];
+        } else if (line.includes('</Row>')) {
+            inRow = false;
+            if (currentRow.length > 0) {
+                data.push(currentRow);
+            }
+        } else if (inRow && line.includes('<Column>')) {
+            // Extract value between <Column> and </Column>
+            const match = line.match(/<Column[^>]*>(.*?)<\/Column>/);
+            if (match) {
+                let value = match[1].trim();
+                // Decode HTML entities
+                value = value.replace(/&amp;/g, '&')
+                             .replace(/&lt;/g, '<')
+                             .replace(/&gt;/g, '>')
+                             .replace(/&quot;/g, '"')
+                             .replace(/&#39;/g, "'");
+                currentRow.push(value);
+            }
+        }
+    }
+    
+    console.log(`Fallback parser extracted ${data.length} rows`);
+    if (data.length > 0) {
+        console.log('First data row:', data[0]);
+    }
+    
+    return data;
 }
 
         function extractDataFromJson(jsonData) {
