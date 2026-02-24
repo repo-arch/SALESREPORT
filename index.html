@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIUS Business Dashboard</title>
+    <title>CRIUS Business Dashboard - Optimized for 50K+ Records</title>
     <style>
         * {
             margin: 0;
@@ -92,10 +92,29 @@
             padding: 4px 8px;
         }
 
-        .nav-menu a:hover {
-            background: #1e3a5f;
+        .stats-bar {
+            background: #e3f2fd;
+            padding: 8px 24px;
+            border-bottom: 2px solid #90caf9;
+            display: flex;
+            gap: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0d47a1;
+        }
+
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-value {
+            background: #0d47a1;
             color: white;
-            border-radius: 4px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
         }
 
         .connection-status-bar {
@@ -118,15 +137,19 @@
             gap: 8px;
         }
 
-        .status-connecting {
-            background: #fff3cd;
-            color: #856404;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4caf50;
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
         .refresh-btn-small {
@@ -138,10 +161,6 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 12px;
-        }
-
-        .refresh-btn-small:hover {
-            background: #1e3a5f;
         }
 
         .nav-sidebar {
@@ -163,20 +182,18 @@
 
         .nav-item:hover {
             background: #e4e7eb;
-            color: #1e3a5f;
         }
 
         .nav-item.active {
             background: #1e3a5f;
             color: white;
-            font-weight: 700;
         }
 
         .filter-bar {
             background: #f8fafc;
             padding: 15px 24px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
             border-bottom: 2px solid #dee2e9;
             flex-wrap: wrap;
             align-items: center;
@@ -230,29 +247,6 @@
             font-weight: 600;
         }
 
-        .refresh-btn {
-            background: #4a6fa5;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .reset-btn {
-            background: #d6562b;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
         .content {
             padding: 24px;
         }
@@ -269,8 +263,8 @@
             font-size: 18px;
             font-weight: 700;
             color: #1e3a5f;
-            margin: 25px 0 15px 0;
-            padding-bottom: 10px;
+            margin: 20px 0 10px 0;
+            padding-bottom: 8px;
             border-bottom: 2px solid #d0d7e5;
             display: flex;
             justify-content: space-between;
@@ -280,21 +274,22 @@
         .table-wrapper {
             border: 1px solid #b7bfcc;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             overflow: auto;
             max-height: 500px;
+            position: relative;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         thead th {
             background: #2b5797;
             color: white;
-            padding: 12px;
+            padding: 10px 8px;
             font-weight: 600;
             border: 1px solid #1e3a5f;
             white-space: nowrap;
@@ -302,6 +297,7 @@
             top: 0;
             z-index: 10;
             cursor: pointer;
+            user-select: none;
         }
 
         thead th:hover {
@@ -319,7 +315,7 @@
         }
 
         tbody td {
-            padding: 10px 12px;
+            padding: 8px;
             border: 1px solid #b7bfcc;
             white-space: nowrap;
         }
@@ -328,10 +324,12 @@
             cursor: pointer;
             color: #1e3a5f;
             font-weight: 500;
+            transition: all 0.2s;
         }
 
         tbody td.clickable:hover {
-            background: #e3f2fd;
+            background: #ffd700;
+            color: #1e3a5f;
             font-weight: 700;
         }
 
@@ -342,12 +340,12 @@
         tfoot td {
             background: #d6562b;
             color: white;
-            font-weight: 700;
-            padding: 12px;
+            padding: 10px 8px;
             border: 1px solid #b13e1f;
             position: sticky;
             bottom: 0;
             z-index: 10;
+            font-weight: 700;
         }
 
         .grand-footer {
@@ -357,7 +355,6 @@
             display: flex;
             justify-content: space-between;
             font-weight: 700;
-            font-size: 16px;
             border-top: 3px solid #ffd700;
         }
 
@@ -369,17 +366,6 @@
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            border-top: 2px solid #0f2a44;
-        }
-
-        .percentage-positive {
-            color: #4caf50;
-            font-weight: 700;
-        }
-
-        .percentage-negative {
-            color: #f44336;
-            font-weight: 700;
         }
 
         .text-right {
@@ -388,8 +374,8 @@
 
         .loading {
             text-align: center;
-            padding: 80px;
-            font-size: 18px;
+            padding: 60px;
+            font-size: 16px;
             color: #1e3a5f;
         }
 
@@ -400,37 +386,6 @@
             background: #ffebee;
             margin: 30px;
             border-radius: 8px;
-            white-space: pre-line;
-        }
-
-        .active-filters-bar {
-            background: #fff3cd;
-            padding: 12px 24px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 2px solid #ffe69c;
-        }
-
-        .filter-tag {
-            background: #ffd700;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #1e3a5f;
-        }
-
-        .filter-tag button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            color: #1e3a5f;
-            font-size: 14px;
         }
 
         .pagination {
@@ -453,12 +408,71 @@
             cursor: not-allowed;
         }
 
-        .connection-panel {
-            display: none; /* Hidden by default */
+        .pagination-info {
+            font-size: 12px;
+            color: #666;
         }
 
         .config-data {
-            display: none; /* Hidden configuration data */
+            display: none;
+        }
+
+        .record-count {
+            background: #ffd700;
+            color: #1e3a5f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .active-filters-bar {
+            background: #fff3cd;
+            padding: 12px 24px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid #ffe69c;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            background: #ffd700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e3a5f;
+        }
+
+        .filter-tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            color: #1e3a5f;
+            font-size: 14px;
+        }
+
+        .virtual-scroll-indicator {
+            background: #e3f2fd;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #0d47a1;
+        }
+
+        .percentage-positive {
+            color: #4caf50;
+            font-weight: 700;
+        }
+
+        .percentage-negative {
+            color: #f44336;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -495,17 +509,41 @@
             <a href="#">CRIUS HEALTHCARE</a>
         </div>
 
-        <!-- Simple Status Bar (Only visible after connection) -->
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar" style="display: none;">
+            <div class="stats-item">
+                <span>📊 Total Records:</span>
+                <span class="stats-value" id="totalRecords">0</span>
+            </div>
+            <div class="stats-item">
+                <span>💰 Total Value:</span>
+                <span class="stats-value" id="totalValue">0</span>
+            </div>
+            <div class="stats-item">
+                <span>📦 Total Quantity:</span>
+                <span class="stats-value" id="totalQty">0</span>
+            </div>
+            <div class="stats-item">
+                <span>🏢 Locations:</span>
+                <span class="stats-value" id="totalLocations">0</span>
+            </div>
+        </div>
+
+        <!-- Simple Status Bar -->
         <div class="connection-status-bar" id="statusBar" style="display: none;">
             <div id="connectionStatus" class="status-connected">
                 <span>✅</span> Connected via CORS Anywhere
+                <span class="record-count" id="recordCount">0 records</span>
+            </div>
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
             <button class="refresh-btn-small" onclick="refreshData()">
                 <span>🔄</span> Refresh Data
             </button>
         </div>
 
-        <!-- Hidden Configuration (never visible to users) -->
+        <!-- Hidden Configuration -->
         <div class="config-data">
             <input type="text" id="apiUsername" value="SOURAV">
             <input type="password" id="apiPassword" value="KUMAR@1308">
@@ -537,20 +575,17 @@
             </div>
             <div class="filter-group">
                 <label>From:</label>
-                <input type="month" id="dateFrom" onchange="applyFilters()" value="2025-02">
+                <input type="month" id="dateFrom" onchange="applyFilters()">
             </div>
             <div class="filter-group">
                 <label>To:</label>
-                <input type="month" id="dateTo" onchange="applyFilters()" value="2026-02">
+                <input type="month" id="dateTo" onchange="applyFilters()">
             </div>
             <div class="search-box">
-                <input type="text" placeholder="🔍 Search products, SF names..." id="globalSearch" onkeyup="applyFilters()">
+                <input type="text" placeholder="🔍 Search products, SF names..." id="globalSearch" onkeyup="debounceApplyFilters()">
                 <button onclick="applyFilters()">Search</button>
             </div>
-            <button class="refresh-btn" onclick="refreshData()">
-                <span>🔄</span> Refresh
-            </button>
-            <button class="reset-btn" onclick="resetFilters()">Reset</button>
+            <button class="refresh-btn-small" onclick="resetFilters()" style="background: #d6562b;">Reset Filters</button>
         </div>
 
         <div class="active-filters-bar" id="activeFiltersBar">
@@ -559,7 +594,7 @@
             <button onclick="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #856404; cursor: pointer; font-weight: 600;">Clear All ✕</button>
         </div>
 
-        <div id="loading" class="loading">Connecting to CORS Anywhere... Please wait.</div>
+        <div id="loading" class="loading">Initializing... Please wait.</div>
         <div id="error" class="error" style="display: none;"></div>
 
         <div id="tabContainers" style="display: none;"></div>
@@ -574,7 +609,7 @@
                 <span>© 2026 CRIUS Group</span>
             </div>
             <div class="footer-right">
-                <span>🌐 v2.0</span>
+                <span>🌐 v3.0 | Optimized for 50K+ Records</span>
             </div>
         </div>
     </div>
@@ -589,49 +624,68 @@
             proxyUrl: 'https://cors-anywhere.herokuapp.com/'
         };
 
+        // Optimized data structures
         let allData = [];
         let filteredData = [];
         let headers = [];
-        let currentPage = 1;
-        const pageSize = 50;
         
+        // Pagination
+        let currentPage = 1;
+        const pageSize = 100; // Increased for better performance with 50K records
+        
+        // Filter state
         let activeFilters = {
             location: null,
             mktBy: null,
             productType: null,
-            dateFrom: '2025-02',
-            dateTo: '2026-02',
+            dateFrom: null,
+            dateTo: null,
             search: null
         };
 
+        // Sort state for each table
         let sortStates = {
-            mktBy: { column: 1, direction: 'desc' },
-            location: { column: 1, direction: 'desc' },
-            sfWise: { column: 2, direction: 'desc' },
-            brand: { column: 4, direction: 'desc' },
-            productMonth: { column: 3, direction: 'desc' },
-            dpr: { column: 6, direction: 'desc' }
+            mktBy: { column: 'value', direction: 'desc' },
+            location: { column: 'value', direction: 'desc' },
+            productType: { column: 'value', direction: 'desc' },
+            sfWise: { column: 'value', direction: 'desc' },
+            sfCode: { column: 'value', direction: 'desc' },
+            brandMonthly: { column: 'value', direction: 'desc' },
+            brandSummary: { column: 'value', direction: 'desc' },
+            productMonthDetail: { column: 'value', direction: 'desc' },
+            productMonthSummary: { column: 'value', direction: 'desc' },
+            dpr: { column: 'value', direction: 'desc' },
+            dispatchLocation: { column: 'value', direction: 'desc' }
         };
 
+        // Unique sets for filters
         let uniqueLocations = new Set();
         let uniqueMktBy = new Set();
         let uniqueProductTypes = new Set();
 
+        // Tab definitions
         const tabs = [
-            { id: 'summary', name: '📊 Summary View' },
-            { id: 'customer-sf', name: '👥 Customer & SF Wise' },
-            { id: 'sf-brand', name: '🏷️ SF Wise Brand Details' },
-            { id: 'sf-product', name: '📦 SF & Product Month Wise' },
-            { id: 'dpr', name: '📋 Daily Dispatch Details (DPR)' }
+            { id: 'mkt-by', name: '📊 Mkt By Analysis' },
+            { id: 'location', name: '📍 Location Wise' },
+            { id: 'product-type', name: '🏷️ Product Type' },
+            { id: 'sf-wise', name: '👥 SF Wise' },
+            { id: 'sf-code', name: '🔢 SF Code' },
+            { id: 'brand-monthly', name: '📅 Brand Monthly' },
+            { id: 'brand-summary', name: '📊 Brand Summary' },
+            { id: 'product-month-detail', name: '📦 Product Month Detail' },
+            { id: 'product-month-summary', name: '📊 Product Summary' },
+            { id: 'dpr', name: '📋 DPR Details' },
+            { id: 'dispatch-location', name: '📍 Dispatch Location' }
         ];
 
-        // ==================== AUTO CONNECT ON PAGE LOAD ====================
+        // Debounce timer
+        let debounceTimer;
+
+        // ==================== INITIALIZATION ====================
         window.onload = function() {
             initializeUI();
-            // Auto-connect after a short delay
-            setTimeout(() => {
-                autoConnect();
-            }, 1000);
+            // Auto-connect after delay
+            setTimeout(autoConnect, 1000);
         };
 
         function initializeUI() {
@@ -645,309 +699,324 @@
             document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + date.toLocaleDateString('en-GB', options);
         }
 
-        // ==================== AUTO CONNECT FUNCTION ====================
+        // ==================== AUTO CONNECT ====================
         async function autoConnect() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('loading').textContent = 'Connecting to CORS Anywhere... Please wait.';
             document.getElementById('error').style.display = 'none';
 
             try {
-                // Open CORS Anywhere demo page in new tab
                 window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                
-                // Wait for user to click the button (3 seconds)
                 document.getElementById('loading').textContent = 'Waiting for CORS Anywhere access... Click the button in the new tab.';
                 
                 await new Promise(resolve => setTimeout(resolve, 3000));
-                
-                // Connect using CORS Anywhere
                 await connectWithCorsAnywhere();
-                
             } catch (error) {
-                console.error('Auto-connect error:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = `
-                    <strong>Connection Error:</strong><br>
-                    ${error.message}<br><br>
-                    <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
-                `;
+                showError(error);
             }
         }
 
         // ==================== CONNECT WITH CORS ANYWHERE ====================
         async function connectWithCorsAnywhere() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading').textContent = 'Fetching data via CORS Anywhere...';
+            showLoading('Fetching data via CORS Anywhere...');
+            showProgressBar();
             
             try {
                 const baseUrl = CONFIG.serverUrl.endsWith('/') ? CONFIG.serverUrl : CONFIG.serverUrl + '/';
                 const proxyUrl = CONFIG.proxyUrl;
 
-                // Step 1: Get Token
-                const tokenUrl = proxyUrl + baseUrl + 'API/getToken';
+                // Get Token
+                updateProgress(20);
+                const token = await fetchToken(proxyUrl, baseUrl);
                 
-                const tokenResponse = await fetch(tokenUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Origin': window.location.origin,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: new URLSearchParams({
-                        username: CONFIG.username,
-                        password: CONFIG.password,
-                        objectid: CONFIG.reportId,
-                        type: 'data'
-                    })
-                });
-
-                if (!tokenResponse.ok) {
-                    if (tokenResponse.status === 403) {
-                        throw new Error('CORS Anywhere needs temporary access. Please click the button in the new tab and try again.');
-                    }
-                    throw new Error(`Token fetch failed: ${tokenResponse.status}`);
-                }
-
-                const token = await tokenResponse.text();
-
-                if (!token || token.trim() === '') {
-                    throw new Error('Empty token response');
-                }
-
-                // Step 2: Get Data
-                const dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
+                // Get Data
+                updateProgress(40);
+                const responseText = await fetchData(proxyUrl, baseUrl, token);
                 
-                const dataResponse = await fetch(dataUrl, {
-                    headers: {
-                        'Origin': window.location.origin,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (!dataResponse.ok) {
-                    throw new Error(`Data fetch failed: ${dataResponse.status}`);
-                }
-
-                const responseText = await dataResponse.text();
-
-                // Parse the data
-                let reportData = parseXmlData(responseText);
-
+                // Parse Data
+                updateProgress(60);
+                const reportData = await parseLargeData(responseText);
+                
                 if (!reportData || reportData.length === 0) {
                     throw new Error('No data found in response');
                 }
 
-                // Store headers and data
+                // Process Headers
+                updateProgress(80);
                 headers = reportData[0] || [];
-                reportData = reportData.slice(1);
-
-                // Transform data
-                allData = transformData(reportData);
-
+                const dataRows = reportData.slice(1);
+                
+                // Transform Data (chunked for 50K records)
+                allData = await transformDataChunked(dataRows, 1000);
+                
                 if (allData.length === 0) {
                     throw new Error('No valid data after transformation');
                 }
 
+                // Initialize filtered data
                 filteredData = [...allData];
                 
-                rebuildUniqueSets();
+                // Build unique sets
+                await buildUniqueSets();
                 
                 // Update UI
+                updateProgress(100);
+                setTimeout(() => hideProgressBar(), 500);
+                
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('tabContainers').style.display = 'block';
                 document.getElementById('grandFooter').style.display = 'flex';
                 document.getElementById('apiBadge').style.display = 'inline-block';
                 document.getElementById('statusBar').style.display = 'flex';
+                document.getElementById('statsBar').style.display = 'flex';
                 
                 updateLastUpdateTime(new Date());
                 updateFilterOptions();
-                renderAllTables();
+                updateStats();
+                renderCurrentTab();
 
             } catch (error) {
-                console.error('Connection error:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = `
-                    <strong>Error:</strong><br>
-                    ${error.message}<br><br>
-                    <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
-                `;
+                hideProgressBar();
+                showError(error);
             }
         }
 
-        // ==================== XML PARSING ====================
-        function parseXmlData(xmlString) {
-            if (!xmlString || xmlString.trim() === '') {
-                console.error('XML data is null or empty');
-                return [];
+        async function fetchToken(proxyUrl, baseUrl) {
+            const tokenUrl = proxyUrl + baseUrl + 'API/getToken';
+            
+            const response = await fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Origin': window.location.origin,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    username: CONFIG.username,
+                    password: CONFIG.password,
+                    objectid: CONFIG.reportId,
+                    type: 'data'
+                })
+            });
+
+            if (!response.ok) {
+                if (response.status === 403) {
+                    throw new Error('CORS Anywhere needs temporary access. Please click the button in the new tab and try again.');
+                }
+                throw new Error(`Token fetch failed: ${response.status}`);
             }
 
-            console.log('Parsing XML data...');
+            const token = await response.text();
+            if (!token || token.trim() === '') {
+                throw new Error('Empty token response');
+            }
             
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-                
-                const parseError = xmlDoc.getElementsByTagName('parsererror');
-                if (parseError.length > 0) {
-                    console.error('XML parse error');
-                    return fallbackParse(xmlString);
+            return token;
+        }
+
+        async function fetchData(proxyUrl, baseUrl, token) {
+            const dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
+            
+            const response = await fetch(dataUrl, {
+                headers: {
+                    'Origin': window.location.origin,
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-                
-                const rows = xmlDoc.getElementsByTagName('Row');
-                
-                if (rows.length === 0) {
-                    return fallbackParse(xmlString);
-                }
-                
-                const data = [];
-                
-                // Extract headers
-                const firstRow = rows[0];
-                const headers = [];
-                const columns = firstRow.getElementsByTagName('Column');
-                
-                for (let col of columns) {
-                    headers.push(col.textContent || '');
-                }
-                
-                if (headers.length > 0) {
-                    data.push(headers);
-                }
-                
-                // Extract data rows
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    const rowData = [];
-                    const cols = row.getElementsByTagName('Column');
-                    
-                    for (let col of cols) {
-                        let value = col.textContent || '';
-                        value = value.replace(/&amp;/g, '&')
-                                     .replace(/&lt;/g, '<')
-                                     .replace(/&gt;/g, '>')
-                                     .replace(/&quot;/g, '"')
-                                     .replace(/&#39;/g, "'")
-                                     .trim();
-                        rowData.push(value);
+            });
+
+            if (!response.ok) {
+                throw new Error(`Data fetch failed: ${response.status}`);
+            }
+
+            return await response.text();
+        }
+
+        // ==================== OPTIMIZED PARSING FOR 50K RECORDS ====================
+        async function parseLargeData(xmlString) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    try {
+                        const data = [];
+                        const rows = xmlString.split('</Row>');
+                        let headerRow = null;
+                        
+                        for (let i = 0; i < rows.length; i++) {
+                            const row = rows[i];
+                            if (!row.includes('<Row>')) continue;
+                            
+                            const cols = row.match(/<Column[^>]*>(.*?)<\/Column>/g);
+                            if (cols) {
+                                const rowData = cols.map(col => {
+                                    let value = col.replace(/<\/?Column[^>]*>/g, '');
+                                    value = value.replace(/&amp;/g, '&')
+                                               .replace(/&lt;/g, '<')
+                                               .replace(/&gt;/g, '>')
+                                               .replace(/&quot;/g, '"')
+                                               .replace(/&#39;/g, "'");
+                                    return value.trim();
+                                });
+                                
+                                if (i === 0) {
+                                    headerRow = rowData;
+                                    data.push(headerRow);
+                                } else {
+                                    data.push(rowData);
+                                }
+                            }
+                            
+                            // Yield to event loop every 1000 rows
+                            if (i % 1000 === 0) {
+                                setTimeout(() => {}, 0);
+                            }
+                        }
+                        
+                        resolve(data);
+                    } catch (e) {
+                        console.error('Parse error:', e);
+                        resolve([]);
                     }
-                    
-                    if (rowData.length > 0) {
-                        data.push(rowData);
-                    }
-                }
-                
-                return data;
-                
-            } catch (e) {
-                console.error('XML parsing error:', e);
-                return fallbackParse(xmlString);
-            }
+                }, 0);
+            });
         }
 
-        function fallbackParse(xmlString) {
-            console.log('Using fallback parser...');
-            const data = [];
-            const rows = xmlString.split('</Row>');
-            
-            for (const row of rows) {
-                if (!row.includes('<Row>')) continue;
-                
-                const cols = row.match(/<Column[^>]*>(.*?)<\/Column>/g);
-                if (cols) {
-                    const rowData = cols.map(col => {
-                        let value = col.replace(/<\/?Column[^>]*>/g, '');
-                        value = value.replace(/&amp;/g, '&')
-                                     .replace(/&lt;/g, '<')
-                                     .replace(/&gt;/g, '>')
-                                     .replace(/&quot;/g, '"')
-                                     .replace(/&#39;/g, "'");
-                        return value.trim();
-                    });
-                    data.push(rowData);
-                }
-            }
-            
-            return data;
-        }
-
-        // ==================== DATA TRANSFORMATION ====================
-        function transformData(rows) {
-            if (rows.length === 0) return [];
+        async function transformDataChunked(rows, chunkSize) {
+            const result = [];
             
             // Create header mapping
-            const headerMap = {};
+            const headerMap = createHeaderMap();
+            
+            for (let i = 0; i < rows.length; i += chunkSize) {
+                const chunk = rows.slice(i, i + chunkSize);
+                const transformed = chunk.map((row, idx) => transformRow(row, headerMap, i + idx));
+                result.push(...transformed);
+                
+                // Update progress
+                updateProgress(80 + Math.floor((i / rows.length) * 20));
+                
+                // Yield to event loop
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+            
+            return result;
+        }
+
+        function createHeaderMap() {
+            const map = {};
             headers.forEach((header, index) => {
                 const headerStr = (header || '').toString().toLowerCase().trim();
                 
-                if (headerStr.includes('location') || headerStr.includes('godown')) headerMap.location = index;
-                else if (headerStr.includes('billno') || headerStr.includes('bill_no')) headerMap.bill_no = index;
-                else if (headerStr.includes('date') || headerStr.includes('txndocdt')) headerMap.bill_date = index;
+                if (headerStr.includes('location') || headerStr.includes('godown')) map.location = index;
+                else if (headerStr.includes('billno') || headerStr.includes('bill_no')) map.bill_no = index;
+                else if (headerStr.includes('date') || headerStr.includes('txndocdt')) map.bill_date = index;
                 else if (headerStr.includes('product') || headerStr.includes('itemname')) {
-                    if (headerStr.includes('type')) headerMap.product_type = index;
-                    else headerMap.product_name = index;
+                    if (headerStr.includes('type')) map.product_type = index;
+                    else map.product_name = index;
                 }
-                else if (headerStr.includes('batch')) headerMap.batch_no = index;
-                else if (headerStr.includes('qty') || headerStr.includes('saleqty')) headerMap.sale_qty = index;
-                else if (headerStr.includes('value') || headerStr.includes('basic')) headerMap.basic_value = index;
-                else if (headerStr.includes('sfcode')) headerMap.sf_code = index;
-                else if (headerStr.includes('sfname')) headerMap.sf_name = index;
-                else if (headerStr.includes('mktby')) headerMap.mkt_by = index;
-                else if (headerStr.includes('city')) headerMap.city = index;
-                else if (headerStr.includes('state')) headerMap.state = index;
+                else if (headerStr.includes('batch')) map.batch_no = index;
+                else if (headerStr.includes('qty') || headerStr.includes('saleqty')) map.sale_qty = index;
+                else if (headerStr.includes('value') || headerStr.includes('basic')) map.basic_value = index;
+                else if (headerStr.includes('sfcode')) map.sf_code = index;
+                else if (headerStr.includes('sfname')) map.sf_name = index;
+                else if (headerStr.includes('mktby')) map.mkt_by = index;
+                else if (headerStr.includes('city')) map.city = index;
+                else if (headerStr.includes('state')) map.state = index;
             });
 
-            // Default mapping if no headers found
-            if (Object.keys(headerMap).length === 0) {
-                headerMap.location = 0;
-                headerMap.bill_no = 1;
-                headerMap.bill_date = 2;
-                headerMap.product_name = 3;
-                headerMap.product_type = 4;
-                headerMap.batch_no = 5;
-                headerMap.sale_qty = 6;
-                headerMap.basic_value = 7;
-                headerMap.sf_code = 8;
-                headerMap.sf_name = 9;
-                headerMap.mkt_by = 10;
-                headerMap.city = 11;
-                headerMap.state = 12;
+            // Default mapping if needed
+            if (Object.keys(map).length === 0) {
+                map.location = 0;
+                map.bill_no = 1;
+                map.bill_date = 2;
+                map.product_name = 3;
+                map.product_type = 4;
+                map.batch_no = 5;
+                map.sale_qty = 6;
+                map.basic_value = 7;
+                map.sf_code = 8;
+                map.sf_name = 9;
+                map.mkt_by = 10;
+                map.city = 11;
+                map.state = 12;
             }
-
-            // Transform rows
-            return rows.map((row, idx) => ({
-                id: `row_${idx}`,
-                location: row[headerMap.location] || '',
-                bill_no: row[headerMap.bill_no] || '',
-                bill_date: row[headerMap.bill_date] || '',
-                product_name: row[headerMap.product_name] || '',
-                product_type: row[headerMap.product_type] || '',
-                batch_no: row[headerMap.batch_no] || '',
-                sale_qty: parseFloat((row[headerMap.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                basic_value: parseFloat((row[headerMap.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                sf_code: row[headerMap.sf_code] || '',
-                sf_name: row[headerMap.sf_name] || '',
-                mkt_by: row[headerMap.mkt_by] || '',
-                city: row[headerMap.city] || '',
-                state: row[headerMap.state] || ''
-            }));
+            
+            return map;
         }
 
-        function rebuildUniqueSets() {
+        function transformRow(row, map, index) {
+            return {
+                id: `row_${index}`,
+                location: row[map.location] || '',
+                bill_no: row[map.bill_no] || '',
+                bill_date: row[map.bill_date] || '',
+                product_name: row[map.product_name] || '',
+                product_type: row[map.product_type] || '',
+                batch_no: row[map.batch_no] || '',
+                sale_qty: parseFloat((row[map.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
+                basic_value: parseFloat((row[map.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
+                sf_code: row[map.sf_code] || '',
+                sf_name: row[map.sf_name] || '',
+                mkt_by: row[map.mkt_by] || '',
+                city: row[map.city] || '',
+                state: row[map.state] || ''
+            };
+        }
+
+        async function buildUniqueSets() {
             uniqueLocations.clear();
             uniqueMktBy.clear();
             uniqueProductTypes.clear();
             
-            allData.forEach(item => {
-                if (item.location) uniqueLocations.add(item.location);
-                if (item.mkt_by) uniqueMktBy.add(item.mkt_by);
-                if (item.product_type) uniqueProductTypes.add(item.product_type);
-            });
+            const chunkSize = 5000;
+            for (let i = 0; i < allData.length; i += chunkSize) {
+                const chunk = allData.slice(i, i + chunkSize);
+                chunk.forEach(item => {
+                    if (item.location) uniqueLocations.add(item.location);
+                    if (item.mkt_by) uniqueMktBy.add(item.mkt_by);
+                    if (item.product_type) uniqueProductTypes.add(item.product_type);
+                });
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
         }
 
-        function refreshData() {
-            connectWithCorsAnywhere();
+        // ==================== UI UPDATES ====================
+        function showLoading(message) {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').textContent = message;
+        }
+
+        function showProgressBar() {
+            document.getElementById('progressBar').style.display = 'block';
+            document.getElementById('progressFill').style.width = '0%';
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        function hideProgressBar() {
+            document.getElementById('progressBar').style.display = 'none';
+        }
+
+        function showError(error) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerHTML = `
+                <strong>Error:</strong><br>
+                ${error.message}<br><br>
+                <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
+            `;
+        }
+
+        function updateStats() {
+            const totalValue = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
+            const totalQty = filteredData.reduce((sum, item) => sum + (item.sale_qty || 0), 0);
+            
+            document.getElementById('totalRecords').textContent = filteredData.length.toLocaleString();
+            document.getElementById('totalValue').textContent = '₹' + formatNumber(totalValue);
+            document.getElementById('totalQty').textContent = formatNumber(totalQty);
+            document.getElementById('totalLocations').textContent = uniqueLocations.size;
+            document.getElementById('recordCount').textContent = filteredData.length.toLocaleString() + ' records';
+            document.getElementById('grandTotalValue').textContent = '₹' + formatNumber(totalValue);
         }
 
         // ==================== TAB FUNCTIONS ====================
@@ -969,173 +1038,52 @@
             const containers = document.getElementById('tabContainers');
             containers.innerHTML = '';
             
-            tabs.forEach((tab, index) => {
+            tabs.forEach(tab => {
                 const container = document.createElement('div');
                 container.id = `tab-${tab.id}`;
-                container.className = `tab-content ${index === 0 ? 'active' : ''}`;
+                container.className = 'tab-content';
                 container.innerHTML = getTabHTML(tab.id);
                 containers.appendChild(container);
             });
         }
 
         function getTabHTML(tabId) {
-            switch(tabId) {
-                case 'summary':
-                    return `
-                        <div class="section-title">
-                            📈 Mkt_By Analysis
-                            <span class="total-info" id="mktByTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="mktByTable">
-                                <thead><tr id="mktByHeader"></tr></thead>
-                                <tbody id="mktByBody"></tbody>
-                                <tfoot id="mktByFooter"></tfoot>
-                            </table>
-                        </div>
+            return `
+                <div class="section-title">
+                    ${getTabTitle(tabId)}
+                    <span class="total-info" id="${tabId}Total"></span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="${tabId}Table">
+                        <thead><tr id="${tabId}Header"></tr></thead>
+                        <tbody id="${tabId}Body"></tbody>
+                        <tfoot id="${tabId}Footer"></tfoot>
+                    </table>
+                </div>
+            `;
+        }
 
-                        <div class="section-title">
-                            📍 Location Wise Analysis
-                            <span class="total-info" id="locationTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="locationTable">
-                                <thead><tr id="locationHeader"></tr></thead>
-                                <tbody id="locationBody"></tbody>
-                                <tfoot id="locationFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            🏷️ Product Type Analysis
-                            <span class="total-info" id="productTypeTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productTypeTable">
-                                <thead><tr id="productTypeHeader"></tr></thead>
-                                <tbody id="productTypeBody"></tbody>
-                                <tfoot id="productTypeFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'customer-sf':
-                    return `
-                        <div class="section-title">
-                            👥 SF Wise Product Details
-                            <span class="total-info" id="sfWiseTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="sfWiseTable">
-                                <thead><tr id="sfWiseHeader"></tr></thead>
-                                <tbody id="sfWiseBody"></tbody>
-                                <tfoot id="sfWiseFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            🔢 SF Code Details
-                            <span class="total-info" id="sfCodeTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="sfCodeTable">
-                                <thead><tr id="sfCodeHeader"></tr></thead>
-                                <tbody id="sfCodeBody"></tbody>
-                                <tfoot id="sfCodeFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'sf-brand':
-                    return `
-                        <div class="section-title">
-                            📅 Brand Details by SF (Monthly)
-                            <span class="total-info" id="brandMonthlyTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="brandMonthlyTable">
-                                <thead><tr id="brandMonthlyHeader"></tr></thead>
-                                <tbody id="brandMonthlyBody"></tbody>
-                                <tfoot id="brandMonthlyFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📊 Brand Details by SF (Summary)
-                            <span class="total-info" id="brandSummaryTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="brandSummaryTable">
-                                <thead><tr id="brandSummaryHeader"></tr></thead>
-                                <tbody id="brandSummaryBody"></tbody>
-                                <tfoot id="brandSummaryFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'sf-product':
-                    return `
-                        <div class="section-title">
-                            📦 Product Month Wise (Detailed)
-                            <span class="total-info" id="productMonthDetailTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productMonthDetailTable">
-                                <thead><tr id="productMonthDetailHeader"></tr></thead>
-                                <tbody id="productMonthDetailBody"></tbody>
-                                <tfoot id="productMonthDetailFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📊 Product Month Wise (Summary)
-                            <div class="pagination">
-                                <span id="productRange">1-50</span>
-                                <span>/ <span id="totalProducts">0</span></span>
-                                <button onclick="prevPage()" id="prevBtn" disabled>←</button>
-                                <button onclick="nextPage()" id="nextBtn">→</button>
-                            </div>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="productMonthSummaryTable">
-                                <thead><tr id="productMonthSummaryHeader"></tr></thead>
-                                <tbody id="productMonthSummaryBody"></tbody>
-                                <tfoot id="productMonthSummaryFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                case 'dpr':
-                    return `
-                        <div class="section-title">
-                            📋 Daily Dispatch Details (DPR)
-                            <span class="total-info" id="dprTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="dprTable">
-                                <thead><tr id="dprHeader"></tr></thead>
-                                <tbody id="dprBody"></tbody>
-                                <tfoot id="dprFooter"></tfoot>
-                            </table>
-                        </div>
-
-                        <div class="section-title">
-                            📍 Dispatch Summary by Location
-                            <span class="total-info" id="dispatchLocationTotal"></span>
-                        </div>
-                        <div class="table-wrapper">
-                            <table id="dispatchLocationTable">
-                                <thead><tr id="dispatchLocationHeader"></tr></thead>
-                                <tbody id="dispatchLocationBody"></tbody>
-                                <tfoot id="dispatchLocationFooter"></tfoot>
-                            </table>
-                        </div>
-                    `;
-                default:
-                    return '';
-            }
+        function getTabTitle(tabId) {
+            const titles = {
+                'mkt-by': '📊 Mkt By Analysis',
+                'location': '📍 Location Wise Analysis',
+                'product-type': '🏷️ Product Type Analysis',
+                'sf-wise': '👥 SF Wise Product Details',
+                'sf-code': '🔢 SF Code Details',
+                'brand-monthly': '📅 Brand Details by SF (Monthly)',
+                'brand-summary': '📊 Brand Details by SF (Summary)',
+                'product-month-detail': '📦 Product Month Wise (Detailed)',
+                'product-month-summary': '📊 Product Month Wise (Summary)',
+                'dpr': '📋 Daily Dispatch Details (DPR)',
+                'dispatch-location': '📍 Dispatch Summary by Location'
+            };
+            return titles[tabId] || tabId;
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
-                if(item.getAttribute('data-tab') === tabId) {
+                if (item.getAttribute('data-tab') === tabId) {
                     item.classList.add('active');
                 }
             });
@@ -1144,6 +1092,773 @@
                 tab.classList.remove('active');
             });
             document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            renderTab(tabId);
+        }
+
+        function renderCurrentTab() {
+            const activeTab = document.querySelector('.nav-item.active').getAttribute('data-tab');
+            renderTab(activeTab);
+        }
+
+        function renderTab(tabId) {
+            if (filteredData.length === 0) {
+                document.getElementById(`${tabId}Body`).innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available.</td></tr>';
+                return;
+            }
+
+            switch(tabId) {
+                case 'mkt-by':
+                    renderMktByTable();
+                    break;
+                case 'location':
+                    renderLocationTable();
+                    break;
+                case 'product-type':
+                    renderProductTypeTable();
+                    break;
+                case 'sf-wise':
+                    renderSfWiseTable();
+                    break;
+                case 'sf-code':
+                    renderSfCodeTable();
+                    break;
+                case 'brand-monthly':
+                    renderBrandMonthlyTable();
+                    break;
+                case 'brand-summary':
+                    renderBrandSummaryTable();
+                    break;
+                case 'product-month-detail':
+                    renderProductMonthDetailTable();
+                    break;
+                case 'product-month-summary':
+                    renderProductMonthSummaryTable();
+                    break;
+                case 'dpr':
+                    renderDprTable();
+                    break;
+                case 'dispatch-location':
+                    renderDispatchLocationTable();
+                    break;
+            }
+        }
+
+        // ==================== SORT FUNCTION ====================
+        function sortTable(tableId, column, dataType = 'string') {
+            const state = sortStates[tableId];
+            if (!state) return;
+            
+            // Update sort direction
+            if (state.column === column) {
+                state.direction = state.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                state.column = column;
+                state.direction = 'desc';
+            }
+
+            // Update header indicators
+            document.querySelectorAll(`#${tableId}Header th`).forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            const headerIndex = getHeaderIndex(tableId, column);
+            const headerCell = document.querySelector(`#${tableId}Header th:nth-child(${headerIndex + 1})`);
+            if (headerCell) {
+                headerCell.classList.add(`sort-${state.direction}`);
+            }
+
+            // Re-render the tab
+            renderTab(tableId);
+        }
+
+        function getHeaderIndex(tableId, column) {
+            const headers = {
+                'mkt-by': ['mkt_by', 'total', 'percentage'],
+                'location': ['location', 'total', 'percentage'],
+                'product-type': ['product_type', 'total', 'percentage'],
+                'sf-wise': ['sf_name', 'sf_code', 'total', 'qty', 'percentage', 'locations', 'products'],
+                'sf-code': ['sf_code', 'sf_name', 'total', 'percentage'],
+                'brand-monthly': ['sf_name', 'sf_code', 'product', 'month', 'value', 'qty'],
+                'brand-summary': ['sf_name', 'sf_code', 'product', 'total', 'qty', 'months'],
+                'product-month-detail': ['product', 'product_type', 'month', 'value', 'qty', 'sf_count'],
+                'product-month-summary': ['product', 'product_type', 'value', 'qty', 'months', 'sf_count'],
+                'dpr': ['bill_date', 'bill_no', 'sf_name', 'product', 'batch_no', 'qty', 'value', 'location'],
+                'dispatch-location': ['location', 'value', 'qty', 'entries', 'percentage']
+            };
+            
+            const index = headers[tableId].indexOf(column);
+            return index >= 0 ? index : 0;
+        }
+
+        // ==================== TABLE RENDERING FUNCTIONS ====================
+        function renderMktByTable() {
+            const data = aggregateData(filteredData, 'mkt_by', 'basic_value');
+            const sortedData = sortAggregatedData(data, sortStates['mkt-by']);
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('mkt-byHeader').innerHTML = `
+                <th onclick="sortTable('mkt-by', 'mkt_by')">Mkt By</th>
+                <th class="text-right" onclick="sortTable('mkt-by', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('mkt-by', 'percentage')">Percentage</th>
+            `;
+
+            document.getElementById('mkt-byBody').innerHTML = sortedData.map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('mkt_by', '${item.name}')">${item.name || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('mkt-byFooter').innerHTML = `
+                <td><strong>Total (${sortedData.length} items)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+            `;
+
+            document.getElementById('mkt-byTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderLocationTable() {
+            const data = aggregateData(filteredData, 'location', 'basic_value');
+            const sortedData = sortAggregatedData(data, sortStates['location']);
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('locationHeader').innerHTML = `
+                <th onclick="sortTable('location', 'location')">Location</th>
+                <th class="text-right" onclick="sortTable('location', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('location', 'percentage')">Percentage</th>
+            `;
+
+            document.getElementById('locationBody').innerHTML = sortedData.map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('location', '${item.name}')">${item.name || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('locationFooter').innerHTML = `
+                <td><strong>Total (${sortedData.length} locations)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+            `;
+
+            document.getElementById('locationTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderProductTypeTable() {
+            const data = aggregateData(filteredData, 'product_type', 'basic_value');
+            const sortedData = sortAggregatedData(data, sortStates['product-type']);
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('product-typeHeader').innerHTML = `
+                <th onclick="sortTable('product-type', 'product_type')">Product Type</th>
+                <th class="text-right" onclick="sortTable('product-type', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('product-type', 'percentage')">Percentage</th>
+            `;
+
+            document.getElementById('product-typeBody').innerHTML = sortedData.map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.name}')">${item.name || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('product-typeFooter').innerHTML = `
+                <td><strong>Total (${sortedData.length} types)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+            `;
+
+            document.getElementById('product-typeTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderSfWiseTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.sf_name) return;
+                const key = item.sf_name;
+                if (!data[key]) {
+                    data[key] = {
+                        sf_name: item.sf_name,
+                        sf_code: item.sf_code,
+                        total: 0,
+                        qty: 0,
+                        locations: new Set(),
+                        products: new Set()
+                    };
+                }
+                data[key].total += item.basic_value || 0;
+                data[key].qty += item.sale_qty || 0;
+                if (item.location) data[key].locations.add(item.location);
+                if (item.product_name) data[key].products.add(item.product_name);
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['sf-wise'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'total' || state.column === 'qty' || state.column === 'percentage') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else if (state.column === 'locations' || state.column === 'products') {
+                        aVal = aVal.size || 0;
+                        bVal = bVal.size || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('sf-wiseHeader').innerHTML = `
+                <th onclick="sortTable('sf-wise', 'sf_name')">SF Name</th>
+                <th onclick="sortTable('sf-wise', 'sf_code')">SF Code</th>
+                <th class="text-right" onclick="sortTable('sf-wise', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('sf-wise', 'qty')">Quantity</th>
+                <th class="text-right" onclick="sortTable('sf-wise', 'percentage')">% of Total</th>
+                <th class="text-right" onclick="sortTable('sf-wise', 'locations')">Locations</th>
+                <th class="text-right" onclick="sortTable('sf-wise', 'products')">Products</th>
+            `;
+
+            document.getElementById('sf-wiseBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('sf_code', '${item.sf_code}')">${item.sf_code || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                    <td class="text-right">${item.locations.size}</td>
+                    <td class="text-right">${item.products.size}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('sf-wiseFooter').innerHTML = `
+                <td colspan="2"><strong>Total (${sortedData.length} SFs)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+                <td colspan="2"></td>
+            `;
+
+            document.getElementById('sf-wiseTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderSfCodeTable() {
+            const data = aggregateData(filteredData, 'sf_code', 'basic_value', 'sf_name');
+            const sortedData = sortAggregatedData(data, sortStates['sf-code']);
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('sf-codeHeader').innerHTML = `
+                <th onclick="sortTable('sf-code', 'sf_code')">SF Code</th>
+                <th onclick="sortTable('sf-code', 'sf_name')">SF Name</th>
+                <th class="text-right" onclick="sortTable('sf-code', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('sf-code', 'percentage')">Percentage</th>
+            `;
+
+            document.getElementById('sf-codeBody').innerHTML = sortedData.map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('sf_code', '${item.name}')">${item.name || '-'}</td>
+                    <td>${item.sf_name || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('sf-codeFooter').innerHTML = `
+                <td colspan="2"><strong>Total (${sortedData.length} codes)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+            `;
+
+            document.getElementById('sf-codeTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderBrandMonthlyTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.sf_name || !item.product_name || !item.bill_date) return;
+                const month = item.bill_date.substring(0, 7);
+                const key = `${item.sf_name}|${item.product_name}|${month}`;
+                
+                if (!data[key]) {
+                    data[key] = {
+                        sf_name: item.sf_name,
+                        sf_code: item.sf_code,
+                        product: item.product_name,
+                        month: month,
+                        total: 0,
+                        qty: 0
+                    };
+                }
+                data[key].total += item.basic_value || 0;
+                data[key].qty += item.sale_qty || 0;
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['brand-monthly'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'value' || state.column === 'qty') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('brand-monthlyHeader').innerHTML = `
+                <th onclick="sortTable('brand-monthly', 'sf_name')">SF Name</th>
+                <th onclick="sortTable('brand-monthly', 'sf_code')">SF Code</th>
+                <th onclick="sortTable('brand-monthly', 'product')">Product</th>
+                <th onclick="sortTable('brand-monthly', 'month')">Month</th>
+                <th class="text-right" onclick="sortTable('brand-monthly', 'value')">Value</th>
+                <th class="text-right" onclick="sortTable('brand-monthly', 'qty')">Quantity</th>
+            `;
+
+            document.getElementById('brand-monthlyBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name}</td>
+                    <td>${item.sf_code || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
+                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('brand-monthlyFooter').innerHTML = `
+                <td colspan="4"><strong>Total (${sortedData.length} entries)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+            `;
+
+            document.getElementById('brand-monthlyTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderBrandSummaryTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.sf_name || !item.product_name) return;
+                const key = `${item.sf_name}|${item.product_name}`;
+                
+                if (!data[key]) {
+                    data[key] = {
+                        sf_name: item.sf_name,
+                        sf_code: item.sf_code,
+                        product: item.product_name,
+                        total: 0,
+                        qty: 0,
+                        months: new Set()
+                    };
+                }
+                data[key].total += item.basic_value || 0;
+                data[key].qty += item.sale_qty || 0;
+                if (item.bill_date) data[key].months.add(item.bill_date.substring(0, 7));
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['brand-summary'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'total' || state.column === 'qty') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else if (state.column === 'months') {
+                        aVal = aVal.size || 0;
+                        bVal = bVal.size || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('brand-summaryHeader').innerHTML = `
+                <th onclick="sortTable('brand-summary', 'sf_name')">SF Name</th>
+                <th onclick="sortTable('brand-summary', 'sf_code')">SF Code</th>
+                <th onclick="sortTable('brand-summary', 'product')">Product</th>
+                <th class="text-right" onclick="sortTable('brand-summary', 'total')">Total Value</th>
+                <th class="text-right" onclick="sortTable('brand-summary', 'qty')">Total Qty</th>
+                <th class="text-right" onclick="sortTable('brand-summary', 'months')">Months</th>
+            `;
+
+            document.getElementById('brand-summaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name}</td>
+                    <td>${item.sf_code || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${item.months.size}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('brand-summaryFooter').innerHTML = `
+                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+                <td></td>
+            `;
+
+            document.getElementById('brand-summaryTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderProductMonthDetailTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.product_name || !item.bill_date) return;
+                const month = item.bill_date.substring(0, 7);
+                const key = `${item.product_name}|${month}`;
+                
+                if (!data[key]) {
+                    data[key] = {
+                        product: item.product_name,
+                        product_type: item.product_type,
+                        month: month,
+                        total: 0,
+                        qty: 0,
+                        sf_count: new Set()
+                    };
+                }
+                data[key].total += item.basic_value || 0;
+                data[key].qty += item.sale_qty || 0;
+                if (item.sf_name) data[key].sf_count.add(item.sf_name);
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['product-month-detail'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'value' || state.column === 'qty') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else if (state.column === 'sf_count') {
+                        aVal = aVal.size || 0;
+                        bVal = bVal.size || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('product-month-detailHeader').innerHTML = `
+                <th onclick="sortTable('product-month-detail', 'product')">Product</th>
+                <th onclick="sortTable('product-month-detail', 'product_type')">Product Type</th>
+                <th onclick="sortTable('product-month-detail', 'month')">Month</th>
+                <th class="text-right" onclick="sortTable('product-month-detail', 'value')">Total Value</th>
+                <th class="text-right" onclick="sortTable('product-month-detail', 'qty')">Total Qty</th>
+                <th class="text-right" onclick="sortTable('product-month-detail', 'sf_count')"># of SFs</th>
+            `;
+
+            document.getElementById('product-month-detailBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
+                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.product_type}')">${item.product_type || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${item.sf_count.size}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('product-month-detailFooter').innerHTML = `
+                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+                <td></td>
+            `;
+
+            document.getElementById('product-month-detailTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderProductMonthSummaryTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.product_name) return;
+                const key = item.product_name;
+                
+                if (!data[key]) {
+                    data[key] = {
+                        product: item.product_name,
+                        product_type: item.product_type,
+                        total: 0,
+                        qty: 0,
+                        months: new Set(),
+                        sf_count: new Set()
+                    };
+                }
+                data[key].total += item.basic_value || 0;
+                data[key].qty += item.sale_qty || 0;
+                if (item.bill_date) data[key].months.add(item.bill_date.substring(0, 7));
+                if (item.sf_name) data[key].sf_count.add(item.sf_name);
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['product-month-summary'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'value' || state.column === 'qty') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else if (state.column === 'months' || state.column === 'sf_count') {
+                        aVal = aVal.size || 0;
+                        bVal = bVal.size || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('product-month-summaryHeader').innerHTML = `
+                <th onclick="sortTable('product-month-summary', 'product')">Product</th>
+                <th onclick="sortTable('product-month-summary', 'product_type')">Product Type</th>
+                <th class="text-right" onclick="sortTable('product-month-summary', 'value')">Total Value</th>
+                <th class="text-right" onclick="sortTable('product-month-summary', 'qty')">Total Qty</th>
+                <th class="text-right" onclick="sortTable('product-month-summary', 'months')"># of Months</th>
+                <th class="text-right" onclick="sortTable('product-month-summary', 'sf_count')"># of SFs</th>
+            `;
+
+            document.getElementById('product-month-summaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
+                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.product_type}')">${item.product_type || '-'}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${item.months.size}</td>
+                    <td class="text-right">${item.sf_count.size}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('product-month-summaryFooter').innerHTML = `
+                <td colspan="2"><strong>Total (${sortedData.length} products)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+                <td colspan="2"></td>
+            `;
+
+            document.getElementById('product-month-summaryTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderDprTable() {
+            let sortedData = [...filteredData];
+            const state = sortStates['dpr'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'value' || state.column === 'qty') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
+
+            document.getElementById('dprHeader').innerHTML = `
+                <th onclick="sortTable('dpr', 'bill_date')">Bill Date</th>
+                <th onclick="sortTable('dpr', 'bill_no')">Bill No</th>
+                <th onclick="sortTable('dpr', 'sf_name')">SF Name</th>
+                <th onclick="sortTable('dpr', 'product')">Product</th>
+                <th onclick="sortTable('dpr', 'batch_no')">Batch No</th>
+                <th class="text-right" onclick="sortTable('dpr', 'qty')">Qty</th>
+                <th class="text-right" onclick="sortTable('dpr', 'value')">Value</th>
+                <th onclick="sortTable('dpr', 'location')">Location</th>
+            `;
+
+            document.getElementById('dprBody').innerHTML = sortedData.slice(0, 100).map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('date', '${item.bill_date}')">${item.bill_date || '-'}</td>
+                    <td>${item.bill_no || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name || '-'}</td>
+                    <td class="clickable" onclick="applyDrilldown('product', '${item.product_name}')">${item.product_name || '-'}</td>
+                    <td>${item.batch_no || '-'}</td>
+                    <td class="text-right">${formatNumber(item.sale_qty)}</td>
+                    <td class="text-right">${formatNumber(item.basic_value)}</td>
+                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location || '-'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('dprFooter').innerHTML = `
+                <td colspan="5"><strong>Total (${sortedData.length} entries)</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + (i.sale_qty || 0), 0))}</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td></td>
+            `;
+
+            document.getElementById('dprTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        function renderDispatchLocationTable() {
+            const data = {};
+            filteredData.forEach(item => {
+                if (!item.location) return;
+                if (!data[item.location]) {
+                    data[item.location] = {
+                        location: item.location,
+                        total: 0,
+                        qty: 0,
+                        entries: 0
+                    };
+                }
+                data[item.location].total += item.basic_value || 0;
+                data[item.location].qty += item.sale_qty || 0;
+                data[item.location].entries++;
+            });
+
+            let sortedData = Object.values(data);
+            const state = sortStates['dispatch-location'];
+            if (state) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[state.column];
+                    let bVal = b[state.column];
+                    
+                    if (state.column === 'value' || state.column === 'qty' || state.column === 'entries' || state.column === 'percentage') {
+                        aVal = aVal || 0;
+                        bVal = bVal || 0;
+                    } else {
+                        aVal = (aVal || '').toString().toLowerCase();
+                        bVal = (bVal || '').toString().toLowerCase();
+                    }
+                    
+                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
+
+            document.getElementById('dispatch-locationHeader').innerHTML = `
+                <th onclick="sortTable('dispatch-location', 'location')">Location</th>
+                <th class="text-right" onclick="sortTable('dispatch-location', 'value')">Total Value</th>
+                <th class="text-right" onclick="sortTable('dispatch-location', 'qty')">Total Qty</th>
+                <th class="text-right" onclick="sortTable('dispatch-location', 'entries')"># of Entries</th>
+                <th class="text-right" onclick="sortTable('dispatch-location', 'percentage')">Percentage</th>
+            `;
+
+            document.getElementById('dispatch-locationBody').innerHTML = sortedData.map(item => `
+                <tr>
+                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location}</td>
+                    <td class="text-right">${formatNumber(item.total)}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${item.entries}</td>
+                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('dispatch-locationFooter').innerHTML = `
+                <td><strong>Total (${sortedData.length} locations)</strong></td>
+                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
+                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
+                <td class="text-right"><strong>${sortedData.reduce((sum, i) => sum + i.entries, 0)}</strong></td>
+                <td class="text-right"><strong>100%</strong></td>
+            `;
+
+            document.getElementById('dispatch-locationTotal').textContent = `Total: ${formatNumber(total)}`;
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function aggregateData(data, groupField, valueField, nameField = null) {
+            const result = {};
+            data.forEach(item => {
+                const key = item[groupField];
+                if (!key) return;
+                
+                if (!result[key]) {
+                    result[key] = {
+                        name: key,
+                        total: 0
+                    };
+                    if (nameField) {
+                        result[key][nameField] = item[nameField];
+                    }
+                }
+                result[key].total += item[valueField] || 0;
+            });
+            return Object.values(result);
+        }
+
+        function sortAggregatedData(data, sortState) {
+            if (!sortState) return data;
+            
+            return [...data].sort((a, b) => {
+                let aVal = a[sortState.column];
+                let bVal = b[sortState.column];
+                
+                if (sortState.column === 'total' || sortState.column === 'percentage') {
+                    aVal = aVal || 0;
+                    bVal = bVal || 0;
+                } else {
+                    aVal = (aVal || '').toString().toLowerCase();
+                    bVal = (bVal || '').toString().toLowerCase();
+                }
+                
+                if (aVal < bVal) return sortState.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortState.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
         }
 
         // ==================== FILTER FUNCTIONS ====================
@@ -1188,10 +1903,11 @@
             activeFilters.location = document.getElementById('locationFilter').value !== 'all' ? document.getElementById('locationFilter').value : null;
             activeFilters.mktBy = document.getElementById('mktByFilter').value !== 'all' ? document.getElementById('mktByFilter').value : null;
             activeFilters.productType = document.getElementById('productTypeFilter').value !== 'all' ? document.getElementById('productTypeFilter').value : null;
-            activeFilters.dateFrom = document.getElementById('dateFrom').value;
-            activeFilters.dateTo = document.getElementById('dateTo').value;
+            activeFilters.dateFrom = document.getElementById('dateFrom').value || null;
+            activeFilters.dateTo = document.getElementById('dateTo').value || null;
             activeFilters.search = document.getElementById('globalSearch').value || null;
 
+            // Apply filters
             filteredData = allData.filter(item => {
                 if (activeFilters.location && item.location !== activeFilters.location) return false;
                 if (activeFilters.mktBy && item.mkt_by !== activeFilters.mktBy) return false;
@@ -1214,7 +1930,10 @@
                         item.mkt_by,
                         item.location,
                         item.batch_no,
-                        item.sf_code
+                        item.sf_code,
+                        item.product_type,
+                        item.city,
+                        item.state
                     ].map(f => (f || '').toLowerCase());
                     
                     if (!searchableFields.some(field => field.includes(searchTerm))) {
@@ -1226,8 +1945,13 @@
             });
 
             updateActiveFiltersDisplay();
-            currentPage = 1;
-            renderAllTables();
+            updateStats();
+            renderCurrentTab();
+        }
+
+        function debounceApplyFilters() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(applyFilters, 300);
         }
 
         function updateActiveFiltersDisplay() {
@@ -1287,63 +2011,65 @@
             document.getElementById('locationFilter').value = 'all';
             document.getElementById('mktByFilter').value = 'all';
             document.getElementById('productTypeFilter').value = 'all';
-            document.getElementById('dateFrom').value = '2025-02';
-            document.getElementById('dateTo').value = '2026-02';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
             document.getElementById('globalSearch').value = '';
             
             activeFilters = {
                 location: null,
                 mktBy: null,
                 productType: null,
-                dateFrom: '2025-02',
-                dateTo: '2026-02',
+                dateFrom: null,
+                dateTo: null,
                 search: null
             };
             
             filteredData = [...allData];
             updateActiveFiltersDisplay();
-            renderAllTables();
+            updateStats();
+            renderCurrentTab();
         }
 
         function resetFilters() {
             clearAllFilters();
         }
 
-        // ==================== SORT FUNCTIONS ====================
-        function sortTable(tableType, columnIndex) {
-            const state = sortStates[tableType];
-            if (!state) return;
-            
-            if (state.column === columnIndex) {
-                state.direction = state.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                state.column = columnIndex;
-                state.direction = 'desc';
+        // ==================== DRILLDOWN FUNCTION ====================
+        function applyDrilldown(type, value) {
+            switch(type) {
+                case 'location':
+                    document.getElementById('locationFilter').value = value;
+                    activeFilters.location = value;
+                    break;
+                case 'mkt_by':
+                    document.getElementById('mktByFilter').value = value;
+                    activeFilters.mktBy = value;
+                    break;
+                case 'product_type':
+                    document.getElementById('productTypeFilter').value = value;
+                    activeFilters.productType = value;
+                    break;
+                case 'sf_name':
+                case 'sf_code':
+                    document.getElementById('globalSearch').value = value;
+                    activeFilters.search = value;
+                    break;
+                case 'product':
+                    document.getElementById('globalSearch').value = value;
+                    activeFilters.search = value;
+                    break;
+                case 'month':
+                case 'date':
+                    if (value && value.length >= 7) {
+                        const yearMonth = value.substring(0, 7);
+                        document.getElementById('dateFrom').value = yearMonth;
+                        document.getElementById('dateTo').value = yearMonth;
+                        activeFilters.dateFrom = yearMonth;
+                        activeFilters.dateTo = yearMonth;
+                    }
+                    break;
             }
-
-            document.querySelectorAll(`#${tableType}Header th`).forEach((th, idx) => {
-                th.classList.remove('sort-asc', 'sort-desc');
-            });
-            
-            const headerCell = document.querySelector(`#${tableType}Header th:nth-child(${columnIndex + 1})`);
-            if (headerCell) {
-                headerCell.classList.add(`sort-${state.direction}`);
-            }
-
-            renderAllTables();
-        }
-
-        // ==================== PAGINATION FUNCTIONS ====================
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderAllTables();
-            }
-        }
-
-        function nextPage() {
-            currentPage++;
-            renderAllTables();
+            applyFilters();
         }
 
         // ==================== UTILITY FUNCTIONS ====================
@@ -1366,593 +2092,20 @@
             return '';
         }
 
-        // ==================== TABLE RENDERING FUNCTIONS ====================
-        function renderAllTables() {
-            if (filteredData.length === 0) {
-                document.querySelectorAll('tbody').forEach(body => {
-                    body.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available.</td></tr>';
-                });
-                return;
-            }
-
-            renderMktByTable();
-            renderLocationTable();
-            renderProductTypeTable();
-            renderSfWiseTable();
-            renderSfCodeTable();
-            renderBrandMonthlyTable();
-            renderBrandSummaryTable();
-            renderProductMonthDetailTable();
-            renderProductMonthSummaryTable();
-            renderDprTable();
-            renderDispatchLocationTable();
-            updateGrandTotal();
-        }
-
-        function renderMktByTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.mkt_by) return acc;
-                if (!acc[item.mkt_by]) {
-                    acc[item.mkt_by] = { name: item.mkt_by, total: 0 };
-                }
-                acc[item.mkt_by].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('mktByHeader').innerHTML = `
-                <th onclick="sortTable('mktBy', 0)">Mkt By</th>
-                <th onclick="sortTable('mktBy', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('mktBy', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('mktByBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('mktBy', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('mktByFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} items)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('mktByTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderLocationTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.location) return acc;
-                if (!acc[item.location]) {
-                    acc[item.location] = { name: item.location, total: 0 };
-                }
-                acc[item.location].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('locationHeader').innerHTML = `
-                <th onclick="sortTable('location', 0)">Location</th>
-                <th onclick="sortTable('location', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('location', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('locationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('locationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('locationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductTypeTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_type) return acc;
-                if (!acc[item.product_type]) {
-                    acc[item.product_type] = { name: item.product_type, total: 0 };
-                }
-                acc[item.product_type].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('productTypeHeader').innerHTML = `
-                <th onclick="sortTable('productType', 0)">Product Type</th>
-                <th onclick="sortTable('productType', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productType', 2)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('productTypeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('productType', '${item.name}')">${item.name}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productTypeFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} types)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('productTypeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfWiseTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name) return acc;
-                const key = item.sf_name;
-                if (!acc[key]) {
-                    acc[key] = { 
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        total: 0,
-                        qty: 0,
-                        locations: new Set(),
-                        products: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.location) acc[key].locations.add(item.location);
-                if (item.product_name) acc[key].products.add(item.product_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sfWiseHeader').innerHTML = `
-                <th onclick="sortTable('sfWise', 0)">SF Name</th>
-                <th onclick="sortTable('sfWise', 1)">SF Code</th>
-                <th onclick="sortTable('sfWise', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('sfWise', 3)" class="text-right">Quantity</th>
-                <th onclick="sortTable('sfWise', 4)" class="text-right">% of Total</th>
-                <th>Locations</th>
-                <th>Products</th>
-            `;
-
-            document.getElementById('sfWiseBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sfCode', '${item.sf_code}')">${item.sf_code || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                    <td>${item.locations.size}</td>
-                    <td>${item.products.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sfWiseFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} SFs)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('sfWiseTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfCodeTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_code) return acc;
-                const key = item.sf_code;
-                if (!acc[key]) {
-                    acc[key] = { 
-                        sf_code: item.sf_code,
-                        sf_name: item.sf_name,
-                        total: 0
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sfCodeHeader').innerHTML = `
-                <th onclick="sortTable('sfCode', 0)">SF Code</th>
-                <th onclick="sortTable('sfCode', 1)">SF Name</th>
-                <th onclick="sortTable('sfCode', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('sfCode', 3)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('sfCodeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfCode', '${item.sf_code}')">${item.sf_code}</td>
-                    <td>${item.sf_name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sfCodeFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} codes)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('sfCodeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandMonthlyTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name || !item.product_name || !item.bill_date) return acc;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.sf_name}|${item.product_name}|${month}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        month: month,
-                        total: 0,
-                        qty: 0
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brandMonthlyHeader').innerHTML = `
-                <th onclick="sortTable('brand', 0)">SF Name</th>
-                <th onclick="sortTable('brand', 1)">SF Code</th>
-                <th onclick="sortTable('brand', 2)">Product</th>
-                <th onclick="sortTable('brand', 3)">Month</th>
-                <th onclick="sortTable('brand', 4)" class="text-right">Value</th>
-                <th onclick="sortTable('brand', 5)" class="text-right">Quantity</th>
-            `;
-
-            document.getElementById('brandMonthlyBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brandMonthlyFooter').innerHTML = `
-                <td colspan="4"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-            `;
-
-            document.getElementById('brandMonthlyTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandSummaryTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.sf_name || !item.product_name) return acc;
-                const key = `${item.sf_name}|${item.product_name}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        total: 0,
-                        qty: 0,
-                        months: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.bill_date) acc[key].months.add(item.bill_date.substring(0, 7));
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brandSummaryHeader').innerHTML = `
-                <th onclick="sortTable('brand', 0)">SF Name</th>
-                <th onclick="sortTable('brand', 1)">SF Code</th>
-                <th onclick="sortTable('brand', 2)">Product</th>
-                <th onclick="sortTable('brand', 3)" class="text-right">Total Value</th>
-                <th onclick="sortTable('brand', 4)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('brand', 5)" class="text-right">Months</th>
-            `;
-
-            document.getElementById('brandSummaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brandSummaryFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('brandSummaryTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthDetailTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_name || !item.bill_date) return acc;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.product_name}|${month}`;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        month: month,
-                        total: 0,
-                        qty: 0,
-                        sf_count: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.sf_name) acc[key].sf_count.add(item.sf_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('productMonthDetailHeader').innerHTML = `
-                <th onclick="sortTable('productMonth', 0)">Product</th>
-                <th onclick="sortTable('productMonth', 1)">Product Type</th>
-                <th onclick="sortTable('productMonth', 2)">Month</th>
-                <th onclick="sortTable('productMonth', 3)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productMonth', 4)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('productMonth', 5)" class="text-right"># of SFs</th>
-            `;
-
-            document.getElementById('productMonthDetailBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td>${item.product_type || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productMonthDetailFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('productMonthDetailTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthSummaryTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.product_name) return acc;
-                const key = item.product_name;
-                
-                if (!acc[key]) {
-                    acc[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        total: 0,
-                        qty: 0,
-                        months: new Set(),
-                        sf_count: new Set()
-                    };
-                }
-                acc[key].total += item.basic_value || 0;
-                acc[key].qty += item.sale_qty || 0;
-                if (item.bill_date) acc[key].months.add(item.bill_date.substring(0, 7));
-                if (item.sf_name) acc[key].sf_count.add(item.sf_name);
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = Math.min(startIndex + pageSize, sortedData.length);
-            const pageData = sortedData.slice(startIndex, endIndex);
-
-            document.getElementById('productMonthSummaryHeader').innerHTML = `
-                <th onclick="sortTable('productMonth', 0)">Product</th>
-                <th onclick="sortTable('productMonth', 1)">Product Type</th>
-                <th onclick="sortTable('productMonth', 2)" class="text-right">Total Value</th>
-                <th onclick="sortTable('productMonth', 3)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('productMonth', 4)" class="text-right"># of Months</th>
-                <th onclick="sortTable('productMonth', 5)" class="text-right"># of SFs</th>
-            `;
-
-            document.getElementById('productMonthSummaryBody').innerHTML = pageData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td>${item.product_type || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('productMonthSummaryFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} products)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('totalProducts').textContent = sortedData.length;
-            document.getElementById('productRange').textContent = `${startIndex + 1}-${endIndex}`;
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = endIndex >= sortedData.length;
-        }
-
-        function renderDprTable() {
-            const sortedData = [...filteredData].sort((a, b) => (b.basic_value || 0) - (a.basic_value || 0));
-            const total = sortedData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-
-            document.getElementById('dprHeader').innerHTML = `
-                <th onclick="sortTable('dpr', 0)">Bill Date</th>
-                <th onclick="sortTable('dpr', 1)">Bill No</th>
-                <th onclick="sortTable('dpr', 2)">SF Name</th>
-                <th onclick="sortTable('dpr', 3)">Product</th>
-                <th onclick="sortTable('dpr', 4)">Batch No</th>
-                <th onclick="sortTable('dpr', 5)" class="text-right">Qty</th>
-                <th onclick="sortTable('dpr', 6)" class="text-right">Value</th>
-                <th onclick="sortTable('dpr', 7)">Location</th>
-            `;
-
-            document.getElementById('dprBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('date', '${item.bill_date}')">${item.bill_date || '-'}</td>
-                    <td>${item.bill_no || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sfName', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product_name}')">${item.product_name || '-'}</td>
-                    <td>${item.batch_no || '-'}</td>
-                    <td class="text-right">${formatNumber(item.sale_qty)}</td>
-                    <td class="text-right">${formatNumber(item.basic_value)}</td>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location || '-'}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dprFooter').innerHTML = `
-                <td colspan="5"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + (i.sale_qty || 0), 0))}</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('dprTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderDispatchLocationTable() {
-            const data = filteredData.reduce((acc, item) => {
-                if (!item.location) return acc;
-                if (!acc[item.location]) {
-                    acc[item.location] = {
-                        location: item.location,
-                        total: 0,
-                        qty: 0,
-                        entries: 0
-                    };
-                }
-                acc[item.location].total += item.basic_value || 0;
-                acc[item.location].qty += item.sale_qty || 0;
-                acc[item.location].entries++;
-                return acc;
-            }, {});
-
-            const sortedData = Object.values(data).sort((a, b) => b.total - a.total);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('dispatchLocationHeader').innerHTML = `
-                <th onclick="sortTable('dpr', 0)">Location</th>
-                <th onclick="sortTable('dpr', 1)" class="text-right">Total Value</th>
-                <th onclick="sortTable('dpr', 2)" class="text-right">Total Qty</th>
-                <th onclick="sortTable('dpr', 3)" class="text-right"># of Entries</th>
-                <th onclick="sortTable('dpr', 4)" class="text-right">Percentage</th>
-            `;
-
-            document.getElementById('dispatchLocationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.entries}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dispatchLocationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>${sortedData.reduce((sum, i) => sum + i.entries, 0)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('dispatchLocationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function updateGrandTotal() {
-            const grandTotal = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-            document.getElementById('grandTotalValue').textContent = formatNumber(grandTotal);
-        }
-
-        function applyDrilldown(type, value) {
-            switch(type) {
-                case 'location':
-                    document.getElementById('locationFilter').value = value;
-                    break;
-                case 'mktBy':
-                    document.getElementById('mktByFilter').value = value;
-                    break;
-                case 'productType':
-                    document.getElementById('productTypeFilter').value = value;
-                    break;
-                case 'sfName':
-                case 'sfCode':
-                    document.getElementById('globalSearch').value = value;
-                    break;
-                case 'product':
-                    document.getElementById('globalSearch').value = value;
-                    break;
-                case 'month':
-                case 'date':
-                    if (value && value.length >= 7) {
-                        const yearMonth = value.substring(0, 7);
-                        document.getElementById('dateFrom').value = yearMonth;
-                        document.getElementById('dateTo').value = yearMonth;
-                    }
-                    break;
-            }
-            applyFilters();
+        function refreshData() {
+            connectWithCorsAnywhere();
         }
 
         // Expose functions to window
         window.applyFilters = applyFilters;
         window.sortTable = sortTable;
-        window.prevPage = prevPage;
-        window.nextPage = nextPage;
         window.resetFilters = resetFilters;
         window.clearAllFilters = clearAllFilters;
         window.removeFilter = removeFilter;
         window.applyDrilldown = applyDrilldown;
         window.refreshData = refreshData;
+        window.autoConnect = autoConnect;
+        window.debounceApplyFilters = debounceApplyFilters;
     </script>
 </body>
 </html>
