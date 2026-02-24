@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>CRIUS Business Dashboard - Auto-Connect</title>
+    <title>CRIUS Business Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -99,83 +99,32 @@
             border-radius: 4px;
         }
 
-        .api-config-panel {
-            background: #e8f0fe;
-            padding: 20px 24px;
-            border-bottom: 2px solid #b8d1f0;
+        /* Hidden Panels */
+        .it-team-panel, 
+        .api-config-panel .server-selector,
+        .api-config-panel input,
+        .api-config-panel button,
+        .api-config-panel span,
+        .proxy-panel,
+        .action-buttons,
+        .reset-connection {
+            display: none !important;
+        }
+
+        /* Show only essential */
+        .auto-connect-bar {
+            background: #e3f2fd;
+            padding: 8px 24px;
+            border-bottom: 2px solid #2196f3;
             display: flex;
+            align-items: center;
             gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .server-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 8px;
-            border: 1px solid #4a6fa5;
-            min-width: 350px;
-        }
-
-        .server-selector select {
-            padding: 8px;
-            border: none;
-            width: 100%;
-            background: transparent;
-            font-size: 14px;
-        }
-
-        .server-selector select:focus {
-            outline: none;
-        }
-
-        .api-config-panel input, .api-config-panel select {
-            padding: 8px 12px;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            min-width: 140px;
             font-size: 13px;
         }
-
-        .api-config-panel button {
-            background: #1e3a5f;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
+        
+        .auto-connect-bar .status {
+            color: #0d47a1;
             font-weight: 600;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .api-config-panel button:hover {
-            background: #0f2a44;
-            transform: translateY(-1px);
-        }
-
-        .api-config-panel button.test-btn {
-            background: #4CAF50;
-        }
-
-        .api-config-panel button.test-btn:hover {
-            background: #45a049;
-        }
-
-        .api-config-panel button.proxy-btn {
-            background: #ff9800;
-        }
-
-        .connection-status {
-            font-size: 13px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: #fff3cd;
-            display: inline-block;
-            font-weight: 500;
         }
 
         .nav-sidebar {
@@ -486,130 +435,13 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        .proxy-panel {
-            background: #f8f9fa;
-            padding: 15px 24px;
-            border-bottom: 2px solid #dee2e9;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .proxy-panel select {
-            padding: 8px 12px;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            min-width: 250px;
-        }
-
-        .proxy-panel button {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .proxy-panel button:hover {
-            background: #138496;
-        }
-
-        .proxy-status {
-            font-size: 13px;
-            color: #1e3a5f;
-            font-weight: 500;
-        }
-
-        .working-proxy-note {
-            background: #d4edda;
-            padding: 10px 24px;
-            border-left: 4px solid #28a745;
-            font-size: 13px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .working-proxy-note button {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .it-team-panel {
-            background: #e8eaf6;
-            padding: 15px 24px;
-            border-bottom: 2px solid #3f51b5;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .it-team-panel button {
-            background: #3f51b5;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .it-team-panel button:hover {
-            background: #303f9f;
-        }
-
-        .it-team-status {
-            background: #c5cae9;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #1a237e;
-        }
-
-        /* Auto-connect status bar */
-        .auto-connect-bar {
-            background: #e3f2fd;
-            padding: 8px 24px;
-            border-bottom: 2px solid #2196f3;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 13px;
-        }
-        
-        .auto-connect-bar .status {
-            color: #0d47a1;
-            font-weight: 600;
-        }
-        
-        .reset-connection {
-            margin-left: auto;
-            background: #ff9800;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div class="main-header">
             <div>
-                CRIUS Business Dashboard - Auto-Connect
+                CRIUS Business Dashboard
                 <span class="api-badge" id="apiBadge" style="display: none;">
                     <span>✅</span> Connected
                 </span>
@@ -622,68 +454,24 @@
 
         <div class="company-header">
             CRIUS GROUP OF COMPANIES
-            <div class="company-subheader">Enterprise Business Intelligence Dashboard - Auto-Connect Edition</div>
+            <div class="company-subheader">Enterprise Business Intelligence Dashboard</div>
         </div>
 
-        <!-- Auto-Connect Status Bar -->
+        <!-- Auto-Connect Status Bar (Only visible element) -->
         <div class="auto-connect-bar" id="autoConnectBar">
-            <span class="status" id="autoConnectStatus">🔄 Auto-connect enabled</span>
-            <span id="savedProxyInfo"></span>
-            <button class="reset-connection" onclick="resetConnection()">Reset Connection</button>
+            <span class="status" id="autoConnectStatus">🔄 Auto-connect enabled - connecting...</span>
         </div>
 
-        <!-- Working Proxy Found Note -->
-        <div class="working-proxy-note" id="workingProxyNote">
-            <span>✅ <strong>Working Proxy Found!</strong></span>
-            <button onclick="useWorkingProxy()">Connect with Working Proxy</button>
-            <span id="workingProxyUrl" style="font-weight: bold; color: #155724;"></span>
-        </div>
+        <!-- Hidden configuration (kept for functionality) -->
+        <select id="proxySelect" style="display: none;">
+            <option value="https://cors-anywhere.azm.workers.dev/?" selected>CORS Bypass</option>
+            <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">CORS Proxy Worker</option>
+            <option value="https://cors-anywhere.herokuapp.com/">CORS Anywhere</option>
+        </select>
 
-        <!-- Server Selection -->
-        <div class="api-config-panel">
-            <div class="server-selector">
-                <select id="serverSelect" onchange="onServerChange()">
-                    <option value="http://43.246.140.102:6060/smarten/">🌐 Public Server 1 (43.246.140.102:6060)</option>
-                    <option value="http://43.246.140.102:6060/smarten/">🏠 Local Server (43.246.140.102:6060)</option>
-                    <option value="http://103.54.103.91:6060/smarten/">🌍 Public Server 2 (103.54.103.91:6060)</option>
-                    <option value="http://43.246.140.102:6060/smarten/" selected>🏢 IT TEAM SERVER - RECOMMENDED</option>
-                    <option value="custom">✏️ Custom URL</option>
-                </select>
-            </div>
-            
-            <div class="filter-group" id="customUrlGroup" style="display: none;">
-                <input type="text" id="customUrl" placeholder="http://your-server:6060/smarten" style="width: 250px;">
-            </div>
-
-            <input type="text" id="apiUsername" value="SOURAV" placeholder="Username">
-            <input type="password" id="apiPassword" value="KUMAR@1308" placeholder="Password">
-            <input type="text" id="reportId" value="r17d84895210.rpt" placeholder="Report ID">
-            
-            <button onclick="saveConfig()" class="proxy-btn">💾 Save Config</button>
-            <span id="connectionStatus" class="connection-status">Ready</span>
-        </div>
-
-        <!-- Proxy Selection Panel -->
-        <div class="proxy-panel">
-            <span style="font-weight: 700; color: #1e3a5f;">🌐 Proxy Selection (Auto-connect enabled):</span>
-            <select id="proxySelect">
-                <option value="https://cors-anywhere.azm.workers.dev/?" selected>✅ CORS Bypass (Worker) - Best</option>
-                <option value="https://cors-proxy.spaceinbox.workers.dev/?url=">✅ CORS Proxy Worker - Fast</option>
-                <option value="https://cors-anywhere.herokuapp.com/">⚠️ CORS Anywhere (Needs Demo)</option>
-                <option value="https://thingproxy.freeboard.io/fetch/">🔄 ThingProxy</option>
-            </select>
-            <button onclick="testSelectedProxy()" class="test-btn">✓ Test Selected</button>
-            <button onclick="findWorkingProxy()" class="proxy-btn">🔍 Find Working Proxy</button>
-            <button onclick="connectWithProxy()" class="refresh-btn">🚀 Connect via Proxy</button>
-            <span id="proxyTestResult" class="proxy-status"></span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="padding: 10px 24px; display: flex; gap: 15px; background: #f8f9fa; border-bottom: 2px solid #dee2e9; flex-wrap: wrap;">
-            <button onclick="testDirectConnection()" class="test-btn">Test Direct Connection</button>
-            <button onclick="loadSavedConfig()" class="proxy-btn">Load Saved Config</button>
-            <span id="globalConnectionStatus" class="connection-status">Ready</span>
-        </div>
+        <input type="text" id="apiUsername" value="SOURAV" style="display: none;">
+        <input type="password" id="apiPassword" value="KUMAR@1308" style="display: none;">
+        <input type="text" id="reportId" value="r17d84895210.rpt" style="display: none;">
 
         <div class="nav-sidebar" id="tabNav"></div>
 
@@ -742,7 +530,7 @@
 
         <div class="dashboard-footer">
             <div class="footer-left">
-                <span>© 2026 CRIUS Group - Auto-Connect Edition</span>
+                <span>© 2026 CRIUS Group</span>
             </div>
             <div class="footer-right">
                 <span>🌐 v3.0 | AUTO-CONNECT</span>
@@ -760,10 +548,9 @@
         };
 
         const PROXIES = [
-            { name: 'CORS Bypass (Worker) - Best', url: 'https://cors-anywhere.azm.workers.dev/?' },
-            { name: 'CORS Proxy Worker - Fast', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-            { name: 'CORS Anywhere (Heroku) - Needs Demo', url: 'https://cors-anywhere.herokuapp.com/' },
-            { name: 'ThingProxy', url: 'https://thingproxy.freeboard.io/fetch/' }
+            { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
+            { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
+            { name: 'CORS Anywhere', url: 'https://cors-anywhere.herokuapp.com/' }
         ];
 
         // ==================== AUTO-CONNECT VARIABLES ====================
@@ -805,80 +592,80 @@
             { id: 'dpr', name: '📋 Daily Dispatch Details (DPR)' }
         ];
 
-        // ==================== AUTO-CONNECT FUNCTIONS ====================
+        // ==================== INITIALIZATION ====================
         window.onload = function() {
             initializeUI();
             loadSavedConfig();
             loadSavedProxy();
             
-            // Show auto-connect status
-            updateAutoConnectStatus();
-            
-            // Start auto-connect process
+            // Start auto-connect
             setTimeout(() => {
                 autoConnect();
-            }, 1500);
+            }, 1000);
         };
 
         function loadSavedProxy() {
             const savedProxy = localStorage.getItem('workingProxy');
             if (savedProxy) {
+                workingProxyUrl = savedProxy;
                 const select = document.getElementById('proxySelect');
                 for (let i = 0; i < select.options.length; i++) {
                     if (select.options[i].value === savedProxy) {
                         select.selectedIndex = i;
-                        document.getElementById('savedProxyInfo').innerHTML = ` | Saved: ${getProxyName(savedProxy)}`;
                         break;
                     }
                 }
             }
         }
 
-        function updateAutoConnectStatus() {
-            const statusEl = document.getElementById('autoConnectStatus');
-            if (workingProxyUrl) {
-                statusEl.innerHTML = `✅ Auto-connect ready (using saved proxy)`;
-            } else {
-                statusEl.innerHTML = `🔄 Auto-connect will find best proxy`;
+        function initializeUI() {
+            updateLastUpdateTime(new Date());
+            createTabs();
+            createTabContainers();
+        }
+
+        function updateLastUpdateTime(date) {
+            const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + date.toLocaleDateString('en-GB', options);
+        }
+
+        function loadSavedConfig() {
+            const saved = localStorage.getItem('smartenConfig');
+            if (saved) {
+                try {
+                    CONFIG = JSON.parse(saved);
+                } catch (e) {}
             }
         }
 
-        function getProxyName(proxyUrl) {
-            if (proxyUrl.includes('azm.workers.dev')) return 'CORS Bypass';
-            if (proxyUrl.includes('spaceinbox.workers.dev')) return 'CORS Proxy Worker';
-            if (proxyUrl.includes('herokuapp.com')) return 'CORS Anywhere';
-            if (proxyUrl.includes('thingproxy')) return 'ThingProxy';
-            return 'Proxy';
+        function getServerUrl() {
+            return 'http://43.246.140.102:6060/smarten/';
         }
 
+        function showStatus(message, color) {
+            document.getElementById('autoConnectStatus').innerHTML = message;
+        }
+
+        // ==================== AUTO-CONNECT FUNCTIONS ====================
         async function autoConnect() {
             document.getElementById('loading').style.display = 'block';
             
-            // Try saved proxy first
             if (workingProxyUrl) {
-                document.getElementById('loading').textContent = `Auto-connecting with saved proxy (${getProxyName(workingProxyUrl)})...`;
+                document.getElementById('loading').textContent = 'Connecting with saved proxy...';
                 try {
                     await connectWithProxy(workingProxyUrl);
                     return;
                 } catch (e) {
-                    console.log('Saved proxy failed, finding new one...');
                     localStorage.removeItem('workingProxy');
                     workingProxyUrl = null;
                 }
             }
             
-            // Find best proxy
             await autoFindAndConnect();
         }
 
         async function autoFindAndConnect() {
-            document.getElementById('loading').textContent = 'Finding best proxy automatically...';
-            
-            const proxies = [
-                { name: 'CORS Bypass', url: 'https://cors-anywhere.azm.workers.dev/?' },
-                { name: 'CORS Proxy Worker', url: 'https://cors-proxy.spaceinbox.workers.dev/?url=' },
-                { name: 'CORS Anywhere', url: 'https://cors-anywhere.herokuapp.com/' }
-            ];
+            document.getElementById('loading').textContent = 'Finding best proxy...';
             
             const testUrl = 'http://43.246.140.102:6060/smarten/API/getToken';
             const params = new URLSearchParams({
@@ -888,7 +675,7 @@
                 type: 'data'
             });
             
-            for (const proxy of proxies) {
+            for (const proxy of PROXIES) {
                 try {
                     document.getElementById('loading').textContent = `Testing ${proxy.name}...`;
                     
@@ -898,11 +685,9 @@
                     });
                     
                     if (response.ok) {
-                        // Save working proxy
                         localStorage.setItem('workingProxy', proxy.url);
                         workingProxyUrl = proxy.url;
                         
-                        // Select in dropdown
                         const select = document.getElementById('proxySelect');
                         for (let i = 0; i < select.options.length; i++) {
                             if (select.options[i].value === proxy.url) {
@@ -911,80 +696,504 @@
                             }
                         }
                         
-                        document.getElementById('savedProxyInfo').innerHTML = ` | Saved: ${proxy.name}`;
-                        
-                        // Connect
                         await connectWithProxy(proxy.url);
                         return;
                     }
-                } catch (e) {
-                    console.log(`${proxy.name} failed:`, e.message);
-                }
+                } catch (e) {}
             }
             
-            // If all fail, show manual option
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
-            document.getElementById('error').innerHTML = `
-                <strong>Auto-connect failed.</strong><br>
-                Please click "Find Working Proxy" to connect manually.
-            `;
+            document.getElementById('error').innerHTML = 'Auto-connect failed. Please refresh.';
         }
 
         function startKeepAlive() {
-            if (keepAliveInterval) {
-                clearInterval(keepAliveInterval);
-            }
-            
-            // Ping every 5 minutes to keep connection alive
-            keepAliveInterval = setInterval(async () => {
-                console.log('Keep-alive ping...');
+            if (keepAliveInterval) clearInterval(keepAliveInterval);
+            keepAliveInterval = setInterval(() => {
                 if (allData.length > 0 && workingProxyUrl) {
-                    await refreshData();
+                    refreshData();
                 }
             }, 5 * 60 * 1000);
         }
 
-        function resetConnection() {
-            if (confirm('Reset connection settings? This will clear saved proxy.')) {
-                localStorage.removeItem('workingProxy');
-                workingProxyUrl = null;
-                if (keepAliveInterval) {
-                    clearInterval(keepAliveInterval);
+        // ==================== PROXY CONNECTION ====================
+        async function connectWithProxy(proxyUrl) {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('loading').textContent = 'Loading data...';
+                document.getElementById('error').style.display = 'none';
+
+                const baseUrl = 'http://43.246.140.102:6060/smarten/';
+                const params = new URLSearchParams({
+                    username: 'SOURAV',
+                    password: 'KUMAR@1308',
+                    objectid: 'r17d84895210.rpt',
+                    type: 'data'
+                });
+
+                // Get token
+                const tokenUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getToken?' + params.toString());
+                const tokenResponse = await fetch(tokenUrl, {
+                    method: 'GET',
+                    headers: { 'Origin': window.location.origin }
+                });
+
+                if (!tokenResponse.ok) throw new Error('Token fetch failed');
+                
+                const token = await tokenResponse.text();
+
+                // Get data
+                const dataUrl = proxyUrl + encodeURIComponent(baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token));
+                const dataResponse = await fetch(dataUrl, {
+                    headers: { 'Origin': window.location.origin }
+                });
+
+                const responseText = await dataResponse.text();
+
+                // Parse XML
+                let reportData = parseXmlData(responseText);
+                
+                if (!reportData || reportData.length === 0) {
+                    throw new Error('No data found');
                 }
-                document.getElementById('savedProxyInfo').innerHTML = '';
-                document.getElementById('autoConnectStatus').innerHTML = '🔄 Auto-connect enabled';
-                location.reload();
+
+                headers = reportData[0] || [];
+                reportData = reportData.slice(1);
+                
+                allData = transformData(reportData);
+                
+                if (allData.length === 0) {
+                    throw new Error('No valid data');
+                }
+
+                filteredData = [...allData];
+                
+                rebuildUniqueSets();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('tabContainers').style.display = 'block';
+                document.getElementById('grandFooter').style.display = 'flex';
+                document.getElementById('apiBadge').style.display = 'inline-block';
+                document.getElementById('autoConnectStatus').innerHTML = '✅ Connected';
+                
+                updateLastUpdateTime(new Date());
+                updateFilterOptions();
+                renderAllTables();
+                
+                startKeepAlive();
+
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = 'Connection error: ' + error.message;
             }
         }
 
-        // ==================== EXISTING FUNCTIONS (Keep all your existing functions below) ====================
-        // [All your existing functions: onServerChange, initializeUI, saveConfig, loadSavedConfig, 
-        //  getServerUrl, showStatus, updateLastUpdateTime, testProxy, testSelectedProxy, 
-        //  findWorkingProxy, useWorkingProxy, parseXmlData, fallbackParse, connectWithProxy,
-        //  transformData, rebuildUniqueSets, refreshData, createTabs, createTabContainers,
-        //  getTabHTML, switchTab, updateFilterOptions, applyFilters, updateActiveFiltersDisplay,
-        //  removeFilter, clearAllFilters, resetFilters, sortTable, prevPage, nextPage,
-        //  formatNumber, formatPercentage, getPercentageClass, renderAllTables, 
-        //  renderMktByTable, renderLocationTable, renderProductTypeTable, renderSfWiseTable,
-        //  renderSfCodeTable, renderBrandMonthlyTable, renderBrandSummaryTable,
-        //  renderProductMonthDetailTable, renderProductMonthSummaryTable, renderDprTable,
-        //  renderDispatchLocationTable, updateGrandTotal, applyDrilldown]
+        // ==================== XML PARSING ====================
+        function parseXmlData(xmlString) {
+            try {
+                const fullXml = xmlString.split('\n').join('');
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(fullXml, 'text/xml');
+                
+                const rows = xmlDoc.getElementsByTagName('Row');
+                if (rows.length === 0) return [];
+                
+                const data = [];
+                
+                // Get headers from first row
+                const firstRow = rows[0];
+                const headers = [];
+                const cols = firstRow.getElementsByTagName('Column');
+                for (let col of cols) {
+                    headers.push(col.textContent || '');
+                }
+                if (headers.length > 0) data.push(headers);
+                
+                // Get data rows
+                for (let i = 0; i < rows.length; i++) {
+                    const rowData = [];
+                    const cols = rows[i].getElementsByTagName('Column');
+                    for (let col of cols) {
+                        rowData.push((col.textContent || '').trim());
+                    }
+                    if (rowData.length > 0) data.push(rowData);
+                }
+                
+                return data;
+                
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function transformData(rows) {
+            if (rows.length === 0) return [];
+            
+            return rows.map((row, idx) => ({
+                id: `row_${idx}`,
+                location: row[0] || '',
+                bill_no: row[1] || '',
+                bill_date: row[2] || '',
+                product_name: row[3] || '',
+                product_type: row[4] || '',
+                batch_no: row[5] || '',
+                sale_qty: parseFloat(row[6]) || 0,
+                basic_value: parseFloat(row[7]) || 0,
+                sf_code: row[8] || '',
+                sf_name: row[9] || '',
+                mkt_by: row[10] || '',
+                city: row[11] || '',
+                state: row[12] || ''
+            }));
+        }
+
+        function rebuildUniqueSets() {
+            uniqueLocations.clear();
+            uniqueMktBy.clear();
+            uniqueProductTypes.clear();
+            
+            allData.forEach(item => {
+                if (item.location) uniqueLocations.add(item.location);
+                if (item.mkt_by) uniqueMktBy.add(item.mkt_by);
+                if (item.product_type) uniqueProductTypes.add(item.product_type);
+            });
+        }
+
+        function refreshData() {
+            if (workingProxyUrl) {
+                connectWithProxy(workingProxyUrl);
+            }
+        }
+
+        // ==================== TAB FUNCTIONS ====================
+        function createTabs() {
+            const tabNav = document.getElementById('tabNav');
+            tabNav.innerHTML = '';
+            
+            tabs.forEach((tab, index) => {
+                const tabElement = document.createElement('div');
+                tabElement.className = `nav-item ${index === 0 ? 'active' : ''}`;
+                tabElement.setAttribute('data-tab', tab.id);
+                tabElement.textContent = tab.name;
+                tabElement.onclick = () => switchTab(tab.id);
+                tabNav.appendChild(tabElement);
+            });
+        }
+
+        function createTabContainers() {
+            const containers = document.getElementById('tabContainers');
+            containers.innerHTML = '';
+            
+            tabs.forEach((tab, index) => {
+                const container = document.createElement('div');
+                container.id = `tab-${tab.id}`;
+                container.className = `tab-content ${index === 0 ? 'active' : ''}`;
+                container.innerHTML = getTabHTML(tab.id);
+                containers.appendChild(container);
+            });
+        }
+
+        function getTabHTML(tabId) {
+            // [Keep your existing getTabHTML function - it's long so I'm not repeating it]
+            // You need to keep ALL your table rendering HTML here
+            return ''; // Placeholder - use your original getTabHTML
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if(item.getAttribute('data-tab') === tabId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // ==================== FILTER FUNCTIONS ====================
+        function updateFilterOptions() {
+            const locationSelect = document.getElementById('locationFilter');
+            const mktBySelect = document.getElementById('mktByFilter');
+            const productTypeSelect = document.getElementById('productTypeFilter');
+            
+            locationSelect.innerHTML = '<option value="all">All Locations</option>';
+            mktBySelect.innerHTML = '<option value="all">All</option>';
+            productTypeSelect.innerHTML = '<option value="all">All Types</option>';
+            
+            Array.from(uniqueLocations).sort().forEach(loc => {
+                if (loc) {
+                    const option = document.createElement('option');
+                    option.value = loc;
+                    option.textContent = loc;
+                    locationSelect.appendChild(option);
+                }
+            });
+
+            Array.from(uniqueMktBy).sort().forEach(mkt => {
+                if (mkt) {
+                    const option = document.createElement('option');
+                    option.value = mkt;
+                    option.textContent = mkt;
+                    mktBySelect.appendChild(option);
+                }
+            });
+
+            Array.from(uniqueProductTypes).sort().forEach(type => {
+                if (type) {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    productTypeSelect.appendChild(option);
+                }
+            });
+        }
+
+        function applyFilters() {
+            activeFilters.location = document.getElementById('locationFilter').value !== 'all' ? document.getElementById('locationFilter').value : null;
+            activeFilters.mktBy = document.getElementById('mktByFilter').value !== 'all' ? document.getElementById('mktByFilter').value : null;
+            activeFilters.productType = document.getElementById('productTypeFilter').value !== 'all' ? document.getElementById('productTypeFilter').value : null;
+            activeFilters.dateFrom = document.getElementById('dateFrom').value;
+            activeFilters.dateTo = document.getElementById('dateTo').value;
+            activeFilters.search = document.getElementById('globalSearch').value || null;
+
+            filteredData = allData.filter(item => {
+                if (activeFilters.location && item.location !== activeFilters.location) return false;
+                if (activeFilters.mktBy && item.mkt_by !== activeFilters.mktBy) return false;
+                if (activeFilters.productType && item.product_type !== activeFilters.productType) return false;
+                
+                if (activeFilters.dateFrom && item.bill_date) {
+                    const itemDate = item.bill_date.substring(0, 7);
+                    if (itemDate < activeFilters.dateFrom) return false;
+                }
+                if (activeFilters.dateTo && item.bill_date) {
+                    const itemDate = item.bill_date.substring(0, 7);
+                    if (itemDate > activeFilters.dateTo) return false;
+                }
+                
+                if (activeFilters.search) {
+                    const searchTerm = activeFilters.search.toLowerCase();
+                    const searchableFields = [
+                        item.product_name,
+                        item.sf_name,
+                        item.mkt_by,
+                        item.location,
+                        item.batch_no,
+                        item.sf_code
+                    ].map(f => (f || '').toLowerCase());
+                    
+                    if (!searchableFields.some(field => field.includes(searchTerm))) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+
+            updateActiveFiltersDisplay();
+            currentPage = 1;
+            renderAllTables();
+        }
+
+        function updateActiveFiltersDisplay() {
+            const bar = document.getElementById('activeFiltersBar');
+            const container = document.getElementById('activeFilters');
+            
+            const activeFilterList = [];
+            
+            if (activeFilters.location) activeFilterList.push(`Location: ${activeFilters.location}`);
+            if (activeFilters.mktBy) activeFilterList.push(`Mkt By: ${activeFilters.mktBy}`);
+            if (activeFilters.productType) activeFilterList.push(`Product Type: ${activeFilters.productType}`);
+            if (activeFilters.dateFrom) activeFilterList.push(`From: ${activeFilters.dateFrom}`);
+            if (activeFilters.dateTo) activeFilterList.push(`To: ${activeFilters.dateTo}`);
+            if (activeFilters.search) activeFilterList.push(`Search: "${activeFilters.search}"`);
+            
+            if (activeFilterList.length > 0) {
+                bar.style.display = 'flex';
+                container.innerHTML = activeFilterList.map(filter => 
+                    `<span class="filter-tag">${filter} <button onclick="removeFilter('${filter.split(':')[0].trim().toLowerCase()}')">✕</button></span>`
+                ).join(' ');
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function removeFilter(filterType) {
+            switch(filterType) {
+                case 'location':
+                    document.getElementById('locationFilter').value = 'all';
+                    activeFilters.location = null;
+                    break;
+                case 'mkt':
+                    document.getElementById('mktByFilter').value = 'all';
+                    activeFilters.mktBy = null;
+                    break;
+                case 'product':
+                    document.getElementById('productTypeFilter').value = 'all';
+                    activeFilters.productType = null;
+                    break;
+                case 'from':
+                    document.getElementById('dateFrom').value = '';
+                    activeFilters.dateFrom = null;
+                    break;
+                case 'to':
+                    document.getElementById('dateTo').value = '';
+                    activeFilters.dateTo = null;
+                    break;
+                case 'search':
+                    document.getElementById('globalSearch').value = '';
+                    activeFilters.search = null;
+                    break;
+            }
+            applyFilters();
+        }
+
+        function clearAllFilters() {
+            document.getElementById('locationFilter').value = 'all';
+            document.getElementById('mktByFilter').value = 'all';
+            document.getElementById('productTypeFilter').value = 'all';
+            document.getElementById('dateFrom').value = '2025-02';
+            document.getElementById('dateTo').value = '2026-02';
+            document.getElementById('globalSearch').value = '';
+            
+            activeFilters = {
+                location: null,
+                mktBy: null,
+                productType: null,
+                dateFrom: '2025-02',
+                dateTo: '2026-02',
+                search: null
+            };
+            
+            filteredData = [...allData];
+            updateActiveFiltersDisplay();
+            renderAllTables();
+        }
+
+        function resetFilters() {
+            clearAllFilters();
+        }
+
+        // ==================== SORT FUNCTIONS ====================
+        function sortTable(tableType, columnIndex) {
+            const state = sortStates[tableType];
+            if (!state) return;
+            
+            if (state.column === columnIndex) {
+                state.direction = state.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                state.column = columnIndex;
+                state.direction = 'desc';
+            }
+
+            document.querySelectorAll(`#${tableType}Header th`).forEach((th, idx) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            const headerCell = document.querySelector(`#${tableType}Header th:nth-child(${columnIndex + 1})`);
+            if (headerCell) {
+                headerCell.classList.add(`sort-${state.direction}`);
+            }
+
+            renderAllTables();
+        }
+
+        // ==================== PAGINATION FUNCTIONS ====================
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderAllTables();
+            }
+        }
+
+        function nextPage() {
+            currentPage++;
+            renderAllTables();
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatNumber(num) {
+            if (!num || isNaN(num)) return '-';
+            return num.toLocaleString('en-IN', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+        }
+
+        function formatPercentage(num) {
+            if (!num || isNaN(num)) return '-';
+            return num.toFixed(2) + '%';
+        }
+
+        function getPercentageClass(value) {
+            if (value > 0) return 'percentage-positive';
+            if (value < 0) return 'percentage-negative';
+            return '';
+        }
+
+        // ==================== TABLE RENDERING FUNCTIONS ====================
+        function renderAllTables() {
+            if (filteredData.length === 0) {
+                document.querySelectorAll('tbody').forEach(body => {
+                    body.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available.</td></tr>';
+                });
+                return;
+            }
+
+            renderMktByTable();
+            renderLocationTable();
+            renderProductTypeTable();
+            renderSfWiseTable();
+            renderSfCodeTable();
+            renderBrandMonthlyTable();
+            renderBrandSummaryTable();
+            renderProductMonthDetailTable();
+            renderProductMonthSummaryTable();
+            renderDprTable();
+            renderDispatchLocationTable();
+            updateGrandTotal();
+        }
+
+        // [Add all your render functions here - mktBy, location, productType, sfWise, etc.]
+        // Keep all your existing render functions from your original code
         
-        // [PASTE ALL YOUR EXISTING FUNCTIONS HERE - they remain exactly the same]
-        // For brevity, I'm not repeating them here, but you need to keep ALL your existing
-        // functions from your original code. The key additions are the auto-connect functions above.
-        
-        // Make sure to expose all functions to window
-        window.testDirectConnection = testDirectConnection;
-        window.testSelectedProxy = testSelectedProxy;
-        window.findWorkingProxy = findWorkingProxy;
-        window.connectWithProxy = connectWithProxy;
-        window.useWorkingProxy = useWorkingProxy;
-        window.refreshData = refreshData;
-        window.saveConfig = saveConfig;
-        window.loadSavedConfig = loadSavedConfig;
-        window.onServerChange = onServerChange;
+        function updateGrandTotal() {
+            const grandTotal = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
+            document.getElementById('grandTotalValue').textContent = formatNumber(grandTotal);
+        }
+
+        function applyDrilldown(type, value) {
+            switch(type) {
+                case 'location':
+                    document.getElementById('locationFilter').value = value;
+                    break;
+                case 'mktBy':
+                    document.getElementById('mktByFilter').value = value;
+                    break;
+                case 'productType':
+                    document.getElementById('productTypeFilter').value = value;
+                    break;
+                case 'sfName':
+                case 'sfCode':
+                case 'product':
+                    document.getElementById('globalSearch').value = value;
+                    break;
+                case 'month':
+                case 'date':
+                    if (value && value.length >= 7) {
+                        const yearMonth = value.substring(0, 7);
+                        document.getElementById('dateFrom').value = yearMonth;
+                        document.getElementById('dateTo').value = yearMonth;
+                    }
+                    break;
+            }
+            applyFilters();
+        }
+
+        // ==================== EXPOSE FUNCTIONS ====================
         window.applyFilters = applyFilters;
         window.sortTable = sortTable;
         window.prevPage = prevPage;
@@ -993,8 +1202,7 @@
         window.clearAllFilters = clearAllFilters;
         window.removeFilter = removeFilter;
         window.applyDrilldown = applyDrilldown;
-        window.requestCorsAnywhereAccess = requestCorsAnywhereAccess;
-        window.resetConnection = resetConnection;
+        window.refreshData = refreshData;
     </script>
 </body>
 </html>
