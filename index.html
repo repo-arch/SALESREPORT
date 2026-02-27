@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Dash Board · FILTERS 100% WORKING · all tables update</title>
+    <title>Business Dash Board · Compact · PDF exact tables</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
-        body { background:#eef2f5; padding:16px; }
-        .dashboard { max-width:1600px; margin:0 auto; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); overflow:hidden; }
-        .main-header { background:#0b2b4a; color:white; padding:16px 24px; font-size:26px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
-        .main-header small { background:#2a4c73; padding:4px 12px; border-radius:30px; margin-left:16px; font-size:14px; }
-        .weather { display:flex; gap:24px; font-size:14px; color:#ffd966; align-items:center; }
-        .last-update { color:#bdd3ff; }
-        .tabs { display:flex; background:#f0f4f8; border-bottom:2px solid #cbd5e1; }
-        .tab-btn { padding:12px 24px; font-size:14px; font-weight:500; background:transparent; border:none; border-right:1px solid #cbd5e1; color:#1e3a5f; cursor:pointer; }
+        body { background:#eef2f5; padding:10px; }
+        .dashboard { max-width:1300px; margin:0 auto; background:white; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); overflow:hidden; }
+
+        /* header */
+        .main-header { background:#0b2b4a; color:white; padding:12px 18px; font-size:20px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+        .main-header small { background:#2a4c73; padding:2px 10px; border-radius:30px; font-size:11px; margin-left:10px; }
+        .weather { display:flex; gap:20px; font-size:12px; color:#ffd966; align-items:center; }
+
+        /* tabs */
+        .tabs { display:flex; background:#f0f4f8; border-bottom:2px solid #cbd5e1; flex-wrap:wrap; }
+        .tab-btn { padding:8px 16px; font-size:12px; font-weight:500; background:transparent; border:none; border-right:1px solid #cbd5e1; color:#1e3a5f; cursor:pointer; }
         .tab-btn.active { background:#0b2b4a; color:white; }
-        .filter-bar { background:#f9fcff; padding:14px 20px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; border-bottom:2px solid #cbd5e1; }
-        .filter-group { display:flex; align-items:center; gap:6px; font-size:13px; }
-        .filter-group label { font-weight:600; color:#0b2b4a; min-width:50px; }
-        .filter-group select, .filter-group input { padding:6px 10px; border:1px solid #9aa9b9; border-radius:6px; background:white; }
-        .search-box { display:flex; border:1px solid #9aa9b9; border-radius:6px; overflow:hidden; }
-        .search-box input { border:none; padding:6px 10px; width:220px; outline:none; }
-        .search-box button { background:#0b2b4a; color:white; border:none; padding:6px 16px; cursor:pointer; }
-        .refresh-btn { background:#0b2b4a; color:white; border:none; padding:6px 16px; border-radius:6px; display:flex; align-items:center; gap:6px; cursor:pointer; }
-        .reset-btn { background:#d6562b; color:white; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; }
-        .active-filters-bar { background:#fff6d9; padding:10px 20px; display:none; flex-wrap:wrap; gap:10px; align-items:center; border-bottom:2px solid #ffe28c; }
-        .filter-tag { background:#ffd966; padding:4px 12px; border-radius:30px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:8px; }
-        .filter-tag button { background:none; border:none; cursor:pointer; font-weight:700; color:#1e3a5f; }
-        .content { padding:20px; }
+
+        /* filter bar – multi select + search */
+        .filter-bar { background:#f9fcff; padding:10px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; border-bottom:2px solid #cbd5e1; font-size:12px; }
+        .filter-group { display:flex; align-items:center; gap:4px; }
+        .filter-group label { font-weight:600; color:#0b2b4a; min-width:40px; font-size:11px; }
+        .filter-group select, .filter-group input { padding:4px 6px; border:1px solid #9aa9b9; border-radius:4px; background:white; font-size:11px; }
+        .multi-select { min-width:130px; max-width:160px; height:26px; }
+        .search-box { display:flex; border:1px solid #9aa9b9; border-radius:4px; overflow:hidden; }
+        .search-box input { border:none; padding:4px 8px; width:140px; outline:none; font-size:11px; }
+        .search-box button { background:#0b2b4a; color:white; border:none; padding:4px 10px; cursor:pointer; font-size:11px; }
+        .action-btn { padding:4px 12px; border:none; border-radius:4px; font-weight:500; cursor:pointer; font-size:11px; }
+        .refresh-btn { background:#0b2b4a; color:white; display:flex; align-items:center; gap:3px; }
+        .reset-btn { background:#d6562b; color:white; }
+
+        /* active filters */
+        .active-filters-bar { background:#fff6d9; padding:6px 14px; display:none; flex-wrap:wrap; gap:5px; align-items:center; border-bottom:2px solid #ffe28c; font-size:11px; }
+        .filter-tag { background:#ffd966; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; display:inline-flex; align-items:center; gap:4px; }
+
+        /* content */
+        .content { padding:14px; }
         .tab-pane { display:none; }
         .tab-pane.active { display:block; }
-        .section-title { font-size:18px; font-weight:700; color:#0b2b4a; margin:25px 0 12px; border-bottom:2px solid #d0ddeb; padding-bottom:6px; display:flex; justify-content:space-between; }
-        .table-wrapper { border:1px solid #b7c1cf; border-radius:8px; overflow:auto; max-height:480px; margin-bottom:30px; }
-        table { width:100%; border-collapse:collapse; font-size:13px; min-width:800px; }
-        thead th { background:#1f4172; color:white; padding:10px 8px; border:1px solid #102a4a; position:sticky; top:0; white-space:nowrap; }
-        tbody td { padding:8px 8px; border:1px solid #b7c1cf; white-space:nowrap; }
+
+        .section-title { font-size:15px; font-weight:700; color:#0b2b4a; margin:15px 0 8px; border-bottom:2px solid #d0ddeb; padding-bottom:4px; display:flex; justify-content:space-between; }
+        .total-badge { font-size:11px; background:#e6f0ff; padding:2px 8px; border-radius:20px; }
+
+        /* tables - compact */
+        .table-wrapper { border:1px solid #b7c1cf; border-radius:5px; overflow:auto; max-height:350px; margin-bottom:18px; }
+        table { width:100%; border-collapse:collapse; font-size:11px; min-width:600px; }
+        thead th { background:#1f4172; color:white; padding:6px 4px; border:1px solid #102a4a; position:sticky; top:0; white-space:nowrap; cursor:pointer; user-select:none; }
+        thead th.sort-asc::after { content:" ↑"; margin-left:2px; color:#ffd966; }
+        thead th.sort-desc::after { content:" ↓"; margin-left:2px; color:#ffd966; }
+        tbody td { padding:4px 4px; border:1px solid #b7c1cf; white-space:nowrap; }
         tbody tr:hover { background:#f2f8ff; }
-        tfoot td { background:#d6562b; color:white; font-weight:700; padding:8px; border:1px solid #b7c1cf; position:sticky; bottom:0; }
+        tfoot td { background:#d6562b; color:white; font-weight:600; padding:4px; border:1px solid #b7c1cf; position:sticky; bottom:0; }
         .clickable { cursor:pointer; transition:0.1s; }
         .clickable:hover { background:#ffe8c7 !important; font-weight:500; }
         .text-right { text-align:right; }
-        .pagination { display:flex; gap:12px; align-items:center; }
-        .grand-footer { background:#0b2b4a; color:white; padding:14px 24px; display:flex; justify-content:space-between; font-weight:700; }
-        .dashboard-footer { background:#0b2b4a; color:white; padding:12px 24px; display:flex; justify-content:space-between; font-size:13px; border-top:2px solid #1f4a7a; }
-        .percentage-positive { color:#2e7d32; font-weight:600; }
-        .percentage-negative { color:#c62828; font-weight:600; }
-        .loading { text-align:center; padding:80px; color:#1f4172; }
+
+        .pagination { display:flex; gap:8px; align-items:center; }
+        .grand-footer { background:#0b2b4a; color:white; padding:10px 18px; display:flex; justify-content:space-between; font-weight:600; font-size:13px; }
+        .dashboard-footer { background:#0b2b4a; color:white; padding:8px 18px; display:flex; justify-content:space-between; font-size:11px; border-top:2px solid #1f4a7a; }
     </style>
 </head>
 <body>
@@ -57,30 +71,31 @@
 
     <div class="tabs" id="tabContainer"></div>
 
+    <!-- FILTERS with multi-select (holding Ctrl/Cmd for multiple) -->
     <div class="filter-bar">
-        <div class="filter-group"><label>Location</label><select id="locationFilter" onchange="filterChanged()"><option value="">All Locations</option></select></div>
-        <div class="filter-group"><label>Mkt By</label><select id="mktByFilter" onchange="filterChanged()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Product Type</label><select id="productTypeFilter" onchange="filterChanged()"><option value="">All Types</option></select></div>
+        <div class="filter-group"><label>Location</label><select id="locationFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All Locations</option></select></div>
+        <div class="filter-group"><label>Mkt By</label><select id="mktByFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All</option></select></div>
+        <div class="filter-group"><label>Product Type</label><select id="productTypeFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All Types</option></select></div>
         <div class="filter-group"><label>From</label><input type="month" id="dateFrom" onchange="filterChanged()" placeholder="YYYY-MM"></div>
         <div class="filter-group"><label>To</label><input type="month" id="dateTo" onchange="filterChanged()" placeholder="YYYY-MM"></div>
         <div class="search-box"><input placeholder="Search product, SF..." id="globalSearch" onkeyup="filterChanged()"><button onclick="filterChanged()">🔍</button></div>
-        <button class="refresh-btn" onclick="refreshData()"><span>🔄</span> Refresh</button>
-        <button class="reset-btn" onclick="resetAllFilters()">Reset</button>
+        <button class="action-btn refresh-btn" onclick="refreshData()"><span>🔄</span> Refresh</button>
+        <button class="action-btn reset-btn" onclick="clearAllFilters()">Reset</button>
     </div>
     
     <div class="active-filters-bar" id="activeFiltersBar">
         <span style="font-weight:600;">Active:</span>
         <span id="activeFilters"></span>
-        <button onclick="clearAllFilters()" style="margin-left:auto; background:none; border:none; color:#856404;">✕ clear all</button>
+        <button onclick="clearAllFilters()" style="margin-left:auto; background:none; border:none; color:#856404; font-size:11px;">✕ clear all</button>
     </div>
 
-    <div id="loading" class="loading">⬇️ Loading from Firebase ...</div>
-    <div id="error" style="display:none; background:#ffebee; color:#b71c1c; padding:40px; text-align:center;"></div>
+    <div id="loading" class="loading" style="display:none; text-align:center; padding:40px;">⬇️ Loading ...</div>
+    <div id="error" style="display:none; background:#ffebee; padding:30px; text-align:center;"></div>
 
     <div class="content" id="tabPanes"></div>
 
     <div class="grand-footer"><span>Overall Grand Total (filtered)</span><span id="grandTotalValue">0</span></div>
-    <div class="dashboard-footer"><span>🏅 Olympic Games · today's updates</span><span id="footerWeather">24°C Sunny · ENG | IN</span></div>
+    <div class="dashboard-footer"><span>🏅 29°C · today's updates</span><span id="footerWeather">ENG | IN</span></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -99,30 +114,40 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Global variables
+    // ---------- GLOBALS ----------
     let allData = [];
     let filteredData = [];
-    let uniqueValues = {
-        locations: new Set(),
-        mktBy: new Set(),
-        productTypes: new Set()
-    };
+    let uniqueValues = { locations: new Set(), mktBy: new Set(), productTypes: new Set() };
     let globalLastUpdate = '';
+
+    // Sorting state per table (we'll handle generically)
+    let sortState = {
+        fy: { col:0, dir:'asc' },
+        cat: { col:1, dir:'desc' },
+        dosage: { col:1, dir:'desc' },
+        mktSimple: { col:1, dir:'desc' },
+        sfWise: { col:4, dir:'desc' },
+        sfCode: { col:4, dir:'desc' },
+        prodDetail: { col:3, dir:'desc' },
+        prodSummary: { col:2, dir:'desc' },
+        dpr: { col:0, dir:'desc' },
+        locDispatch: { col:3, dir:'desc' }
+    };
 
     // Pagination
     let currentPage = 1;
     const pageSize = 50;
 
-    // Tabs
+    // Tabs exactly as PDF
     const tabs = [
-        { id: 'salesBoard', name: 'SALES DASH BOARD' },
+        { id: 'salesBoard', name: 'SALE DASH BOARD' },
         { id: 'mktSf', name: 'Mkt By & SF' },
         { id: 'sfBrand', name: 'SF & Brand' },
         { id: 'prodMonth', name: 'Product Month Wise' },
         { id: 'dispatch', name: 'Daily Dispatch (DPR)' }
     ];
 
-    // Initialize
+    // ---------- INIT ----------
     window.onload = function() {
         createTabs();
         createPanes();
@@ -156,40 +181,40 @@
     }
 
     function buildPaneContents() {
-        // Pane 1
+        // SALE DASH BOARD (first tab)
         document.getElementById('pane-salesBoard').innerHTML = `
             <div class="section-title">Financial Year / Basic_Value <span class="total-badge" id="fyTotal"></span></div>
-            <div class="table-wrapper"><table id="fyTable"><thead><tr><th>Mkt_By</th><th>2026</th><th>2025</th><th>2024</th><th>Grand total</th></tr></thead><tbody id="fyBody"></tbody><tfoot id="fyFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="fyTable"><thead><tr><th onclick="sortTable('fy',0)">Mkt_By</th><th onclick="sortTable('fy',1)">2026</th><th onclick="sortTable('fy',2)">2025</th><th onclick="sortTable('fy',3)">2024</th><th onclick="sortTable('fy',4)">Grand total</th></tr></thead><tbody id="fyBody"></tbody><tfoot id="fyFoot"></tfoot></table></div>
             <div class="section-title">Product Type <span class="total-badge" id="catTotal"></span></div>
-            <div class="table-wrapper"><table id="catTable"><thead><tr><th>Product_Type</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="catBody"></tbody><tfoot id="catFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="catTable"><thead><tr><th onclick="sortTable('cat',0)">Product_Type</th><th onclick="sortTable('cat',1)">Basic_Value</th><th onclick="sortTable('cat',2)">%</th></tr></thead><tbody id="catBody"></tbody><tfoot id="catFoot"></tfoot></table></div>
             <div class="section-title">Dosage_Form / Sale Qty <span class="total-badge" id="dosageTotal"></span></div>
-            <div class="table-wrapper"><table id="dosageTable"><thead><tr><th>Dosage_Form</th><th>Sale Qty</th><th>%</th></tr></thead><tbody id="dosageBody"></tbody><tfoot id="dosageFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="dosageTable"><thead><tr><th onclick="sortTable('dosage',0)">Dosage_Form</th><th onclick="sortTable('dosage',1)">Sale Qty</th><th onclick="sortTable('dosage',2)">%</th></tr></thead><tbody id="dosageBody"></tbody><tfoot id="dosageFoot"></tfoot></table></div>
         `;
-        // Pane 2
+        // Mkt By & SF (second tab)
         document.getElementById('pane-mktSf').innerHTML = `
             <div class="section-title">Mkt_By / Basic_Value & %</div>
-            <div class="table-wrapper"><table id="mktByTable"><thead><tr><th>Mkt_By</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="mktByBody"></tbody><tfoot id="mktByFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="mktByTable"><thead><tr><th onclick="sortTable('mktSimple',0)">Mkt_By</th><th onclick="sortTable('mktSimple',1)">Basic_Value</th><th onclick="sortTable('mktSimple',2)">%</th></tr></thead><tbody id="mktByBody"></tbody><tfoot id="mktByFoot"></tfoot></table></div>
             <div class="section-title">SF_Name / Sale_Qty / Basic_Value / %</div>
-            <div class="table-wrapper"><table id="sfWiseTable"><thead><tr><th>SF_Name</th><th>Product_Name</th><th>Mkt_By</th><th>Sale_Qty</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="sfWiseBody"></tbody><tfoot id="sfWiseFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="sfWiseTable"><thead><tr><th onclick="sortTable('sfWise',0)">SF_Name</th><th onclick="sortTable('sfWise',1)">Product_Name</th><th onclick="sortTable('sfWise',2)">Mkt_By</th><th onclick="sortTable('sfWise',3)">Sale_Qty</th><th onclick="sortTable('sfWise',4)">Basic_Value</th><th onclick="sortTable('sfWise',5)">%</th></tr></thead><tbody id="sfWiseBody"></tbody><tfoot id="sfWiseFoot"></tfoot></table></div>
         `;
-        // Pane 3
+        // SF & Brand (third tab) – with SF Code table (as per PDF)
         document.getElementById('pane-sfBrand').innerHTML = `
             <div class="section-title">SF Code / SF Name / Product / Sale Qty / Basic Value</div>
-            <div class="table-wrapper"><table id="sfCodeTable"><thead><tr><th>SF_Code</th><th>SF_Name</th><th>Product</th><th>Sale_Qty</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="sfCodeBody"></tbody><tfoot id="sfCodeFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="sfCodeTable"><thead><tr><th onclick="sortTable('sfCode',0)">SF_Code</th><th onclick="sortTable('sfCode',1)">SF_Name</th><th onclick="sortTable('sfCode',2)">Product</th><th onclick="sortTable('sfCode',3)">Sale_Qty</th><th onclick="sortTable('sfCode',4)">Basic_Value</th><th onclick="sortTable('sfCode',5)">%</th></tr></thead><tbody id="sfCodeBody"></tbody><tfoot id="sfCodeFoot"></tfoot></table></div>
         `;
-        // Pane 4
+        // Product Month Wise (fourth tab)
         document.getElementById('pane-prodMonth').innerHTML = `
             <div class="section-title">Product Month Wise (detailed)</div>
-            <div class="table-wrapper"><table id="prodMonthDetail"><thead><tr><th>Product</th><th>Month</th><th>Sale Qty</th><th>Basic Value</th></tr></thead><tbody id="prodMonthDetailBody"></tbody><tfoot id="prodMonthDetailFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="prodMonthDetail"><thead><tr><th onclick="sortTable('prodDetail',0)">Product</th><th onclick="sortTable('prodDetail',1)">Month</th><th onclick="sortTable('prodDetail',2)">Sale Qty</th><th onclick="sortTable('prodDetail',3)">Basic Value</th></tr></thead><tbody id="prodMonthDetailBody"></tbody><tfoot id="prodMonthDetailFoot"></tfoot></table></div>
             <div class="section-title">Product Summary <span class="pagination"><span id="prodRange"></span> <button id="prevBtn" onclick="prevPage()">←</button><button id="nextBtn" onclick="nextPage()">→</button></span></div>
-            <div class="table-wrapper"><table id="prodSummary"><thead><tr><th>Product Name</th><th>Sale Qty</th><th>Basic Value</th><th>%</th></tr></thead><tbody id="prodSummaryBody"></tbody><tfoot id="prodSummaryFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="prodSummary"><thead><tr><th onclick="sortTable('prodSummary',0)">Product Name</th><th onclick="sortTable('prodSummary',1)">Sale Qty</th><th onclick="sortTable('prodSummary',2)">Basic Value</th><th onclick="sortTable('prodSummary',3)">%</th></tr></thead><tbody id="prodSummaryBody"></tbody><tfoot id="prodSummaryFoot"></tfoot></table></div>
         `;
-        // Pane 5
+        // Daily Dispatch (fifth tab)
         document.getElementById('pane-dispatch').innerHTML = `
             <div class="section-title">Daily Dispatch Details (DPR)</div>
-            <div class="table-wrapper"><table id="dprTable"><thead><tr><th>Bill_Date</th><th>Bill_No</th><th>Location</th><th>Mkt_By</th><th>Product</th><th>Batch_No</th><th>SF_Name</th><th>Sale_Qty</th><th>Basic_Value</th></tr></thead><tbody id="dprBody"></tbody><tfoot id="dprFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="dprTable"><thead><tr><th onclick="sortTable('dpr',0)">Bill_Date</th><th onclick="sortTable('dpr',1)">Bill_No</th><th onclick="sortTable('dpr',2)">Location</th><th onclick="sortTable('dpr',3)">Mkt_By</th><th onclick="sortTable('dpr',4)">Product</th><th onclick="sortTable('dpr',5)">Batch_No</th><th onclick="sortTable('dpr',6)">SF_Name</th><th onclick="sortTable('dpr',7)">Sale_Qty</th><th onclick="sortTable('dpr',8)">Basic_Value</th></tr></thead><tbody id="dprBody"></tbody><tfoot id="dprFoot"></tfoot></table></div>
             <div class="section-title">Dispatch by Location</div>
-            <div class="table-wrapper"><table id="locDispatchTable"><thead><tr><th>Location</th><th>Dispatches</th><th>Total Qty</th><th>Total Value</th><th>%</th></tr></thead><tbody id="locDispatchBody"></tbody><tfoot id="locDispatchFoot"></tfoot></table></div>
+            <div class="table-wrapper"><table id="locDispatchTable"><thead><tr><th onclick="sortTable('locDispatch',0)">Location</th><th onclick="sortTable('locDispatch',1)">Dispatches</th><th onclick="sortTable('locDispatch',2)">Total Qty</th><th onclick="sortTable('locDispatch',3)">Total Value</th><th onclick="sortTable('locDispatch',4)">%</th></tr></thead><tbody id="locDispatchBody"></tbody><tfoot id="locDispatchFoot"></tfoot></table></div>
         `;
     }
 
@@ -200,29 +225,19 @@
         document.getElementById(`pane-${e.target.dataset.tab}`).classList.add('active');
     }
 
-    // Load data
+    // ---------- DATA LOAD ----------
     async function loadData() {
         document.getElementById('loading').style.display = 'block';
-        document.getElementById('error').style.display = 'none';
-        
         try {
             const snapshot = await db.collection('sales_data').get();
-            if (snapshot.empty) throw new Error('No data found');
-
+            if (snapshot.empty) throw new Error('No data');
             allData = [];
-            uniqueValues.locations.clear();
-            uniqueValues.mktBy.clear();
-            uniqueValues.productTypes.clear();
+            uniqueValues.locations.clear(); uniqueValues.mktBy.clear(); uniqueValues.productTypes.clear();
 
             snapshot.forEach(doc => {
                 const d = doc.data();
-                
-                // Check for metadata
-                if (d.update_datetime && !d.product_name) {
-                    globalLastUpdate = d.update_datetime;
-                }
-                
-                const record = {
+                if (d.update_datetime && !d.product_name) globalLastUpdate = d.update_datetime;
+                const rec = {
                     mkt_by: d.mkt_by || d.Mkt_By || '',
                     location: d.location || d.Location || '',
                     basic_value: parseFloat(d.basic_value || d.Basic_Value || 0),
@@ -238,227 +253,156 @@
                     batch_no: d.batch_no || d.Batch_No || '',
                     dosage_form: d.dosage_form || d.Dosage_Form || ''
                 };
-                
-                if (record.basic_value > 0 || record.sale_qty > 0) {
-                    allData.push(record);
-                    if (record.location) uniqueValues.locations.add(record.location);
-                    if (record.mkt_by) uniqueValues.mktBy.add(record.mkt_by);
-                    if (record.product_type) uniqueValues.productTypes.add(record.product_type);
+                if (rec.basic_value > 0 || rec.sale_qty > 0) {
+                    allData.push(rec);
+                    if (rec.location) uniqueValues.locations.add(rec.location);
+                    if (rec.mkt_by) uniqueValues.mktBy.add(rec.mkt_by);
+                    if (rec.product_type) uniqueValues.productTypes.add(rec.product_type);
                 }
             });
 
             filteredData = [...allData];
-            
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('cacheBadge').style.display = 'none';
-            document.getElementById('lastUpdate').textContent = globalLastUpdate ? 
-                `LAST UPDATE: ${globalLastUpdate}` : 'LAST UPDATE: 27 Feb 2026';
-            
+            document.getElementById('lastUpdate').textContent = globalLastUpdate ? `LAST UPDATE: ${globalLastUpdate}` : 'LAST UPDATE: 27/02/2026 09:20:45';
             updateFilterDropdowns();
-            filterChanged(); // Apply filters and render
-            
+            filterChanged(); // initial render
         } catch (err) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
-            document.getElementById('error').textContent = 'Error: ' + err.message;
+            document.getElementById('error').innerHTML = 'Error: ' + err.message;
         }
     }
 
     function updateFilterDropdowns() {
-        const locationSelect = document.getElementById('locationFilter');
-        const mktSelect = document.getElementById('mktByFilter');
-        const typeSelect = document.getElementById('productTypeFilter');
+        const locSel = document.getElementById('locationFilter');
+        const mktSel = document.getElementById('mktByFilter');
+        const typeSel = document.getElementById('productTypeFilter');
         
-        // Save current selections
-        const currentLoc = locationSelect.value;
-        const currentMkt = mktSelect.value;
-        const currentType = typeSelect.value;
-        
-        locationSelect.innerHTML = '<option value="">All Locations</option>';
-        mktSelect.innerHTML = '<option value="">All</option>';
-        typeSelect.innerHTML = '<option value="">All Types</option>';
-        
-        Array.from(uniqueValues.locations).sort().forEach(l => {
-            locationSelect.add(new Option(l, l));
-        });
-        Array.from(uniqueValues.mktBy).sort().forEach(m => {
-            mktSelect.add(new Option(m, m));
-        });
-        Array.from(uniqueValues.productTypes).sort().forEach(p => {
-            typeSelect.add(new Option(p, p));
-        });
-        
-        // Restore selections if they still exist
-        if (currentLoc && uniqueValues.locations.has(currentLoc)) locationSelect.value = currentLoc;
-        if (currentMkt && uniqueValues.mktBy.has(currentMkt)) mktSelect.value = currentMkt;
-        if (currentType && uniqueValues.productTypes.has(currentType)) typeSelect.value = currentType;
+        // preserve selected values if any
+        let selectedLoc = Array.from(locSel.selectedOptions).map(o => o.value);
+        let selectedMkt = Array.from(mktSel.selectedOptions).map(o => o.value);
+        let selectedType = Array.from(typeSel.selectedOptions).map(o => o.value);
+
+        locSel.innerHTML = '<option value="">All Locations</option>';
+        mktSel.innerHTML = '<option value="">All</option>';
+        typeSel.innerHTML = '<option value="">All Types</option>';
+
+        Array.from(uniqueValues.locations).sort().forEach(v => locSel.add(new Option(v, v)));
+        Array.from(uniqueValues.mktBy).sort().forEach(v => mktSel.add(new Option(v, v)));
+        Array.from(uniqueValues.productTypes).sort().forEach(v => typeSel.add(new Option(v, v)));
+
+        // restore selections
+        [...locSel.options].forEach(opt => { if (selectedLoc.includes(opt.value)) opt.selected = true; });
+        [...mktSel.options].forEach(opt => { if (selectedMkt.includes(opt.value)) opt.selected = true; });
+        [...typeSel.options].forEach(opt => { if (selectedType.includes(opt.value)) opt.selected = true; });
     }
 
-    // Main filter function - called on any filter change or drilldown
+    // ---------- FILTER (multi-select aware) ----------
     window.filterChanged = function() {
-        // Get current filter values
-        const location = document.getElementById('locationFilter').value;
-        const mktBy = document.getElementById('mktByFilter').value;
-        const productType = document.getElementById('productTypeFilter').value;
+        const locationSel = Array.from(document.getElementById('locationFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
+        const mktSel = Array.from(document.getElementById('mktByFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
+        const typeSel = Array.from(document.getElementById('productTypeFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
         const dateFrom = document.getElementById('dateFrom').value;
         const dateTo = document.getElementById('dateTo').value;
         const search = document.getElementById('globalSearch').value.toLowerCase();
 
-        // Apply filters to allData
         filteredData = allData.filter(item => {
-            // Location filter
-            if (location && item.location !== location) return false;
-            
-            // Mkt By filter
-            if (mktBy && item.mkt_by !== mktBy) return false;
-            
-            // Product Type filter - THIS NOW WORKS
-            if (productType && item.product_type !== productType) return false;
-            
-            // Date filters
-            if (dateFrom && item.bill_date) {
-                const itemMonth = item.bill_date.substring(0, 7);
-                if (itemMonth < dateFrom) return false;
-            }
-            if (dateTo && item.bill_date) {
-                const itemMonth = item.bill_date.substring(0, 7);
-                if (itemMonth > dateTo) return false;
-            }
-            
-            // Search filter
+            if (locationSel.length && !locationSel.includes(item.location)) return false;
+            if (mktSel.length && !mktSel.includes(item.mkt_by)) return false;
+            if (typeSel.length && !typeSel.includes(item.product_type)) return false;
+            if (dateFrom && item.bill_date && item.bill_date.substring(0,7) < dateFrom) return false;
+            if (dateTo && item.bill_date && item.bill_date.substring(0,7) > dateTo) return false;
             if (search) {
                 return (item.product_name && item.product_name.toLowerCase().includes(search)) ||
                        (item.sf_name && item.sf_name.toLowerCase().includes(search)) ||
-                       (item.sf_code && item.sf_code.toLowerCase().includes(search)) ||
-                       (item.batch_no && item.batch_no.toLowerCase().includes(search));
+                       (item.sf_code && item.sf_code.toLowerCase().includes(search));
             }
             return true;
         });
 
-        // Reset pagination
         currentPage = 1;
-        
-        // Update all tables
         renderAllTables();
-        updateActiveFiltersDisplay();
+        updateActiveFilters();
     };
 
-    // Drilldown function - sets filter and triggers update
-    window.drilldown = function(type, value) {
-        console.log('Drilldown:', type, value);
-        
-        switch(type) {
-            case 'mktBy':
-                document.getElementById('mktByFilter').value = value;
-                break;
-            case 'location':
-                document.getElementById('locationFilter').value = value;
-                break;
-            case 'productType':
-                document.getElementById('productTypeFilter').value = value;
-                break;
-            case 'sfName':
-            case 'product':
-                document.getElementById('globalSearch').value = value;
-                break;
-            case 'month':
-                document.getElementById('dateFrom').value = value;
-                document.getElementById('dateTo').value = value;
-                break;
-        }
-        
-        // Re-filter all data with new values
-        filterChanged();
-    };
+    function updateActiveFilters() {
+        const loc = Array.from(document.getElementById('locationFilter').selectedOptions).map(o => o.value).filter(v=>v);
+        const mkt = Array.from(document.getElementById('mktByFilter').selectedOptions).map(o => o.value).filter(v=>v);
+        const typ = Array.from(document.getElementById('productTypeFilter').selectedOptions).map(o => o.value).filter(v=>v);
+        const f = document.getElementById('dateFrom').value;
+        const t = document.getElementById('dateTo').value;
+        const s = document.getElementById('globalSearch').value;
 
-    function updateActiveFiltersDisplay() {
+        let tags = [];
+        if (loc.length) tags.push(`Location: ${loc.join(', ')}`);
+        if (mkt.length) tags.push(`Mkt: ${mkt.join(', ')}`);
+        if (typ.length) tags.push(`Type: ${typ.join(', ')}`);
+        if (f) tags.push(`From: ${f}`);
+        if (t) tags.push(`To: ${t}`);
+        if (s) tags.push(`Search: ${s}`);
+
         const bar = document.getElementById('activeFiltersBar');
         const container = document.getElementById('activeFilters');
-        const filters = [];
-        
-        const location = document.getElementById('locationFilter').value;
-        const mktBy = document.getElementById('mktByFilter').value;
-        const productType = document.getElementById('productTypeFilter').value;
-        const dateFrom = document.getElementById('dateFrom').value;
-        const dateTo = document.getElementById('dateTo').value;
-        const search = document.getElementById('globalSearch').value;
-        
-        if (location) filters.push(`Location: ${location}`);
-        if (mktBy) filters.push(`Mkt By: ${mktBy}`);
-        if (productType) filters.push(`Product Type: ${productType}`);
-        if (dateFrom) filters.push(`From: ${dateFrom}`);
-        if (dateTo) filters.push(`To: ${dateTo}`);
-        if (search) filters.push(`Search: ${search}`);
-        
-        if (filters.length > 0) {
+        if (tags.length) {
             bar.style.display = 'flex';
-            container.innerHTML = filters.map(f => 
-                `<span class="filter-tag">${f} <button onclick="removeFilter('${f.split(':')[0].trim()}')">✕</button></span>`
-            ).join('');
-        } else {
-            bar.style.display = 'none';
-        }
+            container.innerHTML = tags.map(t => `<span class="filter-tag">${t}</span>`).join(' ');
+        } else bar.style.display = 'none';
     }
 
-    window.removeFilter = function(filterType) {
-        filterType = filterType.toLowerCase();
-        if (filterType.includes('location')) {
-            document.getElementById('locationFilter').value = '';
-        } else if (filterType.includes('mkt')) {
-            document.getElementById('mktByFilter').value = '';
-        } else if (filterType.includes('product')) {
-            document.getElementById('productTypeFilter').value = '';
-        } else if (filterType.includes('from')) {
-            document.getElementById('dateFrom').value = '';
-        } else if (filterType.includes('to')) {
-            document.getElementById('dateTo').value = '';
-        } else if (filterType.includes('search')) {
-            document.getElementById('globalSearch').value = '';
-        }
-        filterChanged();
-    };
-
     window.clearAllFilters = function() {
-        document.getElementById('locationFilter').value = '';
-        document.getElementById('mktByFilter').value = '';
-        document.getElementById('productTypeFilter').value = '';
+        document.getElementById('locationFilter').selectedIndex = -1;
+        document.getElementById('mktByFilter').selectedIndex = -1;
+        document.getElementById('productTypeFilter').selectedIndex = -1;
         document.getElementById('dateFrom').value = '';
         document.getElementById('dateTo').value = '';
         document.getElementById('globalSearch').value = '';
         filterChanged();
     };
 
-    window.resetAllFilters = clearAllFilters;
-    
-    window.refreshData = function() {
-        loadData();
+    // Drilldown: click on any clickable cell
+    window.drilldown = function(type, value) {
+        if (type === 'mktBy') {
+            let sel = document.getElementById('mktByFilter');
+            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+        } else if (type === 'location') {
+            let sel = document.getElementById('locationFilter');
+            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+        } else if (type === 'productType') {
+            let sel = document.getElementById('productTypeFilter');
+            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+        } else if (type === 'sfName' || type === 'product') {
+            document.getElementById('globalSearch').value = value;
+        } else if (type === 'month') {
+            document.getElementById('dateFrom').value = value;
+            document.getElementById('dateTo').value = value;
+        }
+        filterChanged();
+    };
+
+    // Sorting
+    window.sortTable = function(tableId, colIndex) {
+        if (!sortState[tableId]) sortState[tableId] = { col: colIndex, dir: 'asc' };
+        let state = sortState[tableId];
+        if (state.col === colIndex) {
+            state.dir = state.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            state.col = colIndex;
+            state.dir = 'asc';
+        }
+        // update header arrows
+        document.querySelectorAll(`#${tableId} thead th`).forEach((th, idx) => {
+            th.classList.remove('sort-asc', 'sort-desc');
+            if (idx === state.col) th.classList.add(`sort-${state.dir}`);
+        });
+        renderAllTables(); // re-render with sort applied inside each render function
     };
 
     // Pagination
-    window.prevPage = function() {
-        if (currentPage > 1) {
-            currentPage--;
-            renderProdSummary();
-        }
-    };
-    
-    window.nextPage = function() {
-        currentPage++;
-        renderProdSummary();
-    };
+    window.prevPage = function() { if (currentPage > 1) { currentPage--; renderProdSummary(); } };
+    window.nextPage = function() { currentPage++; renderProdSummary(); };
+    window.refreshData = function() { loadData(); };
 
-    // Formatting
-    function formatNumber(num) {
-        if (!num && num !== 0) return '-';
-        return num.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
-    }
-    
-    function formatPercentage(num) {
-        if (!num && num !== 0) return '-';
-        return num.toFixed(2) + '%';
-    }
-
-    // Render all tables
+    // ---------- RENDER (all tables) ----------
     function renderAllTables() {
         renderFyBoard();
         renderCategory();
@@ -473,332 +417,211 @@
         updateGrandTotal();
     }
 
+    function formatNumber(num) { return (num || 0).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 }); }
+    function formatPercentage(num) { return (num || 0).toFixed(2) + '%'; }
+
+    // ---- Sales Board ----
     function renderFyBoard() {
-        const fyData = new Map();
-        filteredData.forEach(item => {
-            if (!item.mkt_by) return;
-            const year = item.bill_date ? item.bill_date.substring(0, 4) : '';
-            if (year < '2024' || year > '2026') return;
-            
-            if (!fyData.has(item.mkt_by)) {
-                fyData.set(item.mkt_by, { '2024': 0, '2025': 0, '2026': 0 });
-            }
-            const record = fyData.get(item.mkt_by);
-            record[year] += item.basic_value || 0;
+        let map = new Map();
+        filteredData.forEach(r => {
+            if (!r.mkt_by) return;
+            let yr = r.bill_date ? r.bill_date.substring(0,4) : '';
+            if (yr<'2024' || yr>'2026') return;
+            let e = map.get(r.mkt_by) || {y24:0,y25:0,y26:0};
+            if (yr==='2024') e.y24 += r.basic_value;
+            else if (yr==='2025') e.y25 += r.basic_value;
+            else e.y26 += r.basic_value;
+            map.set(r.mkt_by, e);
         });
-
-        let total2024 = 0, total2025 = 0, total2026 = 0;
+        let arr = Array.from(map.entries()).map(([m,v]) => ({ m, ...v, total: v.y24+v.y25+v.y26 }));
+        let state = sortState.fy || {col:0, dir:'asc'};
+        arr.sort((a,b) => {
+            let fields = [a.m, a.y26, a.y25, a.y24, a.total];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
+        });
+        let total24=0,total25=0,total26=0;
         let rows = '';
-        
-        fyData.forEach((values, mkt) => {
-            total2024 += values['2024'];
-            total2025 += values['2025'];
-            total2026 += values['2026'];
-            const grand = values['2024'] + values['2025'] + values['2026'];
-            rows += `<tr>
-                <td class="clickable" onclick="drilldown('mktBy', '${mkt}')">${mkt}</td>
-                <td class="text-right">${formatNumber(values['2026'])}</td>
-                <td class="text-right">${formatNumber(values['2025'])}</td>
-                <td class="text-right">${formatNumber(values['2024'])}</td>
-                <td class="text-right">${formatNumber(grand)}</td>
-            </tr>`;
+        arr.forEach(i => { total24+=i.y24; total25+=i.y25; total26+=i.y26;
+            rows += `<tr><td class="clickable" onclick="drilldown('mktBy','${i.m}')">${i.m}</td><td class="text-right clickable" onclick="drilldown('mktBy','${i.m}')">${formatNumber(i.y26)}</td><td class="text-right">${formatNumber(i.y25)}</td><td class="text-right">${formatNumber(i.y24)}</td><td class="text-right clickable" onclick="drilldown('mktBy','${i.m}')">${formatNumber(i.total)}</td></tr>`;
         });
-
-        const grandTotal = total2024 + total2025 + total2026;
-        
+        let grand = total24+total25+total26;
         document.getElementById('fyBody').innerHTML = rows;
-        document.getElementById('fyFoot').innerHTML = `<tr>
-            <td>Grand total</td>
-            <td class="text-right">${formatNumber(total2026)}</td>
-            <td class="text-right">${formatNumber(total2025)}</td>
-            <td class="text-right">${formatNumber(total2024)}</td>
-            <td class="text-right">${formatNumber(grandTotal)}</td>
-        </tr>`;
-        document.getElementById('fyTotal').textContent = `Total: ${formatNumber(grandTotal)}`;
+        document.getElementById('fyFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total26)}</td><td class="text-right">${formatNumber(total25)}</td><td class="text-right">${formatNumber(total24)}</td><td class="text-right">${formatNumber(grand)}</td></tr>`;
+        document.getElementById('fyTotal').innerText = 'Total: '+formatNumber(grand);
     }
 
     function renderCategory() {
-        const catMap = new Map();
-        filteredData.forEach(item => {
-            if (item.product_type) {
-                catMap.set(item.product_type, (catMap.get(item.product_type) || 0) + (item.basic_value || 0));
-            }
+        let map = new Map();
+        filteredData.forEach(r => { if (r.product_type) map.set(r.product_type, (map.get(r.product_type)||0) + r.basic_value); });
+        let total = Array.from(map.values()).reduce((a,b)=>a+b,0);
+        let arr = Array.from(map.entries()).map(([type,val])=>({type,val}));
+        let state = sortState.cat || {col:1, dir:'desc'};
+        arr.sort((a,b) => {
+            if (state.col===0) return state.dir==='asc' ? a.type.localeCompare(b.type) : b.type.localeCompare(a.type);
+            else return state.dir==='asc' ? a.val - b.val : b.val - a.val;
         });
-
-        const total = Array.from(catMap.values()).reduce((a, b) => a + b, 0);
-        let rows = '';
-        
-        Array.from(catMap.entries())
-            .sort((a, b) => b[1] - a[1])
-            .forEach(([type, val]) => {
-                rows += `<tr>
-                    <td class="clickable" onclick="drilldown('productType', '${type}')">${type}</td>
-                    <td class="text-right">${formatNumber(val)}</td>
-                    <td class="text-right">${formatPercentage((val / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let rows = arr.map(i => `<tr><td class="clickable" onclick="drilldown('productType','${i.type}')">${i.type}</td><td class="text-right clickable" onclick="drilldown('productType','${i.type}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('catBody').innerHTML = rows;
         document.getElementById('catFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td></td></tr>`;
-        document.getElementById('catTotal').textContent = `Total: ${formatNumber(total)}`;
+        document.getElementById('catTotal').innerText = 'Total: '+formatNumber(total);
     }
 
     function renderDosageForm() {
-        const dosageMap = new Map();
-        filteredData.forEach(item => {
-            if (item.dosage_form) {
-                dosageMap.set(item.dosage_form, (dosageMap.get(item.dosage_form) || 0) + (item.sale_qty || 0));
-            }
+        let map = new Map();
+        filteredData.forEach(r => { if (r.dosage_form) map.set(r.dosage_form, (map.get(r.dosage_form)||0) + (r.sale_qty||0)); });
+        let total = Array.from(map.values()).reduce((a,b)=>a+b,0);
+        let arr = Array.from(map.entries()).map(([form,qty])=>({form,qty}));
+        let state = sortState.dosage || {col:1, dir:'desc'};
+        arr.sort((a,b) => {
+            if (state.col===0) return state.dir==='asc' ? a.form.localeCompare(b.form) : b.form.localeCompare(a.form);
+            else return state.dir==='asc' ? a.qty - b.qty : b.qty - a.qty;
         });
-
-        const total = Array.from(dosageMap.values()).reduce((a, b) => a + b, 0);
-        let rows = '';
-        
-        Array.from(dosageMap.entries())
-            .sort((a, b) => b[1] - a[1])
-            .forEach(([form, qty]) => {
-                rows += `<tr>
-                    <td>${form}</td>
-                    <td class="text-right">${formatNumber(qty)}</td>
-                    <td class="text-right">${formatPercentage((qty / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let rows = arr.map(i => `<tr><td>${i.form}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right">${formatPercentage(i.qty/total*100)}</td></tr>`).join('');
         document.getElementById('dosageBody').innerHTML = rows;
         document.getElementById('dosageFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td></td></tr>`;
-        document.getElementById('dosageTotal').textContent = `Total: ${formatNumber(total)}`;
+        document.getElementById('dosageTotal').innerText = 'Total: '+formatNumber(total);
     }
 
     function renderMktBySimple() {
-        const mktMap = new Map();
-        filteredData.forEach(item => {
-            if (item.mkt_by) {
-                mktMap.set(item.mkt_by, (mktMap.get(item.mkt_by) || 0) + (item.basic_value || 0));
-            }
+        let map = new Map();
+        filteredData.forEach(r => { if (r.mkt_by) map.set(r.mkt_by, (map.get(r.mkt_by)||0) + r.basic_value); });
+        let total = Array.from(map.values()).reduce((a,b)=>a+b,0);
+        let arr = Array.from(map.entries()).map(([m,val])=>({m,val}));
+        let state = sortState.mktSimple || {col:1, dir:'desc'};
+        arr.sort((a,b) => {
+            if (state.col===0) return state.dir==='asc' ? a.m.localeCompare(b.m) : b.m.localeCompare(a.m);
+            else return state.dir==='asc' ? a.val - b.val : b.val - a.val;
         });
-
-        const total = Array.from(mktMap.values()).reduce((a, b) => a + b, 0);
-        let rows = '';
-        
-        Array.from(mktMap.entries())
-            .sort((a, b) => b[1] - a[1])
-            .forEach(([mkt, val]) => {
-                rows += `<tr>
-                    <td class="clickable" onclick="drilldown('mktBy', '${mkt}')">${mkt}</td>
-                    <td class="text-right">${formatNumber(val)}</td>
-                    <td class="text-right">${formatPercentage((val / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let rows = arr.map(i => `<tr><td class="clickable" onclick="drilldown('mktBy','${i.m}')">${i.m}</td><td class="text-right clickable" onclick="drilldown('mktBy','${i.m}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('mktByBody').innerHTML = rows;
         document.getElementById('mktByFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
     }
 
     function renderSfWise() {
-        const sfMap = new Map();
-        filteredData.forEach(item => {
-            if (!item.sf_name) return;
-            const key = `${item.sf_name}|${item.product_name}`;
-            if (!sfMap.has(key)) {
-                sfMap.set(key, {
-                    sf: item.sf_name,
-                    product: item.product_name,
-                    mkt: item.mkt_by,
-                    qty: 0,
-                    val: 0
-                });
-            }
-            const rec = sfMap.get(key);
-            rec.qty += item.sale_qty || 0;
-            rec.val += item.basic_value || 0;
+        let map = new Map();
+        filteredData.forEach(r => {
+            if (!r.sf_name) return;
+            let key = r.sf_name+'|'+r.product_name;
+            let cur = map.get(key) || {sf:r.sf_name, prod:r.product_name, mkt:r.mkt_by, qty:0, val:0};
+            cur.qty += r.sale_qty||0; cur.val += r.basic_value||0;
+            map.set(key, cur);
         });
-
-        const total = Array.from(sfMap.values()).reduce((a, b) => a + b.val, 0);
-        let rows = '';
-        
-        Array.from(sfMap.values())
-            .sort((a, b) => b.val - a.val)
-            .forEach(item => {
-                rows += `<tr>
-                    <td class="clickable" onclick="drilldown('sfName', '${item.sf}')">${item.sf}</td>
-                    <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product || '-'}</td>
-                    <td class="clickable" onclick="drilldown('mktBy', '${item.mkt}')">${item.mkt || '-'}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${formatNumber(item.val)}</td>
-                    <td class="text-right">${formatPercentage((item.val / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let arr = Array.from(map.values());
+        let total = arr.reduce((a,b)=>a+b.val,0);
+        let state = sortState.sfWise || {col:4, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.sf, a.prod, a.mkt, a.qty, a.val, (a.val/total*100)];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
+        });
+        let rows = arr.map(i => `<tr><td class="clickable" onclick="drilldown('sfName','${i.sf}')">${i.sf}</td><td class="clickable" onclick="drilldown('product','${i.prod}')">${i.prod||'-'}</td><td class="clickable" onclick="drilldown('mktBy','${i.mkt}')">${i.mkt||'-'}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right clickable" onclick="drilldown('sfName','${i.sf}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('sfWiseBody').innerHTML = rows;
         document.getElementById('sfWiseFoot').innerHTML = `<tr><td colspan="4">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
     }
 
     function renderSfCode() {
-        const codeMap = new Map();
-        filteredData.forEach(item => {
-            if (!item.sf_code) return;
-            const key = `${item.sf_code}|${item.sf_name}|${item.product_name}`;
-            if (!codeMap.has(key)) {
-                codeMap.set(key, {
-                    code: item.sf_code,
-                    sf: item.sf_name,
-                    product: item.product_name,
-                    qty: 0,
-                    val: 0
-                });
-            }
-            const rec = codeMap.get(key);
-            rec.qty += item.sale_qty || 0;
-            rec.val += item.basic_value || 0;
+        let map = new Map();
+        filteredData.forEach(r => {
+            if (!r.sf_code) return;
+            let key = r.sf_code+'|'+r.sf_name+'|'+r.product_name;
+            let cur = map.get(key) || {code:r.sf_code, sf:r.sf_name, prod:r.product_name, qty:0, val:0};
+            cur.qty += r.sale_qty||0; cur.val += r.basic_value||0;
+            map.set(key, cur);
         });
-
-        const total = Array.from(codeMap.values()).reduce((a, b) => a + b.val, 0);
-        let rows = '';
-        
-        Array.from(codeMap.values())
-            .sort((a, b) => b.val - a.val)
-            .forEach(item => {
-                rows += `<tr>
-                    <td>${item.code}</td>
-                    <td class="clickable" onclick="drilldown('sfName', '${item.sf}')">${item.sf || ''}</td>
-                    <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product || ''}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${formatNumber(item.val)}</td>
-                    <td class="text-right">${formatPercentage((item.val / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let arr = Array.from(map.values());
+        let total = arr.reduce((a,b)=>a+b.val,0);
+        let state = sortState.sfCode || {col:4, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.code, a.sf, a.prod, a.qty, a.val, (a.val/total*100)];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
+        });
+        let rows = arr.map(i => `<tr><td>${i.code}</td><td class="clickable" onclick="drilldown('sfName','${i.sf}')">${i.sf||''}</td><td class="clickable" onclick="drilldown('product','${i.prod}')">${i.prod||''}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right clickable" onclick="drilldown('sfName','${i.sf}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('sfCodeBody').innerHTML = rows;
         document.getElementById('sfCodeFoot').innerHTML = `<tr><td colspan="4">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
     }
 
     function renderProdMonthDetail() {
-        const detailData = filteredData
-            .filter(item => item.product_name && item.bill_date)
-            .map(item => ({
-                product: item.product_name,
-                month: item.bill_date.substring(0, 7),
-                qty: item.sale_qty || 0,
-                val: item.basic_value || 0
-            }))
-            .sort((a, b) => b.val - a.val)
-            .slice(0, 50);
-
-        const total = detailData.reduce((a, b) => a + b.val, 0);
-        let rows = '';
-        
-        detailData.forEach(item => {
-            rows += `<tr>
-                <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product}</td>
-                <td class="clickable" onclick="drilldown('month', '${item.month}')">${item.month}</td>
-                <td class="text-right">${formatNumber(item.qty)}</td>
-                <td class="text-right">${formatNumber(item.val)}</td>
-            </tr>`;
+        let arr = filteredData.filter(r=>r.product_name && r.bill_date).map(r=>({prod:r.product_name, month:r.bill_date.substring(0,7), qty:r.sale_qty||0, val:r.basic_value||0}));
+        let state = sortState.prodDetail || {col:3, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.prod, a.month, a.qty, a.val];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
         });
-
+        let total = arr.reduce((a,b)=>a+b.val,0);
+        let rows = arr.slice(0,50).map(i => `<tr><td class="clickable" onclick="drilldown('product','${i.prod}')">${i.prod}</td><td class="clickable" onclick="drilldown('month','${i.month}')">${i.month}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right clickable" onclick="drilldown('product','${i.prod}')">${formatNumber(i.val)}</td></tr>`).join('');
         document.getElementById('prodMonthDetailBody').innerHTML = rows;
         document.getElementById('prodMonthDetailFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
     }
 
     function renderProdSummary() {
-        const prodMap = new Map();
-        filteredData.forEach(item => {
-            if (item.product_name) {
-                prodMap.set(item.product_name, {
-                    val: (prodMap.get(item.product_name)?.val || 0) + (item.basic_value || 0),
-                    qty: (prodMap.get(item.product_name)?.qty || 0) + (item.sale_qty || 0)
-                });
-            }
+        let map = new Map();
+        filteredData.forEach(r => { if (r.product_name) map.set(r.product_name, {val:(map.get(r.product_name)?.val||0)+r.basic_value, qty:(map.get(r.product_name)?.qty||0)+(r.sale_qty||0)}); });
+        let arr = Array.from(map.entries()).map(([name, d]) => ({ name, val: d.val, qty: d.qty }));
+        let total = arr.reduce((a,b)=>a+b.val,0);
+        let state = sortState.prodSummary || {col:2, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.name, a.qty, a.val, (a.val/total*100)];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
         });
-
-        const total = Array.from(prodMap.values()).reduce((a, b) => a + b.val, 0);
-        const products = Array.from(prodMap.entries())
-            .map(([name, data]) => ({ name, val: data.val, qty: data.qty }))
-            .sort((a, b) => b.val - a.val);
-
-        const start = (currentPage - 1) * pageSize;
-        const end = Math.min(start + pageSize, products.length);
-        const pageProducts = products.slice(start, end);
-
-        let rows = '';
-        pageProducts.forEach(p => {
-            rows += `<tr>
-                <td class="clickable" onclick="drilldown('product', '${p.name}')">${p.name}</td>
-                <td class="text-right">${formatNumber(p.qty)}</td>
-                <td class="text-right">${formatNumber(p.val)}</td>
-                <td class="text-right">${formatPercentage((p.val / total) * 100)}</td>
-            </tr>`;
-        });
-
+        let start = (currentPage-1)*pageSize, end = Math.min(start+pageSize, arr.length);
+        let page = arr.slice(start,end);
+        let rows = page.map(i => `<tr><td class="clickable" onclick="drilldown('product','${i.name}')">${i.name}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right clickable" onclick="drilldown('product','${i.name}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('prodSummaryBody').innerHTML = rows;
         document.getElementById('prodSummaryFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
-        document.getElementById('prodRange').textContent = `${start + 1}-${end} / ${products.length}`;
-        document.getElementById('prevBtn').disabled = currentPage === 1;
-        document.getElementById('nextBtn').disabled = end >= products.length;
+        document.getElementById('prodRange').innerText = `${start+1}-${end} / ${arr.length}`;
+        document.getElementById('prevBtn').disabled = currentPage===1;
+        document.getElementById('nextBtn').disabled = end>=arr.length;
     }
 
     function renderDpr() {
-        const dprData = filteredData
-            .filter(item => item.bill_date && item.bill_no)
-            .sort((a, b) => (b.bill_date || '').localeCompare(a.bill_date || ''))
-            .slice(0, 100);
-
-        const total = dprData.reduce((a, b) => a + (b.basic_value || 0), 0);
-        let rows = '';
-        
-        dprData.forEach(item => {
-            rows += `<tr>
-                <td class="clickable" onclick="drilldown('month', '${item.bill_date.substring(0, 7)}')">${item.bill_date || ''}</td>
-                <td>${item.bill_no || ''}</td>
-                <td class="clickable" onclick="drilldown('location', '${item.location}')">${item.location || ''}</td>
-                <td class="clickable" onclick="drilldown('mktBy', '${item.mkt_by}')">${item.mkt_by || ''}</td>
-                <td class="clickable" onclick="drilldown('product', '${item.product_name}')">${item.product_name || ''}</td>
-                <td>${item.batch_no || ''}</td>
-                <td class="clickable" onclick="drilldown('sfName', '${item.sf_name}')">${item.sf_name || ''}</td>
-                <td class="text-right">${formatNumber(item.sale_qty)}</td>
-                <td class="text-right">${formatNumber(item.basic_value)}</td>
-            </tr>`;
+        let arr = filteredData.filter(r=>r.bill_date && r.bill_no).map(r=>r);
+        let state = sortState.dpr || {col:0, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.bill_date, a.bill_no, a.location, a.mkt_by, a.product_name, a.batch_no, a.sf_name, a.sale_qty, a.basic_value];
+            let fa = fields[state.col] || '', fb = fields[state.col] || '';
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
         });
-
+        let total = arr.reduce((a,b)=>a+(b.basic_value||0),0);
+        let rows = arr.slice(0,100).map(r => `<tr><td class="clickable" onclick="drilldown('month','${r.bill_date.substring(0,7)}')">${r.bill_date||''}</td><td>${r.bill_no||''}</td><td class="clickable" onclick="drilldown('location','${r.location}')">${r.location||''}</td><td class="clickable" onclick="drilldown('mktBy','${r.mkt_by}')">${r.mkt_by||''}</td><td class="clickable" onclick="drilldown('product','${r.product_name}')">${r.product_name||''}</td><td>${r.batch_no||''}</td><td class="clickable" onclick="drilldown('sfName','${r.sf_name}')">${r.sf_name||''}</td><td class="text-right">${formatNumber(r.sale_qty)}</td><td class="text-right clickable" onclick="drilldown('month','${r.bill_date.substring(0,7)}')">${formatNumber(r.basic_value)}</td></tr>`).join('');
         document.getElementById('dprBody').innerHTML = rows;
         document.getElementById('dprFoot').innerHTML = `<tr><td colspan="8">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
     }
 
     function renderLocDispatch() {
-        const locMap = new Map();
-        filteredData.forEach(item => {
-            if (!item.location) return;
-            if (!locMap.has(item.location)) {
-                locMap.set(item.location, { cnt: 0, qty: 0, val: 0 });
-            }
-            const rec = locMap.get(item.location);
-            rec.cnt++;
-            rec.qty += item.sale_qty || 0;
-            rec.val += item.basic_value || 0;
+        let map = new Map();
+        filteredData.forEach(r => {
+            if (!r.location) return;
+            let cur = map.get(r.location) || {loc:r.location, cnt:0, qty:0, val:0};
+            cur.cnt++; cur.qty += r.sale_qty||0; cur.val += r.basic_value||0;
+            map.set(r.location, cur);
         });
-
-        const total = Array.from(locMap.values()).reduce((a, b) => a + b.val, 0);
-        let rows = '';
-        
-        Array.from(locMap.entries())
-            .sort((a, b) => b[1].val - a[1].val)
-            .forEach(([loc, data]) => {
-                rows += `<tr>
-                    <td class="clickable" onclick="drilldown('location', '${loc}')">${loc}</td>
-                    <td class="text-right">${data.cnt}</td>
-                    <td class="text-right">${formatNumber(data.qty)}</td>
-                    <td class="text-right">${formatNumber(data.val)}</td>
-                    <td class="text-right">${formatPercentage((data.val / total) * 100)}</td>
-                </tr>`;
-            });
-
+        let arr = Array.from(map.values());
+        let total = arr.reduce((a,b)=>a+b.val,0);
+        let state = sortState.locDispatch || {col:3, dir:'desc'};
+        arr.sort((a,b) => {
+            let fields = [a.loc, a.cnt, a.qty, a.val, (a.val/total*100)];
+            let fa = fields[state.col], fb = fields[state.col];
+            if (typeof fa === 'string') return state.dir==='asc' ? fa.localeCompare(fb) : fb.localeCompare(fa);
+            else return state.dir==='asc' ? fa - fb : fb - fa;
+        });
+        let rows = arr.map(i => `<tr><td class="clickable" onclick="drilldown('location','${i.loc}')">${i.loc}</td><td class="text-right">${i.cnt}</td><td class="text-right">${formatNumber(i.qty)}</td><td class="text-right clickable" onclick="drilldown('location','${i.loc}')">${formatNumber(i.val)}</td><td class="text-right">${formatPercentage(i.val/total*100)}</td></tr>`).join('');
         document.getElementById('locDispatchBody').innerHTML = rows;
         document.getElementById('locDispatchFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
     }
 
     function updateGrandTotal() {
-        const total = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-        document.getElementById('grandTotalValue').textContent = formatNumber(total);
+        let total = filteredData.reduce((s,r)=>s+(r.basic_value||0),0);
+        document.getElementById('grandTotalValue').innerText = formatNumber(total);
     }
 </script>
 </body>
