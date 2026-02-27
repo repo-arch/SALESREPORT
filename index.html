@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Dash Board · Dynamic Years · Excel Export with Password</title>
+    <title>Business Dash Board · Search inside filters · Prominent X · Tab Export</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { background:#eef2f5; padding:10px; }
@@ -20,8 +20,57 @@
         .filter-bar { background:#f9fcff; padding:10px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; border-bottom:2px solid #cbd5e1; font-size:12px; }
         .filter-group { display:flex; align-items:center; gap:4px; }
         .filter-group label { font-weight:600; color:#0b2b4a; min-width:40px; font-size:11px; }
-        .filter-group select, .filter-group input { padding:4px 6px; border:1px solid #9aa9b9; border-radius:4px; background:white; font-size:11px; }
-        .multi-select { min-width:130px; max-width:160px; height:26px; }
+        
+        /* Enhanced multi-select with search */
+        .multi-select-container { position:relative; display:inline-block; }
+        .multi-select-box { 
+            border:1px solid #9aa9b9; 
+            border-radius:4px; 
+            background:white; 
+            min-width:160px; 
+            max-width:180px;
+            cursor:pointer;
+            padding:4px 20px 4px 6px;
+            font-size:11px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" stroke="%23333" fill="none"/></svg>');
+            background-repeat:no-repeat;
+            background-position:right 4px center;
+        }
+        .multi-select-dropdown {
+            display:none;
+            position:absolute;
+            top:100%;
+            left:0;
+            right:0;
+            background:white;
+            border:1px solid #9aa9b9;
+            border-radius:4px;
+            max-height:200px;
+            overflow-y:auto;
+            z-index:1000;
+            box-shadow:0 2px 8px rgba(0,0,0,0.2);
+        }
+        .multi-select-dropdown.show { display:block; }
+        .multi-select-search {
+            width:100%;
+            padding:6px;
+            border:none;
+            border-bottom:1px solid #ddd;
+            font-size:11px;
+            outline:none;
+        }
+        .multi-select-option {
+            padding:5px 8px;
+            cursor:pointer;
+            font-size:11px;
+        }
+        .multi-select-option:hover { background:#f0f0f0; }
+        .multi-select-option.selected { background:#e3f2fd; font-weight:500; }
+        
+        .filter-group input[type="month"] { padding:4px 6px; border:1px solid #9aa9b9; border-radius:4px; font-size:11px; width:120px; }
         
         .search-wrapper { display:flex; border:1px solid #9aa9b9; border-radius:4px; overflow:hidden; background:white; margin-left:5px; }
         .search-wrapper input { border:none; padding:5px 8px; width:160px; outline:none; font-size:11px; }
@@ -32,8 +81,26 @@
         .reset-btn { background:#d6562b; color:white; }
         .export-btn { background:#2e7d32; color:white; display:flex; align-items:center; gap:3px; }
 
-        .active-filters-bar { background:#fff6d9; padding:6px 14px; display:none; flex-wrap:wrap; gap:5px; align-items:center; border-bottom:2px solid #ffe28c; font-size:11px; }
-        .filter-tag { background:#ffd966; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; display:inline-flex; align-items:center; gap:4px; }
+        /* Prominent X button */
+        .active-filters-bar { background:#fff6d9; padding:8px 14px; display:none; flex-wrap:wrap; gap:8px; align-items:center; border-bottom:2px solid #ffe28c; font-size:12px; }
+        .filter-tag { background:#ffd966; padding:4px 10px; border-radius:30px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+        .filter-tag button { 
+            background:#b45f06; 
+            color:white; 
+            border:none; 
+            border-radius:50%; 
+            width:20px; 
+            height:20px; 
+            font-size:13px; 
+            font-weight:bold; 
+            cursor:pointer; 
+            display:inline-flex; 
+            align-items:center; 
+            justify-content:center;
+            line-height:1;
+            padding:0;
+        }
+        .filter-tag button:hover { background:#8b4b04; }
 
         .content { padding:14px; }
         .tab-pane { display:none; }
@@ -72,15 +139,45 @@
 
     <div class="tabs" id="tabContainer"></div>
 
-    <!-- FILTERS with search and export button -->
+    <!-- FILTERS with search inside each multi-select -->
     <div class="filter-bar">
-        <div class="filter-group"><label>Location</label><select id="locationFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All Locations</option></select></div>
-        <div class="filter-group"><label>Mkt By</label><select id="mktByFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All</option></select></div>
-        <div class="filter-group"><label>Product Type</label><select id="productTypeFilter" multiple class="multi-select" size="1" onchange="filterChanged()"><option value="">All Types</option></select></div>
+        <div class="filter-group">
+            <label>Location</label>
+            <div class="multi-select-container" id="locationContainer">
+                <div class="multi-select-box" onclick="toggleDropdown('location')">All Locations</div>
+                <div class="multi-select-dropdown" id="locationDropdown">
+                    <input type="text" class="multi-select-search" placeholder="Search..." onkeyup="filterDropdown('location', this.value)">
+                    <div class="multi-select-options" id="locationOptions"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Mkt By</label>
+            <div class="multi-select-container" id="mktByContainer">
+                <div class="multi-select-box" onclick="toggleDropdown('mktBy')">All</div>
+                <div class="multi-select-dropdown" id="mktByDropdown">
+                    <input type="text" class="multi-select-search" placeholder="Search..." onkeyup="filterDropdown('mktBy', this.value)">
+                    <div class="multi-select-options" id="mktByOptions"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Product Type</label>
+            <div class="multi-select-container" id="productTypeContainer">
+                <div class="multi-select-box" onclick="toggleDropdown('productType')">All Types</div>
+                <div class="multi-select-dropdown" id="productTypeDropdown">
+                    <input type="text" class="multi-select-search" placeholder="Search..." onkeyup="filterDropdown('productType', this.value)">
+                    <div class="multi-select-options" id="productTypeOptions"></div>
+                </div>
+            </div>
+        </div>
+        
         <div class="filter-group"><label>From</label><input type="month" id="dateFrom" onchange="filterChanged()" placeholder="YYYY-MM"></div>
         <div class="filter-group"><label>To</label><input type="month" id="dateTo" onchange="filterChanged()" placeholder="YYYY-MM"></div>
         
-        <!-- SEARCH BOX -->
+        <!-- Global search box -->
         <div class="search-wrapper">
             <input type="text" id="globalSearch" placeholder="Search product, SF, code..." onkeyup="filterChanged()">
             <button onclick="filterChanged()">🔍</button>
@@ -88,13 +185,13 @@
         
         <button class="action-btn refresh-btn" onclick="refreshData()"><span>🔄</span> Refresh</button>
         <button class="action-btn reset-btn" onclick="clearAllFilters()">Reset</button>
-        <button class="action-btn export-btn" onclick="exportAllToExcel()"><span>📥</span> Export Excel (criusexcel)</button>
+        <button class="action-btn export-btn" onclick="exportCurrentTab()"><span>📥</span> Export Tab</button>
     </div>
     
     <div class="active-filters-bar" id="activeFiltersBar">
         <span style="font-weight:600;">Active:</span>
         <span id="activeFilters"></span>
-        <button onclick="clearAllFilters()" style="margin-left:auto; background:none; border:none; color:#856404; font-size:11px;">✕ clear all</button>
+        <button onclick="clearAllFilters()" style="margin-left:auto; background:none; border:none; color:#856404; font-size:11px; font-weight:bold;">✕ CLEAR ALL</button>
     </div>
 
     <div id="loading" class="loading" style="display:none; text-align:center; padding:40px;">⬇️ Loading ...</div>
@@ -125,11 +222,15 @@
     // ---------- GLOBALS ----------
     let allData = [];
     let filteredData = [];
-    let uniqueValues = { locations: new Set(), mktBy: new Set(), productTypes: new Set() };
+    let uniqueValues = { locations: [], mktBy: [], productTypes: [] };
+    let selectedFilters = { locations: [], mktBy: [], productTypes: [] };
     let globalLastUpdate = '';
-    let availableYears = []; // Will be populated dynamically
+    let availableYears = [];
 
-    // Sorting state for EVERY table
+    // Dropdown state
+    let activeDropdown = null;
+
+    // Sorting state
     let sortState = {
         fy: { col: 0, dir: 'asc' },
         cat: { col: 1, dir: 'desc' },
@@ -155,6 +256,70 @@
         { id: 'prodMonth', name: 'Product Month Wise' },
         { id: 'dispatch', name: 'Daily Dispatch (DPR)' }
     ];
+
+    // ---------- DROPDOWN FUNCTIONS ----------
+    window.toggleDropdown = function(type) {
+        const dropdown = document.getElementById(type + 'Dropdown');
+        if (activeDropdown && activeDropdown !== dropdown) {
+            activeDropdown.classList.remove('show');
+        }
+        dropdown.classList.toggle('show');
+        activeDropdown = dropdown.classList.contains('show') ? dropdown : null;
+        
+        // Focus search input
+        setTimeout(() => {
+            const searchInput = dropdown.querySelector('.multi-select-search');
+            if (searchInput) searchInput.focus();
+        }, 100);
+    };
+
+    window.filterDropdown = function(type, searchText) {
+        const optionsDiv = document.getElementById(type + 'Options');
+        const values = uniqueValues[type === 'location' ? 'locations' : (type === 'mktBy' ? 'mktBy' : 'productTypes')];
+        const selected = selectedFilters[type === 'location' ? 'locations' : (type === 'mktBy' ? 'mktBy' : 'productTypes')];
+        
+        const filtered = values.filter(v => v.toLowerCase().includes(searchText.toLowerCase()));
+        
+        optionsDiv.innerHTML = filtered.map(v => `
+            <div class="multi-select-option ${selected.includes(v) ? 'selected' : ''}" 
+                 onclick="toggleOption('${type}', '${v}'); event.stopPropagation();">
+                ${v} ${selected.includes(v) ? '✓' : ''}
+            </div>
+        `).join('');
+    };
+
+    window.toggleOption = function(type, value) {
+        const filterType = type === 'location' ? 'locations' : (type === 'mktBy' ? 'mktBy' : 'productTypes');
+        const index = selectedFilters[filterType].indexOf(value);
+        if (index === -1) {
+            selectedFilters[filterType].push(value);
+        } else {
+            selectedFilters[filterType].splice(index, 1);
+        }
+        
+        // Update box text
+        const box = document.querySelector(`#${type}Container .multi-select-box`);
+        if (selectedFilters[filterType].length === 0) {
+            box.textContent = type === 'location' ? 'All Locations' : (type === 'mktBy' ? 'All' : 'All Types');
+        } else if (selectedFilters[filterType].length <= 2) {
+            box.textContent = selectedFilters[filterType].join(', ');
+        } else {
+            box.textContent = `${selectedFilters[filterType].length} selected`;
+        }
+        
+        // Update options highlighting
+        filterDropdown(type, document.querySelector(`#${type}Dropdown .multi-select-search`).value);
+        
+        filterChanged();
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.multi-select-container') && activeDropdown) {
+            activeDropdown.classList.remove('show');
+            activeDropdown = null;
+        }
+    });
 
     // ---------- INIT ----------
     window.onload = function() {
@@ -186,17 +351,12 @@
             panes.appendChild(pane);
         });
         document.getElementById('pane-salesBoard').classList.add('active');
-        // We'll build table structures after data load to make years dynamic
     }
 
     function buildPaneContentsWithYears(years) {
-        // Sort years descending (most recent first)
         const sortedYears = years.sort((a,b) => b - a);
-        
-        // Generate year headers for FY table
         const yearHeaders = sortedYears.map(y => `<th onclick="sortTable('fy',${sortedYears.indexOf(y)+1})">${y}</th>`).join('');
         
-        // SALE DASH BOARD with dynamic years
         document.getElementById('pane-salesBoard').innerHTML = `
             <div class="section-title">Financial Year / Basic_Value <span class="total-badge" id="fyTotal"></span></div>
             <div class="table-wrapper"><table id="fyTable"><thead><tr><th onclick="sortTable('fy',0)">Mkt_By</th>${yearHeaders}<th onclick="sortTable('fy',${sortedYears.length+1})">Grand total</th></tr></thead><tbody id="fyBody"></tbody><tfoot id="fyFoot"></tfoot></table></div>
@@ -206,26 +366,25 @@
             <div class="table-wrapper"><table id="dosageTable"><thead><tr><th onclick="sortTable('dosage',0)">Dosage_Form</th><th onclick="sortTable('dosage',1)">Sale Qty</th><th onclick="sortTable('dosage',2)">%</th></tr></thead><tbody id="dosageBody"></tbody><tfoot id="dosageFoot"></tfoot></table></div>
         `;
         
-        // Mkt By & SF
         document.getElementById('pane-mktSf').innerHTML = `
             <div class="section-title">Mkt_By / Basic_Value & %</div>
             <div class="table-wrapper"><table id="mktByTable"><thead><tr><th onclick="sortTable('mktSimple',0)">Mkt_By</th><th onclick="sortTable('mktSimple',1)">Basic_Value</th><th onclick="sortTable('mktSimple',2)">%</th></tr></thead><tbody id="mktByBody"></tbody><tfoot id="mktByFoot"></tfoot></table></div>
             <div class="section-title">SF_Name / Sale_Qty / Basic_Value / %</div>
             <div class="table-wrapper"><table id="sfWiseTable"><thead><tr><th onclick="sortTable('sfWise',0)">SF_Name</th><th onclick="sortTable('sfWise',1)">Product_Name</th><th onclick="sortTable('sfWise',2)">Mkt_By</th><th onclick="sortTable('sfWise',3)">Sale_Qty</th><th onclick="sortTable('sfWise',4)">Basic_Value</th><th onclick="sortTable('sfWise',5)">%</th></tr></thead><tbody id="sfWiseBody"></tbody><tfoot id="sfWiseFoot"></tfoot></table></div>
         `;
-        // SF & Brand
+        
         document.getElementById('pane-sfBrand').innerHTML = `
             <div class="section-title">SF Code / SF Name / Product / Sale Qty / Basic Value</div>
             <div class="table-wrapper"><table id="sfCodeTable"><thead><tr><th onclick="sortTable('sfCode',0)">SF_Code</th><th onclick="sortTable('sfCode',1)">SF_Name</th><th onclick="sortTable('sfCode',2)">Product</th><th onclick="sortTable('sfCode',3)">Sale_Qty</th><th onclick="sortTable('sfCode',4)">Basic_Value</th><th onclick="sortTable('sfCode',5)">%</th></tr></thead><tbody id="sfCodeBody"></tbody><tfoot id="sfCodeFoot"></tfoot></table></div>
         `;
-        // Product Month Wise
+        
         document.getElementById('pane-prodMonth').innerHTML = `
             <div class="section-title">Product Month Wise (detailed)</div>
             <div class="table-wrapper"><table id="prodMonthDetail"><thead><tr><th onclick="sortTable('prodDetail',0)">Product</th><th onclick="sortTable('prodDetail',1)">Month</th><th onclick="sortTable('prodDetail',2)">Sale Qty</th><th onclick="sortTable('prodDetail',3)">Basic Value</th></tr></thead><tbody id="prodMonthDetailBody"></tbody><tfoot id="prodMonthDetailFoot"></tfoot></table></div>
             <div class="section-title">Product Summary <span class="pagination"><span id="prodRange"></span> <button id="prevBtn" onclick="prevPage()">←</button><button id="nextBtn" onclick="nextPage()">→</button></span></div>
             <div class="table-wrapper"><table id="prodSummary"><thead><tr><th onclick="sortTable('prodSummary',0)">Product Name</th><th onclick="sortTable('prodSummary',1)">Sale Qty</th><th onclick="sortTable('prodSummary',2)">Basic Value</th><th onclick="sortTable('prodSummary',3)">%</th></tr></thead><tbody id="prodSummaryBody"></tbody><tfoot id="prodSummaryFoot"></tfoot></table></div>
         `;
-        // Daily Dispatch
+        
         document.getElementById('pane-dispatch').innerHTML = `
             <div class="section-title">Daily Dispatch Details (DPR)</div>
             <div class="table-wrapper"><table id="dprTable"><thead><tr><th onclick="sortTable('dpr',0)">Bill_Date</th><th onclick="sortTable('dpr',1)">Bill_No</th><th onclick="sortTable('dpr',2)">Location</th><th onclick="sortTable('dpr',3)">Mkt_By</th><th onclick="sortTable('dpr',4)">Product</th><th onclick="sortTable('dpr',5)">Batch_No</th><th onclick="sortTable('dpr',6)">SF_Name</th><th onclick="sortTable('dpr',7)">Sale_Qty</th><th onclick="sortTable('dpr',8)">Basic_Value</th></tr></thead><tbody id="dprBody"></tbody><tfoot id="dprFoot"></tfoot></table></div>
@@ -248,7 +407,7 @@
             const snapshot = await db.collection('sales_data').get();
             if (snapshot.empty) throw new Error('No data');
             allData = [];
-            uniqueValues.locations.clear(); uniqueValues.mktBy.clear(); uniqueValues.productTypes.clear();
+            const locSet = new Set(), mktSet = new Set(), typeSet = new Set();
             const yearSet = new Set();
 
             snapshot.forEach(doc => {
@@ -271,7 +430,6 @@
                     dosage_form: d.dosage_form || d.Dosage_Form || ''
                 };
                 
-                // Extract year from bill_date
                 if (rec.bill_date && rec.bill_date.length >= 4) {
                     const year = rec.bill_date.substring(0, 4);
                     if (year.match(/^\d{4}$/)) yearSet.add(parseInt(year));
@@ -279,24 +437,27 @@
                 
                 if (rec.basic_value > 0 || rec.sale_qty > 0) {
                     allData.push(rec);
-                    if (rec.location) uniqueValues.locations.add(rec.location);
-                    if (rec.mkt_by) uniqueValues.mktBy.add(rec.mkt_by);
-                    if (rec.product_type) uniqueValues.productTypes.add(rec.product_type);
+                    if (rec.location) locSet.add(rec.location);
+                    if (rec.mkt_by) mktSet.add(rec.mkt_by);
+                    if (rec.product_type) typeSet.add(rec.product_type);
                 }
             });
 
-            // Get available years and sort
-            availableYears = Array.from(yearSet).sort((a,b) => b - a);
-            if (availableYears.length === 0) availableYears = [2024, 2025, 2026]; // fallback
+            uniqueValues.locations = Array.from(locSet).sort();
+            uniqueValues.mktBy = Array.from(mktSet).sort();
+            uniqueValues.productTypes = Array.from(typeSet).sort();
             
-            // Build panes with dynamic years
+            availableYears = Array.from(yearSet).sort((a,b) => b - a);
+            if (availableYears.length === 0) availableYears = [2024, 2025, 2026];
+            
             buildPaneContentsWithYears(availableYears);
+            populateDropdowns();
             
             filteredData = [...allData];
             document.getElementById('loading').style.display = 'none';
             document.getElementById('lastUpdate').textContent = globalLastUpdate ? `LAST UPDATE: ${globalLastUpdate}` : 'LAST UPDATE: 27/02/2026 09:20:45';
-            updateFilterDropdowns();
-            filterChanged(); // initial render
+            
+            filterChanged();
         } catch (err) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
@@ -304,42 +465,36 @@
         }
     }
 
-    function updateFilterDropdowns() {
-        const locSel = document.getElementById('locationFilter');
-        const mktSel = document.getElementById('mktByFilter');
-        const typeSel = document.getElementById('productTypeFilter');
+    function populateDropdowns() {
+        // Location options
+        const locOptions = document.getElementById('locationOptions');
+        locOptions.innerHTML = uniqueValues.locations.map(v => 
+            `<div class="multi-select-option" onclick="toggleOption('location', '${v}'); event.stopPropagation();">${v}</div>`
+        ).join('');
         
-        let selectedLoc = Array.from(locSel.selectedOptions).map(o => o.value);
-        let selectedMkt = Array.from(mktSel.selectedOptions).map(o => o.value);
-        let selectedType = Array.from(typeSel.selectedOptions).map(o => o.value);
-
-        locSel.innerHTML = '<option value="">All Locations</option>';
-        mktSel.innerHTML = '<option value="">All</option>';
-        typeSel.innerHTML = '<option value="">All Types</option>';
-
-        Array.from(uniqueValues.locations).sort().forEach(v => locSel.add(new Option(v, v)));
-        Array.from(uniqueValues.mktBy).sort().forEach(v => mktSel.add(new Option(v, v)));
-        Array.from(uniqueValues.productTypes).sort().forEach(v => typeSel.add(new Option(v, v)));
-
-        // restore selections
-        [...locSel.options].forEach(opt => { if (selectedLoc.includes(opt.value)) opt.selected = true; });
-        [...mktSel.options].forEach(opt => { if (selectedMkt.includes(opt.value)) opt.selected = true; });
-        [...typeSel.options].forEach(opt => { if (selectedType.includes(opt.value)) opt.selected = true; });
+        // MktBy options
+        const mktOptions = document.getElementById('mktByOptions');
+        mktOptions.innerHTML = uniqueValues.mktBy.map(v => 
+            `<div class="multi-select-option" onclick="toggleOption('mktBy', '${v}'); event.stopPropagation();">${v}</div>`
+        ).join('');
+        
+        // Product Type options
+        const typeOptions = document.getElementById('productTypeOptions');
+        typeOptions.innerHTML = uniqueValues.productTypes.map(v => 
+            `<div class="multi-select-option" onclick="toggleOption('productType', '${v}'); event.stopPropagation();">${v}</div>`
+        ).join('');
     }
 
     // ---------- FILTER ----------
     window.filterChanged = function() {
-        const locationSel = Array.from(document.getElementById('locationFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
-        const mktSel = Array.from(document.getElementById('mktByFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
-        const typeSel = Array.from(document.getElementById('productTypeFilter').selectedOptions).map(o => o.value).filter(v => v !== '');
         const dateFrom = document.getElementById('dateFrom').value;
         const dateTo = document.getElementById('dateTo').value;
         const search = document.getElementById('globalSearch').value.toLowerCase();
 
         filteredData = allData.filter(item => {
-            if (locationSel.length && !locationSel.includes(item.location)) return false;
-            if (mktSel.length && !mktSel.includes(item.mkt_by)) return false;
-            if (typeSel.length && !typeSel.includes(item.product_type)) return false;
+            if (selectedFilters.locations.length && !selectedFilters.locations.includes(item.location)) return false;
+            if (selectedFilters.mktBy.length && !selectedFilters.mktBy.includes(item.mkt_by)) return false;
+            if (selectedFilters.productTypes.length && !selectedFilters.productTypes.includes(item.product_type)) return false;
             if (dateFrom && item.bill_date && item.bill_date.substring(0,7) < dateFrom) return false;
             if (dateTo && item.bill_date && item.bill_date.substring(0,7) > dateTo) return false;
             if (search) {
@@ -357,33 +512,54 @@
     };
 
     function updateActiveFilters() {
-        const loc = Array.from(document.getElementById('locationFilter').selectedOptions).map(o => o.value).filter(v=>v);
-        const mkt = Array.from(document.getElementById('mktByFilter').selectedOptions).map(o => o.value).filter(v=>v);
-        const typ = Array.from(document.getElementById('productTypeFilter').selectedOptions).map(o => o.value).filter(v=>v);
-        const f = document.getElementById('dateFrom').value;
-        const t = document.getElementById('dateTo').value;
-        const s = document.getElementById('globalSearch').value;
-
-        let tags = [];
-        if (loc.length) tags.push(`Location: ${loc.join(', ')}`);
-        if (mkt.length) tags.push(`Mkt: ${mkt.join(', ')}`);
-        if (typ.length) tags.push(`Type: ${typ.join(', ')}`);
-        if (f) tags.push(`From: ${f}`);
-        if (t) tags.push(`To: ${t}`);
-        if (s) tags.push(`Search: ${s}`);
+        const tags = [];
+        if (selectedFilters.locations.length) tags.push(`Location: ${selectedFilters.locations.join(', ')}`);
+        if (selectedFilters.mktBy.length) tags.push(`Mkt: ${selectedFilters.mktBy.join(', ')}`);
+        if (selectedFilters.productTypes.length) tags.push(`Type: ${selectedFilters.productTypes.join(', ')}`);
+        if (document.getElementById('dateFrom').value) tags.push(`From: ${document.getElementById('dateFrom').value}`);
+        if (document.getElementById('dateTo').value) tags.push(`To: ${document.getElementById('dateTo').value}`);
+        if (document.getElementById('globalSearch').value) tags.push(`Search: ${document.getElementById('globalSearch').value}`);
 
         const bar = document.getElementById('activeFiltersBar');
         const container = document.getElementById('activeFilters');
+        
         if (tags.length) {
             bar.style.display = 'flex';
-            container.innerHTML = tags.map(t => `<span class="filter-tag">${t}</span>`).join(' ');
-        } else bar.style.display = 'none';
+            container.innerHTML = tags.map(t => 
+                `<span class="filter-tag">${t} <button onclick="removeFilterTag('${t.split(':')[0].trim()}')">✕</button></span>`
+            ).join(' ');
+        } else {
+            bar.style.display = 'none';
+        }
     }
 
+    window.removeFilterTag = function(type) {
+        if (type === 'Location') {
+            selectedFilters.locations = [];
+            document.querySelector('#locationContainer .multi-select-box').textContent = 'All Locations';
+        } else if (type === 'Mkt') {
+            selectedFilters.mktBy = [];
+            document.querySelector('#mktByContainer .multi-select-box').textContent = 'All';
+        } else if (type === 'Type') {
+            selectedFilters.productTypes = [];
+            document.querySelector('#productTypeContainer .multi-select-box').textContent = 'All Types';
+        } else if (type === 'From') {
+            document.getElementById('dateFrom').value = '';
+        } else if (type === 'To') {
+            document.getElementById('dateTo').value = '';
+        } else if (type === 'Search') {
+            document.getElementById('globalSearch').value = '';
+        }
+        filterChanged();
+    };
+
     window.clearAllFilters = function() {
-        document.getElementById('locationFilter').selectedIndex = -1;
-        document.getElementById('mktByFilter').selectedIndex = -1;
-        document.getElementById('productTypeFilter').selectedIndex = -1;
+        selectedFilters.locations = [];
+        selectedFilters.mktBy = [];
+        selectedFilters.productTypes = [];
+        document.querySelector('#locationContainer .multi-select-box').textContent = 'All Locations';
+        document.querySelector('#mktByContainer .multi-select-box').textContent = 'All';
+        document.querySelector('#productTypeContainer .multi-select-box').textContent = 'All Types';
         document.getElementById('dateFrom').value = '';
         document.getElementById('dateTo').value = '';
         document.getElementById('globalSearch').value = '';
@@ -393,14 +569,14 @@
     // Drilldown
     window.drilldown = function(type, value) {
         if (type === 'mktBy') {
-            let sel = document.getElementById('mktByFilter');
-            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+            selectedFilters.mktBy = [value];
+            document.querySelector('#mktByContainer .multi-select-box').textContent = value;
         } else if (type === 'location') {
-            let sel = document.getElementById('locationFilter');
-            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+            selectedFilters.locations = [value];
+            document.querySelector('#locationContainer .multi-select-box').textContent = value;
         } else if (type === 'productType') {
-            let sel = document.getElementById('productTypeFilter');
-            [...sel.options].forEach(opt => { if (opt.value === value) opt.selected = true; });
+            selectedFilters.productTypes = [value];
+            document.querySelector('#productTypeContainer .multi-select-box').textContent = value;
         } else if (type === 'sfName' || type === 'product') {
             document.getElementById('globalSearch').value = value;
         } else if (type === 'month') {
@@ -420,7 +596,6 @@
             state.col = colIndex;
             state.dir = 'asc';
         }
-        // update header arrows
         document.querySelectorAll(`#${tableId} thead th`).forEach((th, idx) => {
             th.classList.remove('sort-asc', 'sort-desc');
             if (idx === state.col) th.classList.add(`sort-${state.dir}`);
@@ -451,22 +626,18 @@
     function formatNumber(num) { return (num || 0).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 }); }
     function formatPercentage(num) { return (num || 0).toFixed(2) + '%'; }
 
-    // Financial Year Board - Dynamic Years
     function renderFyBoard() {
-        let map = new Map(); // mkt_by -> Map of year -> total
+        let map = new Map();
         filteredData.forEach(r => {
             if (!r.mkt_by || !r.bill_date) return;
             const year = r.bill_date.substring(0, 4);
             if (!year.match(/^\d{4}$/)) return;
             
-            if (!map.has(r.mkt_by)) {
-                map.set(r.mkt_by, new Map());
-            }
+            if (!map.has(r.mkt_by)) map.set(r.mkt_by, new Map());
             const yearMap = map.get(r.mkt_by);
             yearMap.set(year, (yearMap.get(year) || 0) + r.basic_value);
         });
 
-        // Prepare array for sorting
         let rows = [];
         const years = availableYears;
         
@@ -481,7 +652,6 @@
             rows.push(row);
         }
 
-        // Apply sorting
         const state = sortState.fy || { col: 0, dir: 'asc' };
         rows.sort((a, b) => {
             let fieldA, fieldB;
@@ -504,7 +674,6 @@
             }
         });
 
-        // Calculate totals per year
         let yearTotals = {};
         years.forEach(y => yearTotals[y] = 0);
         let grandTotal = 0;
@@ -525,11 +694,8 @@
 
         document.getElementById('fyBody').innerHTML = tbody;
         
-        // Footer
         let footer = '<tr><td>Grand total</td>';
-        years.forEach(y => {
-            footer += `<td class="text-right">${formatNumber(yearTotals[y])}</td>`;
-        });
+        years.forEach(y => footer += `<td class="text-right">${formatNumber(yearTotals[y])}</td>`);
         footer += `<td class="text-right">${formatNumber(grandTotal)}</td></tr>`;
         document.getElementById('fyFoot').innerHTML = footer;
         document.getElementById('fyTotal').textContent = `Total: ${formatNumber(grandTotal)}`;
@@ -707,12 +873,18 @@
         document.getElementById('grandTotalValue').innerText = formatNumber(total);
     }
 
-    // ---------- EXPORT TO EXCEL WITH PASSWORD "criusexcel" ----------
-    window.exportAllToExcel = function() {
-        // Collect all tables data
+    // ---------- EXPORT CURRENT TAB WITH PASSWORD PROMPT ----------
+    window.exportCurrentTab = function() {
+        const password = prompt("Enter password to export Excel file:", "criusexcel");
+        if (password !== "criusexcel") {
+            alert("Incorrect password. Export cancelled.");
+            return;
+        }
+        
+        // Get active tab
+        const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
         const wb = XLSX.utils.book_new();
         
-        // Helper to extract table data
         function addTableToWorkbook(tableId, sheetName) {
             const table = document.getElementById(tableId);
             if (!table) return;
@@ -739,37 +911,37 @@
             XLSX.utils.book_append_sheet(wb, ws, sheetName);
         }
         
-        // Add all tables
-        addTableToWorkbook('fyTable', 'Financial Year');
-        addTableToWorkbook('catTable', 'Product Type');
-        addTableToWorkbook('dosageTable', 'Dosage Form');
-        addTableToWorkbook('mktByTable', 'Mkt By');
-        addTableToWorkbook('sfWiseTable', 'SF Wise');
-        addTableToWorkbook('sfCodeTable', 'SF Code');
-        addTableToWorkbook('prodMonthDetail', 'Product Month Detail');
-        addTableToWorkbook('prodSummary', 'Product Summary');
-        addTableToWorkbook('dprTable', 'DPR');
-        addTableToWorkbook('locDispatchTable', 'Dispatch Location');
+        // Add tables based on active tab
+        switch(activeTab) {
+            case 'salesBoard':
+                addTableToWorkbook('fyTable', 'Financial Year');
+                addTableToWorkbook('catTable', 'Product Type');
+                addTableToWorkbook('dosageTable', 'Dosage Form');
+                break;
+            case 'mktSf':
+                addTableToWorkbook('mktByTable', 'Mkt By');
+                addTableToWorkbook('sfWiseTable', 'SF Wise');
+                break;
+            case 'sfBrand':
+                addTableToWorkbook('sfCodeTable', 'SF Code');
+                break;
+            case 'prodMonth':
+                addTableToWorkbook('prodMonthDetail', 'Product Month Detail');
+                addTableToWorkbook('prodSummary', 'Product Summary');
+                break;
+            case 'dispatch':
+                addTableToWorkbook('dprTable', 'DPR');
+                addTableToWorkbook('locDispatchTable', 'Dispatch Location');
+                break;
+        }
         
-        // Generate Excel file with password protection
-        const wbOptions = { bookType: 'xlsx', type: 'binary' };
-        const wbout = XLSX.write(wb, wbOptions);
-        
-        // Create blob and trigger download
+        // Generate file
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
         const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-        
-        // Since pure JS can't password protect directly, we'll create a password prompt
-        // and use the password in the filename as a simple indicator
-        const password = 'criusexcel';
-        const fileName = `Business_DashBoard_${password}.xlsx`;
-        
+        const fileName = `Business_DashBoard_${activeTab}_${password}.xlsx`;
         saveAs(blob, fileName);
-        
-        // Show password message
-        alert(`Excel file saved with password: ${password}\n(Note: Excel file is not encrypted - this is a filename indicator. For real password protection, use Excel's built-in protection.)`);
-    }
+    };
     
-    // Utility to convert string to array buffer
     function s2ab(s) {
         const buf = new ArrayBuffer(s.length);
         const view = new Uint8Array(buf);
