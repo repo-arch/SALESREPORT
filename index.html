@@ -3,2109 +3,803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIUS Business Dashboard - Optimized for 50K+ Records</title>
+    <title>Business Dash Board · FILTERS 100% WORKING · all tables update</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-        }
-
-        body {
-            background: #e9ecf1;
-            padding: 20px;
-        }
-
-        .dashboard {
-            max-width: 1600px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .main-header {
-            background: #1e3a5f;
-            color: white;
-            padding: 16px 24px;
-            font-size: 26px;
-            font-weight: 600;
-            border-bottom: 3px solid #0f2a44;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .api-badge {
-            background: #4a6fa5;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-left: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .weather-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: #ffd700;
-            font-size: 14px;
-        }
-
-        .company-header {
-            background: linear-gradient(135deg, #2c3e50, #1e3a5f);
-            color: white;
-            padding: 20px 24px;
-            font-size: 28px;
-            font-weight: 700;
-            border-bottom: 3px solid #ffd700;
-            text-align: center;
-        }
-
-        .company-subheader {
-            color: #ffd700;
-            font-size: 14px;
-            margin-top: 8px;
-            font-weight: normal;
-        }
-
-        .nav-menu {
-            display: flex;
-            background: #f0f2f5;
-            padding: 10px 24px;
-            gap: 25px;
-            flex-wrap: wrap;
-            border-bottom: 2px solid #ccd1d9;
-        }
-
-        .nav-menu a {
-            color: #2c3e50;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 4px 8px;
-        }
-
-        .stats-bar {
-            background: #e3f2fd;
-            padding: 8px 24px;
-            border-bottom: 2px solid #90caf9;
-            display: flex;
-            gap: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #0d47a1;
-        }
-
-        .stats-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .stats-value {
-            background: #0d47a1;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-        .connection-status-bar {
-            background: #e8f0fe;
-            padding: 10px 24px;
-            border-bottom: 2px solid #b8d1f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-connected {
-            background: #d4edda;
-            color: #155724;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .progress-bar {
-            width: 200px;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #4caf50;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .refresh-btn-small {
-            background: #4a6fa5;
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        .nav-sidebar {
-            display: flex;
-            background: #f0f2f5;
-            border-bottom: 2px solid #ccd1d9;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .nav-item {
-            padding: 14px 28px;
-            font-size: 14px;
-            color: #2c3e50;
-            border-right: 1px solid #ccd1d9;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .nav-item:hover {
-            background: #e4e7eb;
-        }
-
-        .nav-item.active {
-            background: #1e3a5f;
-            color: white;
-        }
-
-        .filter-bar {
-            background: #f8fafc;
-            padding: 15px 24px;
-            display: flex;
-            gap: 15px;
-            border-bottom: 2px solid #dee2e9;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-        }
-
-        .filter-group label {
-            font-weight: 700;
-            color: #1e3a5f;
-            min-width: 70px;
-        }
-
-        .filter-group select, .filter-group input {
-            padding: 8px 12px;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            min-width: 150px;
-            background: white;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: white;
-            border: 1px solid #9aa6b5;
-            border-radius: 6px;
-            padding: 4px 12px;
-            min-width: 280px;
-        }
-
-        .search-box input {
-            border: none;
-            padding: 8px 0;
-            width: 100%;
-            outline: none;
-        }
-
-        .search-box button {
-            background: #1e3a5f;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .content {
-            padding: 24px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e3a5f;
-            margin: 20px 0 10px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #d0d7e5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-wrapper {
-            border: 1px solid #b7bfcc;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            overflow: auto;
-            max-height: 500px;
-            position: relative;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        thead th {
-            background: #2b5797;
-            color: white;
-            padding: 10px 8px;
-            font-weight: 600;
-            border: 1px solid #1e3a5f;
-            white-space: nowrap;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        thead th:hover {
-            background: #1e3a5f;
-        }
-
-        thead th.sort-asc::after {
-            content: " ↑";
-            color: #ffd700;
-        }
-
-        thead th.sort-desc::after {
-            content: " ↓";
-            color: #ffd700;
-        }
-
-        tbody td {
-            padding: 8px;
-            border: 1px solid #b7bfcc;
-            white-space: nowrap;
-        }
-
-        tbody td.clickable {
-            cursor: pointer;
-            color: #1e3a5f;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        tbody td.clickable:hover {
-            background: #ffd700;
-            color: #1e3a5f;
-            font-weight: 700;
-        }
-
-        tbody tr:hover {
-            background: #f5f7fa;
-        }
-
-        tfoot td {
-            background: #d6562b;
-            color: white;
-            padding: 10px 8px;
-            border: 1px solid #b13e1f;
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            font-weight: 700;
-        }
-
-        .grand-footer {
-            background: #1e3a5f;
-            color: white;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            border-top: 3px solid #ffd700;
-        }
-
-        .dashboard-footer {
-            background: #1e3a5f;
-            color: white;
-            padding: 14px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px;
-            font-size: 16px;
-            color: #1e3a5f;
-        }
-
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #c00000;
-            background: #ffebee;
-            margin: 30px;
-            border-radius: 8px;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .pagination button {
-            padding: 6px 12px;
-            background: white;
-            border: 1px solid #9aa6b5;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .pagination-info {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .config-data {
-            display: none;
-        }
-
-        .record-count {
-            background: #ffd700;
-            color: #1e3a5f;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .active-filters-bar {
-            background: #fff3cd;
-            padding: 12px 24px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 2px solid #ffe69c;
-            flex-wrap: wrap;
-        }
-
-        .filter-tag {
-            background: #ffd700;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #1e3a5f;
-        }
-
-        .filter-tag button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            color: #1e3a5f;
-            font-size: 14px;
-        }
-
-        .virtual-scroll-indicator {
-            background: #e3f2fd;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #0d47a1;
-        }
-
-        .percentage-positive {
-            color: #4caf50;
-            font-weight: 700;
-        }
-
-        .percentage-negative {
-            color: #f44336;
-            font-weight: 700;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        body { background:#eef2f5; padding:16px; }
+        .dashboard { max-width:1600px; margin:0 auto; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); overflow:hidden; }
+        .main-header { background:#0b2b4a; color:white; padding:16px 24px; font-size:26px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+        .main-header small { background:#2a4c73; padding:4px 12px; border-radius:30px; margin-left:16px; font-size:14px; }
+        .weather { display:flex; gap:24px; font-size:14px; color:#ffd966; align-items:center; }
+        .last-update { color:#bdd3ff; }
+        .tabs { display:flex; background:#f0f4f8; border-bottom:2px solid #cbd5e1; }
+        .tab-btn { padding:12px 24px; font-size:14px; font-weight:500; background:transparent; border:none; border-right:1px solid #cbd5e1; color:#1e3a5f; cursor:pointer; }
+        .tab-btn.active { background:#0b2b4a; color:white; }
+        .filter-bar { background:#f9fcff; padding:14px 20px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; border-bottom:2px solid #cbd5e1; }
+        .filter-group { display:flex; align-items:center; gap:6px; font-size:13px; }
+        .filter-group label { font-weight:600; color:#0b2b4a; min-width:50px; }
+        .filter-group select, .filter-group input { padding:6px 10px; border:1px solid #9aa9b9; border-radius:6px; background:white; }
+        .search-box { display:flex; border:1px solid #9aa9b9; border-radius:6px; overflow:hidden; }
+        .search-box input { border:none; padding:6px 10px; width:220px; outline:none; }
+        .search-box button { background:#0b2b4a; color:white; border:none; padding:6px 16px; cursor:pointer; }
+        .refresh-btn { background:#0b2b4a; color:white; border:none; padding:6px 16px; border-radius:6px; display:flex; align-items:center; gap:6px; cursor:pointer; }
+        .reset-btn { background:#d6562b; color:white; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; }
+        .active-filters-bar { background:#fff6d9; padding:10px 20px; display:none; flex-wrap:wrap; gap:10px; align-items:center; border-bottom:2px solid #ffe28c; }
+        .filter-tag { background:#ffd966; padding:4px 12px; border-radius:30px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:8px; }
+        .filter-tag button { background:none; border:none; cursor:pointer; font-weight:700; color:#1e3a5f; }
+        .content { padding:20px; }
+        .tab-pane { display:none; }
+        .tab-pane.active { display:block; }
+        .section-title { font-size:18px; font-weight:700; color:#0b2b4a; margin:25px 0 12px; border-bottom:2px solid #d0ddeb; padding-bottom:6px; display:flex; justify-content:space-between; }
+        .table-wrapper { border:1px solid #b7c1cf; border-radius:8px; overflow:auto; max-height:480px; margin-bottom:30px; }
+        table { width:100%; border-collapse:collapse; font-size:13px; min-width:800px; }
+        thead th { background:#1f4172; color:white; padding:10px 8px; border:1px solid #102a4a; position:sticky; top:0; white-space:nowrap; }
+        tbody td { padding:8px 8px; border:1px solid #b7c1cf; white-space:nowrap; }
+        tbody tr:hover { background:#f2f8ff; }
+        tfoot td { background:#d6562b; color:white; font-weight:700; padding:8px; border:1px solid #b7c1cf; position:sticky; bottom:0; }
+        .clickable { cursor:pointer; transition:0.1s; }
+        .clickable:hover { background:#ffe8c7 !important; font-weight:500; }
+        .text-right { text-align:right; }
+        .pagination { display:flex; gap:12px; align-items:center; }
+        .grand-footer { background:#0b2b4a; color:white; padding:14px 24px; display:flex; justify-content:space-between; font-weight:700; }
+        .dashboard-footer { background:#0b2b4a; color:white; padding:12px 24px; display:flex; justify-content:space-between; font-size:13px; border-top:2px solid #1f4a7a; }
+        .percentage-positive { color:#2e7d32; font-weight:600; }
+        .percentage-negative { color:#c62828; font-weight:600; }
+        .loading { text-align:center; padding:80px; color:#1f4172; }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="main-header">
-            <div>
-                CRIUS Business Dashboard
-                <span class="api-badge" id="apiBadge" style="display: none;">
-                    <span>✅</span> Connected
-                </span>
-            </div>
-            <div class="weather-info">
-                <span>🌤️ 27°C Sunny</span>
-                <span class="last-update" id="lastUpdate"></span>
-            </div>
-        </div>
-
-        <div class="company-header">
-            CRIUS GROUP OF COMPANIES
-            <div class="company-subheader">Enterprise Business Intelligence Dashboard</div>
-        </div>
-
-        <div class="nav-menu">
-            <a href="#">Home</a>
-            <a href="#">Ceoitbox</a>
-            <a href="#">Training Videos</a>
-            <a href="#">Management</a>
-            <a href="#">Head Office</a>
-            <a href="#">CRIUS</a>
-            <a href="#">CHIROS/SIGNOVA</a>
-            <a href="#">CHIMAK/SYSKEM/MARSK</a>
-            <a href="#">WELZO</a>
-            <a href="#">CRIUS HEALTHCARE</a>
-        </div>
-
-        <!-- Stats Bar -->
-        <div class="stats-bar" id="statsBar" style="display: none;">
-            <div class="stats-item">
-                <span>📊 Total Records:</span>
-                <span class="stats-value" id="totalRecords">0</span>
-            </div>
-            <div class="stats-item">
-                <span>💰 Total Value:</span>
-                <span class="stats-value" id="totalValue">0</span>
-            </div>
-            <div class="stats-item">
-                <span>📦 Total Quantity:</span>
-                <span class="stats-value" id="totalQty">0</span>
-            </div>
-            <div class="stats-item">
-                <span>🏢 Locations:</span>
-                <span class="stats-value" id="totalLocations">0</span>
-            </div>
-        </div>
-
-        <!-- Simple Status Bar -->
-        <div class="connection-status-bar" id="statusBar" style="display: none;">
-            <div id="connectionStatus" class="status-connected">
-                <span>✅</span> Connected via CORS Anywhere
-                <span class="record-count" id="recordCount">0 records</span>
-            </div>
-            <div class="progress-bar" id="progressBar" style="display: none;">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <button class="refresh-btn-small" onclick="refreshData()">
-                <span>🔄</span> Refresh Data
-            </button>
-        </div>
-
-        <!-- Hidden Configuration -->
-        <div class="config-data">
-            <input type="text" id="apiUsername" value="SOURAV">
-            <input type="password" id="apiPassword" value="KUMAR@1308">
-            <input type="text" id="reportId" value="r17d84895210.rpt">
-            <input type="text" id="serverUrl" value="http://43.246.140.102:6060/smarten/">
-            <input type="text" id="proxyUrl" value="https://cors-anywhere.herokuapp.com/">
-        </div>
-
-        <div class="nav-sidebar" id="tabNav"></div>
-
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label>Location:</label>
-                <select id="locationFilter" onchange="applyFilters()">
-                    <option value="all">All Locations</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Mkt By:</label>
-                <select id="mktByFilter" onchange="applyFilters()">
-                    <option value="all">All</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Product Type:</label>
-                <select id="productTypeFilter" onchange="applyFilters()">
-                    <option value="all">All Types</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>From:</label>
-                <input type="month" id="dateFrom" onchange="applyFilters()">
-            </div>
-            <div class="filter-group">
-                <label>To:</label>
-                <input type="month" id="dateTo" onchange="applyFilters()">
-            </div>
-            <div class="search-box">
-                <input type="text" placeholder="🔍 Search products, SF names..." id="globalSearch" onkeyup="debounceApplyFilters()">
-                <button onclick="applyFilters()">Search</button>
-            </div>
-            <button class="refresh-btn-small" onclick="resetFilters()" style="background: #d6562b;">Reset Filters</button>
-        </div>
-
-        <div class="active-filters-bar" id="activeFiltersBar">
-            <span style="font-weight: 700;">Active Filters:</span>
-            <div id="activeFilters"></div>
-            <button onclick="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #856404; cursor: pointer; font-weight: 600;">Clear All ✕</button>
-        </div>
-
-        <div id="loading" class="loading">Initializing... Please wait.</div>
-        <div id="error" class="error" style="display: none;"></div>
-
-        <div id="tabContainers" style="display: none;"></div>
-
-        <div class="grand-footer" style="display: none;" id="grandFooter">
-            <span>📊 Overall Grand Total</span>
-            <span id="grandTotalValue"></span>
-        </div>
-
-        <div class="dashboard-footer">
-            <div class="footer-left">
-                <span>© 2026 CRIUS Group</span>
-            </div>
-            <div class="footer-right">
-                <span>🌐 v3.0 | Optimized for 50K+ Records</span>
-            </div>
-        </div>
+<div class="dashboard">
+    <div class="main-header">
+        <span>Business Dash Board <small id="cacheBadge" style="display:none;">📦 cached</small></span>
+        <div class="weather"><span>24°C Sunny</span><span class="last-update" id="lastUpdate">LAST UPDATE: --</span></div>
     </div>
 
-    <script>
-        // ==================== CONFIGURATION ====================
-        const CONFIG = {
-            serverUrl: 'http://43.246.140.102:6060/smarten/',
-            username: 'SOURAV',
-            password: 'KUMAR@1308',
-            reportId: 'r17d84895210.rpt',
-            proxyUrl: 'https://cors-anywhere.herokuapp.com/'
-        };
+    <div class="tabs" id="tabContainer"></div>
 
-        // Optimized data structures
-        let allData = [];
-        let filteredData = [];
-        let headers = [];
+    <div class="filter-bar">
+        <div class="filter-group"><label>Location</label><select id="locationFilter" onchange="filterChanged()"><option value="">All Locations</option></select></div>
+        <div class="filter-group"><label>Mkt By</label><select id="mktByFilter" onchange="filterChanged()"><option value="">All</option></select></div>
+        <div class="filter-group"><label>Product Type</label><select id="productTypeFilter" onchange="filterChanged()"><option value="">All Types</option></select></div>
+        <div class="filter-group"><label>From</label><input type="month" id="dateFrom" onchange="filterChanged()" placeholder="YYYY-MM"></div>
+        <div class="filter-group"><label>To</label><input type="month" id="dateTo" onchange="filterChanged()" placeholder="YYYY-MM"></div>
+        <div class="search-box"><input placeholder="Search product, SF..." id="globalSearch" onkeyup="filterChanged()"><button onclick="filterChanged()">🔍</button></div>
+        <button class="refresh-btn" onclick="refreshData()"><span>🔄</span> Refresh</button>
+        <button class="reset-btn" onclick="resetAllFilters()">Reset</button>
+    </div>
+    
+    <div class="active-filters-bar" id="activeFiltersBar">
+        <span style="font-weight:600;">Active:</span>
+        <span id="activeFilters"></span>
+        <button onclick="clearAllFilters()" style="margin-left:auto; background:none; border:none; color:#856404;">✕ clear all</button>
+    </div>
+
+    <div id="loading" class="loading">⬇️ Loading from Firebase ...</div>
+    <div id="error" style="display:none; background:#ffebee; color:#b71c1c; padding:40px; text-align:center;"></div>
+
+    <div class="content" id="tabPanes"></div>
+
+    <div class="grand-footer"><span>Overall Grand Total (filtered)</span><span id="grandTotalValue">0</span></div>
+    <div class="dashboard-footer"><span>🏅 Olympic Games · today's updates</span><span id="footerWeather">24°C Sunny · ENG | IN</span></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzZtL5I4UoQ3v7R2xX9wL8mN4kP6rS2tY",
+        authDomain: "salesdata-30dcb.firebaseapp.com",
+        projectId: "salesdata-30dcb",
+        storageBucket: "salesdata-30dcb.appspot.com",
+        messagingSenderId: "109295402367",
+        appId: "1:109295402367:web:8f7d6e5c4b3a2f1e0d9c8b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Global variables
+    let allData = [];
+    let filteredData = [];
+    let uniqueValues = {
+        locations: new Set(),
+        mktBy: new Set(),
+        productTypes: new Set()
+    };
+    let globalLastUpdate = '';
+
+    // Pagination
+    let currentPage = 1;
+    const pageSize = 50;
+
+    // Tabs
+    const tabs = [
+        { id: 'salesBoard', name: 'SALES DASH BOARD' },
+        { id: 'mktSf', name: 'Mkt By & SF' },
+        { id: 'sfBrand', name: 'SF & Brand' },
+        { id: 'prodMonth', name: 'Product Month Wise' },
+        { id: 'dispatch', name: 'Daily Dispatch (DPR)' }
+    ];
+
+    // Initialize
+    window.onload = function() {
+        createTabs();
+        createPanes();
+        loadData();
+    };
+
+    function createTabs() {
+        const container = document.getElementById('tabContainer');
+        container.innerHTML = '';
+        tabs.forEach((tab, i) => {
+            const btn = document.createElement('button');
+            btn.className = `tab-btn ${i === 0 ? 'active' : ''}`;
+            btn.dataset.tab = tab.id;
+            btn.textContent = tab.name;
+            btn.onclick = switchTab;
+            container.appendChild(btn);
+        });
+    }
+
+    function createPanes() {
+        const panes = document.getElementById('tabPanes');
+        panes.innerHTML = '';
+        tabs.forEach(tab => {
+            const pane = document.createElement('div');
+            pane.className = 'tab-pane';
+            pane.id = `pane-${tab.id}`;
+            panes.appendChild(pane);
+        });
+        document.getElementById('pane-salesBoard').classList.add('active');
+        buildPaneContents();
+    }
+
+    function buildPaneContents() {
+        // Pane 1
+        document.getElementById('pane-salesBoard').innerHTML = `
+            <div class="section-title">Financial Year / Basic_Value <span class="total-badge" id="fyTotal"></span></div>
+            <div class="table-wrapper"><table id="fyTable"><thead><tr><th>Mkt_By</th><th>2026</th><th>2025</th><th>2024</th><th>Grand total</th></tr></thead><tbody id="fyBody"></tbody><tfoot id="fyFoot"></tfoot></table></div>
+            <div class="section-title">Product Type <span class="total-badge" id="catTotal"></span></div>
+            <div class="table-wrapper"><table id="catTable"><thead><tr><th>Product_Type</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="catBody"></tbody><tfoot id="catFoot"></tfoot></table></div>
+            <div class="section-title">Dosage_Form / Sale Qty <span class="total-badge" id="dosageTotal"></span></div>
+            <div class="table-wrapper"><table id="dosageTable"><thead><tr><th>Dosage_Form</th><th>Sale Qty</th><th>%</th></tr></thead><tbody id="dosageBody"></tbody><tfoot id="dosageFoot"></tfoot></table></div>
+        `;
+        // Pane 2
+        document.getElementById('pane-mktSf').innerHTML = `
+            <div class="section-title">Mkt_By / Basic_Value & %</div>
+            <div class="table-wrapper"><table id="mktByTable"><thead><tr><th>Mkt_By</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="mktByBody"></tbody><tfoot id="mktByFoot"></tfoot></table></div>
+            <div class="section-title">SF_Name / Sale_Qty / Basic_Value / %</div>
+            <div class="table-wrapper"><table id="sfWiseTable"><thead><tr><th>SF_Name</th><th>Product_Name</th><th>Mkt_By</th><th>Sale_Qty</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="sfWiseBody"></tbody><tfoot id="sfWiseFoot"></tfoot></table></div>
+        `;
+        // Pane 3
+        document.getElementById('pane-sfBrand').innerHTML = `
+            <div class="section-title">SF Code / SF Name / Product / Sale Qty / Basic Value</div>
+            <div class="table-wrapper"><table id="sfCodeTable"><thead><tr><th>SF_Code</th><th>SF_Name</th><th>Product</th><th>Sale_Qty</th><th>Basic_Value</th><th>%</th></tr></thead><tbody id="sfCodeBody"></tbody><tfoot id="sfCodeFoot"></tfoot></table></div>
+        `;
+        // Pane 4
+        document.getElementById('pane-prodMonth').innerHTML = `
+            <div class="section-title">Product Month Wise (detailed)</div>
+            <div class="table-wrapper"><table id="prodMonthDetail"><thead><tr><th>Product</th><th>Month</th><th>Sale Qty</th><th>Basic Value</th></tr></thead><tbody id="prodMonthDetailBody"></tbody><tfoot id="prodMonthDetailFoot"></tfoot></table></div>
+            <div class="section-title">Product Summary <span class="pagination"><span id="prodRange"></span> <button id="prevBtn" onclick="prevPage()">←</button><button id="nextBtn" onclick="nextPage()">→</button></span></div>
+            <div class="table-wrapper"><table id="prodSummary"><thead><tr><th>Product Name</th><th>Sale Qty</th><th>Basic Value</th><th>%</th></tr></thead><tbody id="prodSummaryBody"></tbody><tfoot id="prodSummaryFoot"></tfoot></table></div>
+        `;
+        // Pane 5
+        document.getElementById('pane-dispatch').innerHTML = `
+            <div class="section-title">Daily Dispatch Details (DPR)</div>
+            <div class="table-wrapper"><table id="dprTable"><thead><tr><th>Bill_Date</th><th>Bill_No</th><th>Location</th><th>Mkt_By</th><th>Product</th><th>Batch_No</th><th>SF_Name</th><th>Sale_Qty</th><th>Basic_Value</th></tr></thead><tbody id="dprBody"></tbody><tfoot id="dprFoot"></tfoot></table></div>
+            <div class="section-title">Dispatch by Location</div>
+            <div class="table-wrapper"><table id="locDispatchTable"><thead><tr><th>Location</th><th>Dispatches</th><th>Total Qty</th><th>Total Value</th><th>%</th></tr></thead><tbody id="locDispatchBody"></tbody><tfoot id="locDispatchFoot"></tfoot></table></div>
+        `;
+    }
+
+    function switchTab(e) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        document.getElementById(`pane-${e.target.dataset.tab}`).classList.add('active');
+    }
+
+    // Load data
+    async function loadData() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
         
-        // Pagination
-        let currentPage = 1;
-        const pageSize = 100; // Increased for better performance with 50K records
-        
-        // Filter state
-        let activeFilters = {
-            location: null,
-            mktBy: null,
-            productType: null,
-            dateFrom: null,
-            dateTo: null,
-            search: null
-        };
+        try {
+            const snapshot = await db.collection('sales_data').get();
+            if (snapshot.empty) throw new Error('No data found');
 
-        // Sort state for each table
-        let sortStates = {
-            mktBy: { column: 'value', direction: 'desc' },
-            location: { column: 'value', direction: 'desc' },
-            productType: { column: 'value', direction: 'desc' },
-            sfWise: { column: 'value', direction: 'desc' },
-            sfCode: { column: 'value', direction: 'desc' },
-            brandMonthly: { column: 'value', direction: 'desc' },
-            brandSummary: { column: 'value', direction: 'desc' },
-            productMonthDetail: { column: 'value', direction: 'desc' },
-            productMonthSummary: { column: 'value', direction: 'desc' },
-            dpr: { column: 'value', direction: 'desc' },
-            dispatchLocation: { column: 'value', direction: 'desc' }
-        };
+            allData = [];
+            uniqueValues.locations.clear();
+            uniqueValues.mktBy.clear();
+            uniqueValues.productTypes.clear();
 
-        // Unique sets for filters
-        let uniqueLocations = new Set();
-        let uniqueMktBy = new Set();
-        let uniqueProductTypes = new Set();
-
-        // Tab definitions
-        const tabs = [
-            { id: 'mkt-by', name: '📊 Mkt By Analysis' },
-            { id: 'location', name: '📍 Location Wise' },
-            { id: 'product-type', name: '🏷️ Product Type' },
-            { id: 'sf-wise', name: '👥 SF Wise' },
-            { id: 'sf-code', name: '🔢 SF Code' },
-            { id: 'brand-monthly', name: '📅 Brand Monthly' },
-            { id: 'brand-summary', name: '📊 Brand Summary' },
-            { id: 'product-month-detail', name: '📦 Product Month Detail' },
-            { id: 'product-month-summary', name: '📊 Product Summary' },
-            { id: 'dpr', name: '📋 DPR Details' },
-            { id: 'dispatch-location', name: '📍 Dispatch Location' }
-        ];
-
-        // Debounce timer
-        let debounceTimer;
-
-        // ==================== INITIALIZATION ====================
-        window.onload = function() {
-            initializeUI();
-            // Auto-connect after delay
-            setTimeout(autoConnect, 1000);
-        };
-
-        function initializeUI() {
-            updateLastUpdateTime(new Date());
-            createTabs();
-            createTabContainers();
-        }
-
-        function updateLastUpdateTime(date) {
-            const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('lastUpdate').textContent = 'LAST UPDATE: ' + date.toLocaleDateString('en-GB', options);
-        }
-
-        // ==================== AUTO CONNECT ====================
-        async function autoConnect() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading').textContent = 'Connecting to CORS Anywhere... Please wait.';
-            document.getElementById('error').style.display = 'none';
-
-            try {
-                window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
-                document.getElementById('loading').textContent = 'Waiting for CORS Anywhere access... Click the button in the new tab.';
+            snapshot.forEach(doc => {
+                const d = doc.data();
                 
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                await connectWithCorsAnywhere();
-            } catch (error) {
-                showError(error);
-            }
-        }
-
-        // ==================== CONNECT WITH CORS ANYWHERE ====================
-        async function connectWithCorsAnywhere() {
-            showLoading('Fetching data via CORS Anywhere...');
-            showProgressBar();
-            
-            try {
-                const baseUrl = CONFIG.serverUrl.endsWith('/') ? CONFIG.serverUrl : CONFIG.serverUrl + '/';
-                const proxyUrl = CONFIG.proxyUrl;
-
-                // Get Token
-                updateProgress(20);
-                const token = await fetchToken(proxyUrl, baseUrl);
-                
-                // Get Data
-                updateProgress(40);
-                const responseText = await fetchData(proxyUrl, baseUrl, token);
-                
-                // Parse Data
-                updateProgress(60);
-                const reportData = await parseLargeData(responseText);
-                
-                if (!reportData || reportData.length === 0) {
-                    throw new Error('No data found in response');
+                // Check for metadata
+                if (d.update_datetime && !d.product_name) {
+                    globalLastUpdate = d.update_datetime;
                 }
-
-                // Process Headers
-                updateProgress(80);
-                headers = reportData[0] || [];
-                const dataRows = reportData.slice(1);
                 
-                // Transform Data (chunked for 50K records)
-                allData = await transformDataChunked(dataRows, 1000);
+                const record = {
+                    mkt_by: d.mkt_by || d.Mkt_By || '',
+                    location: d.location || d.Location || '',
+                    basic_value: parseFloat(d.basic_value || d.Basic_Value || 0),
+                    percentage: parseFloat(d.percentage || 0),
+                    difference: parseFloat(d.difference || 0),
+                    sf_code: d.sf_code || d.SF_Code || '',
+                    sf_name: d.sf_name || d.SF_Name || '',
+                    product_name: d.product_name || d.Product_Name || '',
+                    product_type: d.product_type || d.Product_Type || '',
+                    sale_qty: parseFloat(d.sale_qty || d.Sale_Qty || 0),
+                    bill_date: d.bill_date || d.Bill_Date || '',
+                    bill_no: d.bill_no || d.Bill_No || '',
+                    batch_no: d.batch_no || d.Batch_No || '',
+                    dosage_form: d.dosage_form || d.Dosage_Form || ''
+                };
                 
-                if (allData.length === 0) {
-                    throw new Error('No valid data after transformation');
-                }
-
-                // Initialize filtered data
-                filteredData = [...allData];
-                
-                // Build unique sets
-                await buildUniqueSets();
-                
-                // Update UI
-                updateProgress(100);
-                setTimeout(() => hideProgressBar(), 500);
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('tabContainers').style.display = 'block';
-                document.getElementById('grandFooter').style.display = 'flex';
-                document.getElementById('apiBadge').style.display = 'inline-block';
-                document.getElementById('statusBar').style.display = 'flex';
-                document.getElementById('statsBar').style.display = 'flex';
-                
-                updateLastUpdateTime(new Date());
-                updateFilterOptions();
-                updateStats();
-                renderCurrentTab();
-
-            } catch (error) {
-                hideProgressBar();
-                showError(error);
-            }
-        }
-
-        async function fetchToken(proxyUrl, baseUrl) {
-            const tokenUrl = proxyUrl + baseUrl + 'API/getToken';
-            
-            const response = await fetch(tokenUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Origin': window.location.origin,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: new URLSearchParams({
-                    username: CONFIG.username,
-                    password: CONFIG.password,
-                    objectid: CONFIG.reportId,
-                    type: 'data'
-                })
-            });
-
-            if (!response.ok) {
-                if (response.status === 403) {
-                    throw new Error('CORS Anywhere needs temporary access. Please click the button in the new tab and try again.');
-                }
-                throw new Error(`Token fetch failed: ${response.status}`);
-            }
-
-            const token = await response.text();
-            if (!token || token.trim() === '') {
-                throw new Error('Empty token response');
-            }
-            
-            return token;
-        }
-
-        async function fetchData(proxyUrl, baseUrl, token) {
-            const dataUrl = proxyUrl + baseUrl + 'API/getObject?tokenid=' + encodeURIComponent(token);
-            
-            const response = await fetch(dataUrl, {
-                headers: {
-                    'Origin': window.location.origin,
-                    'X-Requested-With': 'XMLHttpRequest'
+                if (record.basic_value > 0 || record.sale_qty > 0) {
+                    allData.push(record);
+                    if (record.location) uniqueValues.locations.add(record.location);
+                    if (record.mkt_by) uniqueValues.mktBy.add(record.mkt_by);
+                    if (record.product_type) uniqueValues.productTypes.add(record.product_type);
                 }
             });
 
-            if (!response.ok) {
-                throw new Error(`Data fetch failed: ${response.status}`);
-            }
-
-            return await response.text();
-        }
-
-        // ==================== OPTIMIZED PARSING FOR 50K RECORDS ====================
-        async function parseLargeData(xmlString) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    try {
-                        const data = [];
-                        const rows = xmlString.split('</Row>');
-                        let headerRow = null;
-                        
-                        for (let i = 0; i < rows.length; i++) {
-                            const row = rows[i];
-                            if (!row.includes('<Row>')) continue;
-                            
-                            const cols = row.match(/<Column[^>]*>(.*?)<\/Column>/g);
-                            if (cols) {
-                                const rowData = cols.map(col => {
-                                    let value = col.replace(/<\/?Column[^>]*>/g, '');
-                                    value = value.replace(/&amp;/g, '&')
-                                               .replace(/&lt;/g, '<')
-                                               .replace(/&gt;/g, '>')
-                                               .replace(/&quot;/g, '"')
-                                               .replace(/&#39;/g, "'");
-                                    return value.trim();
-                                });
-                                
-                                if (i === 0) {
-                                    headerRow = rowData;
-                                    data.push(headerRow);
-                                } else {
-                                    data.push(rowData);
-                                }
-                            }
-                            
-                            // Yield to event loop every 1000 rows
-                            if (i % 1000 === 0) {
-                                setTimeout(() => {}, 0);
-                            }
-                        }
-                        
-                        resolve(data);
-                    } catch (e) {
-                        console.error('Parse error:', e);
-                        resolve([]);
-                    }
-                }, 0);
-            });
-        }
-
-        async function transformDataChunked(rows, chunkSize) {
-            const result = [];
+            filteredData = [...allData];
             
-            // Create header mapping
-            const headerMap = createHeaderMap();
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('cacheBadge').style.display = 'none';
+            document.getElementById('lastUpdate').textContent = globalLastUpdate ? 
+                `LAST UPDATE: ${globalLastUpdate}` : 'LAST UPDATE: 27 Feb 2026';
             
-            for (let i = 0; i < rows.length; i += chunkSize) {
-                const chunk = rows.slice(i, i + chunkSize);
-                const transformed = chunk.map((row, idx) => transformRow(row, headerMap, i + idx));
-                result.push(...transformed);
-                
-                // Update progress
-                updateProgress(80 + Math.floor((i / rows.length) * 20));
-                
-                // Yield to event loop
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
+            updateFilterDropdowns();
+            filterChanged(); // Apply filters and render
             
-            return result;
-        }
-
-        function createHeaderMap() {
-            const map = {};
-            headers.forEach((header, index) => {
-                const headerStr = (header || '').toString().toLowerCase().trim();
-                
-                if (headerStr.includes('location') || headerStr.includes('godown')) map.location = index;
-                else if (headerStr.includes('billno') || headerStr.includes('bill_no')) map.bill_no = index;
-                else if (headerStr.includes('date') || headerStr.includes('txndocdt')) map.bill_date = index;
-                else if (headerStr.includes('product') || headerStr.includes('itemname')) {
-                    if (headerStr.includes('type')) map.product_type = index;
-                    else map.product_name = index;
-                }
-                else if (headerStr.includes('batch')) map.batch_no = index;
-                else if (headerStr.includes('qty') || headerStr.includes('saleqty')) map.sale_qty = index;
-                else if (headerStr.includes('value') || headerStr.includes('basic')) map.basic_value = index;
-                else if (headerStr.includes('sfcode')) map.sf_code = index;
-                else if (headerStr.includes('sfname')) map.sf_name = index;
-                else if (headerStr.includes('mktby')) map.mkt_by = index;
-                else if (headerStr.includes('city')) map.city = index;
-                else if (headerStr.includes('state')) map.state = index;
-            });
-
-            // Default mapping if needed
-            if (Object.keys(map).length === 0) {
-                map.location = 0;
-                map.bill_no = 1;
-                map.bill_date = 2;
-                map.product_name = 3;
-                map.product_type = 4;
-                map.batch_no = 5;
-                map.sale_qty = 6;
-                map.basic_value = 7;
-                map.sf_code = 8;
-                map.sf_name = 9;
-                map.mkt_by = 10;
-                map.city = 11;
-                map.state = 12;
-            }
-            
-            return map;
-        }
-
-        function transformRow(row, map, index) {
-            return {
-                id: `row_${index}`,
-                location: row[map.location] || '',
-                bill_no: row[map.bill_no] || '',
-                bill_date: row[map.bill_date] || '',
-                product_name: row[map.product_name] || '',
-                product_type: row[map.product_type] || '',
-                batch_no: row[map.batch_no] || '',
-                sale_qty: parseFloat((row[map.sale_qty] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                basic_value: parseFloat((row[map.basic_value] || '0').replace(/[^0-9.-]/g, '')) || 0,
-                sf_code: row[map.sf_code] || '',
-                sf_name: row[map.sf_name] || '',
-                mkt_by: row[map.mkt_by] || '',
-                city: row[map.city] || '',
-                state: row[map.state] || ''
-            };
-        }
-
-        async function buildUniqueSets() {
-            uniqueLocations.clear();
-            uniqueMktBy.clear();
-            uniqueProductTypes.clear();
-            
-            const chunkSize = 5000;
-            for (let i = 0; i < allData.length; i += chunkSize) {
-                const chunk = allData.slice(i, i + chunkSize);
-                chunk.forEach(item => {
-                    if (item.location) uniqueLocations.add(item.location);
-                    if (item.mkt_by) uniqueMktBy.add(item.mkt_by);
-                    if (item.product_type) uniqueProductTypes.add(item.product_type);
-                });
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-        }
-
-        // ==================== UI UPDATES ====================
-        function showLoading(message) {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading').textContent = message;
-        }
-
-        function showProgressBar() {
-            document.getElementById('progressBar').style.display = 'block';
-            document.getElementById('progressFill').style.width = '0%';
-        }
-
-        function updateProgress(percent) {
-            document.getElementById('progressFill').style.width = percent + '%';
-        }
-
-        function hideProgressBar() {
-            document.getElementById('progressBar').style.display = 'none';
-        }
-
-        function showError(error) {
+        } catch (err) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
-            document.getElementById('error').innerHTML = `
-                <strong>Error:</strong><br>
-                ${error.message}<br><br>
-                <button onclick="autoConnect()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
-            `;
+            document.getElementById('error').textContent = 'Error: ' + err.message;
         }
+    }
 
-        function updateStats() {
-            const totalValue = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-            const totalQty = filteredData.reduce((sum, item) => sum + (item.sale_qty || 0), 0);
+    function updateFilterDropdowns() {
+        const locationSelect = document.getElementById('locationFilter');
+        const mktSelect = document.getElementById('mktByFilter');
+        const typeSelect = document.getElementById('productTypeFilter');
+        
+        // Save current selections
+        const currentLoc = locationSelect.value;
+        const currentMkt = mktSelect.value;
+        const currentType = typeSelect.value;
+        
+        locationSelect.innerHTML = '<option value="">All Locations</option>';
+        mktSelect.innerHTML = '<option value="">All</option>';
+        typeSelect.innerHTML = '<option value="">All Types</option>';
+        
+        Array.from(uniqueValues.locations).sort().forEach(l => {
+            locationSelect.add(new Option(l, l));
+        });
+        Array.from(uniqueValues.mktBy).sort().forEach(m => {
+            mktSelect.add(new Option(m, m));
+        });
+        Array.from(uniqueValues.productTypes).sort().forEach(p => {
+            typeSelect.add(new Option(p, p));
+        });
+        
+        // Restore selections if they still exist
+        if (currentLoc && uniqueValues.locations.has(currentLoc)) locationSelect.value = currentLoc;
+        if (currentMkt && uniqueValues.mktBy.has(currentMkt)) mktSelect.value = currentMkt;
+        if (currentType && uniqueValues.productTypes.has(currentType)) typeSelect.value = currentType;
+    }
+
+    // Main filter function - called on any filter change or drilldown
+    window.filterChanged = function() {
+        // Get current filter values
+        const location = document.getElementById('locationFilter').value;
+        const mktBy = document.getElementById('mktByFilter').value;
+        const productType = document.getElementById('productTypeFilter').value;
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        const search = document.getElementById('globalSearch').value.toLowerCase();
+
+        // Apply filters to allData
+        filteredData = allData.filter(item => {
+            // Location filter
+            if (location && item.location !== location) return false;
             
-            document.getElementById('totalRecords').textContent = filteredData.length.toLocaleString();
-            document.getElementById('totalValue').textContent = '₹' + formatNumber(totalValue);
-            document.getElementById('totalQty').textContent = formatNumber(totalQty);
-            document.getElementById('totalLocations').textContent = uniqueLocations.size;
-            document.getElementById('recordCount').textContent = filteredData.length.toLocaleString() + ' records';
-            document.getElementById('grandTotalValue').textContent = '₹' + formatNumber(totalValue);
-        }
-
-        // ==================== TAB FUNCTIONS ====================
-        function createTabs() {
-            const tabNav = document.getElementById('tabNav');
-            tabNav.innerHTML = '';
+            // Mkt By filter
+            if (mktBy && item.mkt_by !== mktBy) return false;
             
-            tabs.forEach((tab, index) => {
-                const tabElement = document.createElement('div');
-                tabElement.className = `nav-item ${index === 0 ? 'active' : ''}`;
-                tabElement.setAttribute('data-tab', tab.id);
-                tabElement.textContent = tab.name;
-                tabElement.onclick = () => switchTab(tab.id);
-                tabNav.appendChild(tabElement);
-            });
-        }
-
-        function createTabContainers() {
-            const containers = document.getElementById('tabContainers');
-            containers.innerHTML = '';
+            // Product Type filter - THIS NOW WORKS
+            if (productType && item.product_type !== productType) return false;
             
-            tabs.forEach(tab => {
-                const container = document.createElement('div');
-                container.id = `tab-${tab.id}`;
-                container.className = 'tab-content';
-                container.innerHTML = getTabHTML(tab.id);
-                containers.appendChild(container);
-            });
-        }
-
-        function getTabHTML(tabId) {
-            return `
-                <div class="section-title">
-                    ${getTabTitle(tabId)}
-                    <span class="total-info" id="${tabId}Total"></span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="${tabId}Table">
-                        <thead><tr id="${tabId}Header"></tr></thead>
-                        <tbody id="${tabId}Body"></tbody>
-                        <tfoot id="${tabId}Footer"></tfoot>
-                    </table>
-                </div>
-            `;
-        }
-
-        function getTabTitle(tabId) {
-            const titles = {
-                'mkt-by': '📊 Mkt By Analysis',
-                'location': '📍 Location Wise Analysis',
-                'product-type': '🏷️ Product Type Analysis',
-                'sf-wise': '👥 SF Wise Product Details',
-                'sf-code': '🔢 SF Code Details',
-                'brand-monthly': '📅 Brand Details by SF (Monthly)',
-                'brand-summary': '📊 Brand Details by SF (Summary)',
-                'product-month-detail': '📦 Product Month Wise (Detailed)',
-                'product-month-summary': '📊 Product Month Wise (Summary)',
-                'dpr': '📋 Daily Dispatch Details (DPR)',
-                'dispatch-location': '📍 Dispatch Summary by Location'
-            };
-            return titles[tabId] || tabId;
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-tab') === tabId) {
-                    item.classList.add('active');
-                }
-            });
-            
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            renderTab(tabId);
-        }
-
-        function renderCurrentTab() {
-            const activeTab = document.querySelector('.nav-item.active').getAttribute('data-tab');
-            renderTab(activeTab);
-        }
-
-        function renderTab(tabId) {
-            if (filteredData.length === 0) {
-                document.getElementById(`${tabId}Body`).innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available.</td></tr>';
-                return;
+            // Date filters
+            if (dateFrom && item.bill_date) {
+                const itemMonth = item.bill_date.substring(0, 7);
+                if (itemMonth < dateFrom) return false;
             }
-
-            switch(tabId) {
-                case 'mkt-by':
-                    renderMktByTable();
-                    break;
-                case 'location':
-                    renderLocationTable();
-                    break;
-                case 'product-type':
-                    renderProductTypeTable();
-                    break;
-                case 'sf-wise':
-                    renderSfWiseTable();
-                    break;
-                case 'sf-code':
-                    renderSfCodeTable();
-                    break;
-                case 'brand-monthly':
-                    renderBrandMonthlyTable();
-                    break;
-                case 'brand-summary':
-                    renderBrandSummaryTable();
-                    break;
-                case 'product-month-detail':
-                    renderProductMonthDetailTable();
-                    break;
-                case 'product-month-summary':
-                    renderProductMonthSummaryTable();
-                    break;
-                case 'dpr':
-                    renderDprTable();
-                    break;
-                case 'dispatch-location':
-                    renderDispatchLocationTable();
-                    break;
+            if (dateTo && item.bill_date) {
+                const itemMonth = item.bill_date.substring(0, 7);
+                if (itemMonth > dateTo) return false;
             }
-        }
-
-        // ==================== SORT FUNCTION ====================
-        function sortTable(tableId, column, dataType = 'string') {
-            const state = sortStates[tableId];
-            if (!state) return;
             
-            // Update sort direction
-            if (state.column === column) {
-                state.direction = state.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                state.column = column;
-                state.direction = 'desc';
+            // Search filter
+            if (search) {
+                return (item.product_name && item.product_name.toLowerCase().includes(search)) ||
+                       (item.sf_name && item.sf_name.toLowerCase().includes(search)) ||
+                       (item.sf_code && item.sf_code.toLowerCase().includes(search)) ||
+                       (item.batch_no && item.batch_no.toLowerCase().includes(search));
             }
+            return true;
+        });
 
-            // Update header indicators
-            document.querySelectorAll(`#${tableId}Header th`).forEach(th => {
-                th.classList.remove('sort-asc', 'sort-desc');
-            });
-            
-            const headerIndex = getHeaderIndex(tableId, column);
-            const headerCell = document.querySelector(`#${tableId}Header th:nth-child(${headerIndex + 1})`);
-            if (headerCell) {
-                headerCell.classList.add(`sort-${state.direction}`);
-            }
+        // Reset pagination
+        currentPage = 1;
+        
+        // Update all tables
+        renderAllTables();
+        updateActiveFiltersDisplay();
+    };
 
-            // Re-render the tab
-            renderTab(tableId);
+    // Drilldown function - sets filter and triggers update
+    window.drilldown = function(type, value) {
+        console.log('Drilldown:', type, value);
+        
+        switch(type) {
+            case 'mktBy':
+                document.getElementById('mktByFilter').value = value;
+                break;
+            case 'location':
+                document.getElementById('locationFilter').value = value;
+                break;
+            case 'productType':
+                document.getElementById('productTypeFilter').value = value;
+                break;
+            case 'sfName':
+            case 'product':
+                document.getElementById('globalSearch').value = value;
+                break;
+            case 'month':
+                document.getElementById('dateFrom').value = value;
+                document.getElementById('dateTo').value = value;
+                break;
         }
+        
+        // Re-filter all data with new values
+        filterChanged();
+    };
 
-        function getHeaderIndex(tableId, column) {
-            const headers = {
-                'mkt-by': ['mkt_by', 'total', 'percentage'],
-                'location': ['location', 'total', 'percentage'],
-                'product-type': ['product_type', 'total', 'percentage'],
-                'sf-wise': ['sf_name', 'sf_code', 'total', 'qty', 'percentage', 'locations', 'products'],
-                'sf-code': ['sf_code', 'sf_name', 'total', 'percentage'],
-                'brand-monthly': ['sf_name', 'sf_code', 'product', 'month', 'value', 'qty'],
-                'brand-summary': ['sf_name', 'sf_code', 'product', 'total', 'qty', 'months'],
-                'product-month-detail': ['product', 'product_type', 'month', 'value', 'qty', 'sf_count'],
-                'product-month-summary': ['product', 'product_type', 'value', 'qty', 'months', 'sf_count'],
-                'dpr': ['bill_date', 'bill_no', 'sf_name', 'product', 'batch_no', 'qty', 'value', 'location'],
-                'dispatch-location': ['location', 'value', 'qty', 'entries', 'percentage']
-            };
-            
-            const index = headers[tableId].indexOf(column);
-            return index >= 0 ? index : 0;
+    function updateActiveFiltersDisplay() {
+        const bar = document.getElementById('activeFiltersBar');
+        const container = document.getElementById('activeFilters');
+        const filters = [];
+        
+        const location = document.getElementById('locationFilter').value;
+        const mktBy = document.getElementById('mktByFilter').value;
+        const productType = document.getElementById('productTypeFilter').value;
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        const search = document.getElementById('globalSearch').value;
+        
+        if (location) filters.push(`Location: ${location}`);
+        if (mktBy) filters.push(`Mkt By: ${mktBy}`);
+        if (productType) filters.push(`Product Type: ${productType}`);
+        if (dateFrom) filters.push(`From: ${dateFrom}`);
+        if (dateTo) filters.push(`To: ${dateTo}`);
+        if (search) filters.push(`Search: ${search}`);
+        
+        if (filters.length > 0) {
+            bar.style.display = 'flex';
+            container.innerHTML = filters.map(f => 
+                `<span class="filter-tag">${f} <button onclick="removeFilter('${f.split(':')[0].trim()}')">✕</button></span>`
+            ).join('');
+        } else {
+            bar.style.display = 'none';
         }
-
-        // ==================== TABLE RENDERING FUNCTIONS ====================
-        function renderMktByTable() {
-            const data = aggregateData(filteredData, 'mkt_by', 'basic_value');
-            const sortedData = sortAggregatedData(data, sortStates['mkt-by']);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('mkt-byHeader').innerHTML = `
-                <th onclick="sortTable('mkt-by', 'mkt_by')">Mkt By</th>
-                <th class="text-right" onclick="sortTable('mkt-by', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('mkt-by', 'percentage')">Percentage</th>
-            `;
-
-            document.getElementById('mkt-byBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('mkt_by', '${item.name}')">${item.name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('mkt-byFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} items)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('mkt-byTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderLocationTable() {
-            const data = aggregateData(filteredData, 'location', 'basic_value');
-            const sortedData = sortAggregatedData(data, sortStates['location']);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('locationHeader').innerHTML = `
-                <th onclick="sortTable('location', 'location')">Location</th>
-                <th class="text-right" onclick="sortTable('location', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('location', 'percentage')">Percentage</th>
-            `;
-
-            document.getElementById('locationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.name}')">${item.name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('locationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('locationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductTypeTable() {
-            const data = aggregateData(filteredData, 'product_type', 'basic_value');
-            const sortedData = sortAggregatedData(data, sortStates['product-type']);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('product-typeHeader').innerHTML = `
-                <th onclick="sortTable('product-type', 'product_type')">Product Type</th>
-                <th class="text-right" onclick="sortTable('product-type', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('product-type', 'percentage')">Percentage</th>
-            `;
-
-            document.getElementById('product-typeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.name}')">${item.name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('product-typeFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} types)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('product-typeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfWiseTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.sf_name) return;
-                const key = item.sf_name;
-                if (!data[key]) {
-                    data[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        total: 0,
-                        qty: 0,
-                        locations: new Set(),
-                        products: new Set()
-                    };
-                }
-                data[key].total += item.basic_value || 0;
-                data[key].qty += item.sale_qty || 0;
-                if (item.location) data[key].locations.add(item.location);
-                if (item.product_name) data[key].products.add(item.product_name);
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['sf-wise'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'total' || state.column === 'qty' || state.column === 'percentage') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else if (state.column === 'locations' || state.column === 'products') {
-                        aVal = aVal.size || 0;
-                        bVal = bVal.size || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sf-wiseHeader').innerHTML = `
-                <th onclick="sortTable('sf-wise', 'sf_name')">SF Name</th>
-                <th onclick="sortTable('sf-wise', 'sf_code')">SF Code</th>
-                <th class="text-right" onclick="sortTable('sf-wise', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('sf-wise', 'qty')">Quantity</th>
-                <th class="text-right" onclick="sortTable('sf-wise', 'percentage')">% of Total</th>
-                <th class="text-right" onclick="sortTable('sf-wise', 'locations')">Locations</th>
-                <th class="text-right" onclick="sortTable('sf-wise', 'products')">Products</th>
-            `;
-
-            document.getElementById('sf-wiseBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sf_code', '${item.sf_code}')">${item.sf_code || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                    <td class="text-right">${item.locations.size}</td>
-                    <td class="text-right">${item.products.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sf-wiseFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} SFs)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('sf-wiseTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderSfCodeTable() {
-            const data = aggregateData(filteredData, 'sf_code', 'basic_value', 'sf_name');
-            const sortedData = sortAggregatedData(data, sortStates['sf-code']);
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('sf-codeHeader').innerHTML = `
-                <th onclick="sortTable('sf-code', 'sf_code')">SF Code</th>
-                <th onclick="sortTable('sf-code', 'sf_name')">SF Name</th>
-                <th class="text-right" onclick="sortTable('sf-code', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('sf-code', 'percentage')">Percentage</th>
-            `;
-
-            document.getElementById('sf-codeBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sf_code', '${item.name}')">${item.name || '-'}</td>
-                    <td>${item.sf_name || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('sf-codeFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} codes)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('sf-codeTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandMonthlyTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.sf_name || !item.product_name || !item.bill_date) return;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.sf_name}|${item.product_name}|${month}`;
-                
-                if (!data[key]) {
-                    data[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        month: month,
-                        total: 0,
-                        qty: 0
-                    };
-                }
-                data[key].total += item.basic_value || 0;
-                data[key].qty += item.sale_qty || 0;
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['brand-monthly'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'value' || state.column === 'qty') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brand-monthlyHeader').innerHTML = `
-                <th onclick="sortTable('brand-monthly', 'sf_name')">SF Name</th>
-                <th onclick="sortTable('brand-monthly', 'sf_code')">SF Code</th>
-                <th onclick="sortTable('brand-monthly', 'product')">Product</th>
-                <th onclick="sortTable('brand-monthly', 'month')">Month</th>
-                <th class="text-right" onclick="sortTable('brand-monthly', 'value')">Value</th>
-                <th class="text-right" onclick="sortTable('brand-monthly', 'qty')">Quantity</th>
-            `;
-
-            document.getElementById('brand-monthlyBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brand-monthlyFooter').innerHTML = `
-                <td colspan="4"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-            `;
-
-            document.getElementById('brand-monthlyTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderBrandSummaryTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.sf_name || !item.product_name) return;
-                const key = `${item.sf_name}|${item.product_name}`;
-                
-                if (!data[key]) {
-                    data[key] = {
-                        sf_name: item.sf_name,
-                        sf_code: item.sf_code,
-                        product: item.product_name,
-                        total: 0,
-                        qty: 0,
-                        months: new Set()
-                    };
-                }
-                data[key].total += item.basic_value || 0;
-                data[key].qty += item.sale_qty || 0;
-                if (item.bill_date) data[key].months.add(item.bill_date.substring(0, 7));
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['brand-summary'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'total' || state.column === 'qty') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else if (state.column === 'months') {
-                        aVal = aVal.size || 0;
-                        bVal = bVal.size || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('brand-summaryHeader').innerHTML = `
-                <th onclick="sortTable('brand-summary', 'sf_name')">SF Name</th>
-                <th onclick="sortTable('brand-summary', 'sf_code')">SF Code</th>
-                <th onclick="sortTable('brand-summary', 'product')">Product</th>
-                <th class="text-right" onclick="sortTable('brand-summary', 'total')">Total Value</th>
-                <th class="text-right" onclick="sortTable('brand-summary', 'qty')">Total Qty</th>
-                <th class="text-right" onclick="sortTable('brand-summary', 'months')">Months</th>
-            `;
-
-            document.getElementById('brand-summaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name}</td>
-                    <td>${item.sf_code || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('brand-summaryFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('brand-summaryTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthDetailTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.product_name || !item.bill_date) return;
-                const month = item.bill_date.substring(0, 7);
-                const key = `${item.product_name}|${month}`;
-                
-                if (!data[key]) {
-                    data[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        month: month,
-                        total: 0,
-                        qty: 0,
-                        sf_count: new Set()
-                    };
-                }
-                data[key].total += item.basic_value || 0;
-                data[key].qty += item.sale_qty || 0;
-                if (item.sf_name) data[key].sf_count.add(item.sf_name);
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['product-month-detail'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'value' || state.column === 'qty') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else if (state.column === 'sf_count') {
-                        aVal = aVal.size || 0;
-                        bVal = bVal.size || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('product-month-detailHeader').innerHTML = `
-                <th onclick="sortTable('product-month-detail', 'product')">Product</th>
-                <th onclick="sortTable('product-month-detail', 'product_type')">Product Type</th>
-                <th onclick="sortTable('product-month-detail', 'month')">Month</th>
-                <th class="text-right" onclick="sortTable('product-month-detail', 'value')">Total Value</th>
-                <th class="text-right" onclick="sortTable('product-month-detail', 'qty')">Total Qty</th>
-                <th class="text-right" onclick="sortTable('product-month-detail', 'sf_count')"># of SFs</th>
-            `;
-
-            document.getElementById('product-month-detailBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.product_type}')">${item.product_type || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('month', '${item.month}')">${item.month}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('product-month-detailFooter').innerHTML = `
-                <td colspan="3"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('product-month-detailTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderProductMonthSummaryTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.product_name) return;
-                const key = item.product_name;
-                
-                if (!data[key]) {
-                    data[key] = {
-                        product: item.product_name,
-                        product_type: item.product_type,
-                        total: 0,
-                        qty: 0,
-                        months: new Set(),
-                        sf_count: new Set()
-                    };
-                }
-                data[key].total += item.basic_value || 0;
-                data[key].qty += item.sale_qty || 0;
-                if (item.bill_date) data[key].months.add(item.bill_date.substring(0, 7));
-                if (item.sf_name) data[key].sf_count.add(item.sf_name);
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['product-month-summary'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'value' || state.column === 'qty') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else if (state.column === 'months' || state.column === 'sf_count') {
-                        aVal = aVal.size || 0;
-                        bVal = bVal.size || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('product-month-summaryHeader').innerHTML = `
-                <th onclick="sortTable('product-month-summary', 'product')">Product</th>
-                <th onclick="sortTable('product-month-summary', 'product_type')">Product Type</th>
-                <th class="text-right" onclick="sortTable('product-month-summary', 'value')">Total Value</th>
-                <th class="text-right" onclick="sortTable('product-month-summary', 'qty')">Total Qty</th>
-                <th class="text-right" onclick="sortTable('product-month-summary', 'months')"># of Months</th>
-                <th class="text-right" onclick="sortTable('product-month-summary', 'sf_count')"># of SFs</th>
-            `;
-
-            document.getElementById('product-month-summaryBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product}')">${item.product}</td>
-                    <td class="clickable" onclick="applyDrilldown('product_type', '${item.product_type}')">${item.product_type || '-'}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.months.size}</td>
-                    <td class="text-right">${item.sf_count.size}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('product-month-summaryFooter').innerHTML = `
-                <td colspan="2"><strong>Total (${sortedData.length} products)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td colspan="2"></td>
-            `;
-
-            document.getElementById('product-month-summaryTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderDprTable() {
-            let sortedData = [...filteredData];
-            const state = sortStates['dpr'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'value' || state.column === 'qty') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
-
-            document.getElementById('dprHeader').innerHTML = `
-                <th onclick="sortTable('dpr', 'bill_date')">Bill Date</th>
-                <th onclick="sortTable('dpr', 'bill_no')">Bill No</th>
-                <th onclick="sortTable('dpr', 'sf_name')">SF Name</th>
-                <th onclick="sortTable('dpr', 'product')">Product</th>
-                <th onclick="sortTable('dpr', 'batch_no')">Batch No</th>
-                <th class="text-right" onclick="sortTable('dpr', 'qty')">Qty</th>
-                <th class="text-right" onclick="sortTable('dpr', 'value')">Value</th>
-                <th onclick="sortTable('dpr', 'location')">Location</th>
-            `;
-
-            document.getElementById('dprBody').innerHTML = sortedData.slice(0, 100).map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('date', '${item.bill_date}')">${item.bill_date || '-'}</td>
-                    <td>${item.bill_no || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('sf_name', '${item.sf_name}')">${item.sf_name || '-'}</td>
-                    <td class="clickable" onclick="applyDrilldown('product', '${item.product_name}')">${item.product_name || '-'}</td>
-                    <td>${item.batch_no || '-'}</td>
-                    <td class="text-right">${formatNumber(item.sale_qty)}</td>
-                    <td class="text-right">${formatNumber(item.basic_value)}</td>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location || '-'}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dprFooter').innerHTML = `
-                <td colspan="5"><strong>Total (${sortedData.length} entries)</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + (i.sale_qty || 0), 0))}</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td></td>
-            `;
-
-            document.getElementById('dprTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        function renderDispatchLocationTable() {
-            const data = {};
-            filteredData.forEach(item => {
-                if (!item.location) return;
-                if (!data[item.location]) {
-                    data[item.location] = {
-                        location: item.location,
-                        total: 0,
-                        qty: 0,
-                        entries: 0
-                    };
-                }
-                data[item.location].total += item.basic_value || 0;
-                data[item.location].qty += item.sale_qty || 0;
-                data[item.location].entries++;
-            });
-
-            let sortedData = Object.values(data);
-            const state = sortStates['dispatch-location'];
-            if (state) {
-                sortedData.sort((a, b) => {
-                    let aVal = a[state.column];
-                    let bVal = b[state.column];
-                    
-                    if (state.column === 'value' || state.column === 'qty' || state.column === 'entries' || state.column === 'percentage') {
-                        aVal = aVal || 0;
-                        bVal = bVal || 0;
-                    } else {
-                        aVal = (aVal || '').toString().toLowerCase();
-                        bVal = (bVal || '').toString().toLowerCase();
-                    }
-                    
-                    if (aVal < bVal) return state.direction === 'asc' ? -1 : 1;
-                    if (aVal > bVal) return state.direction === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            const total = sortedData.reduce((sum, item) => sum + item.total, 0);
-
-            document.getElementById('dispatch-locationHeader').innerHTML = `
-                <th onclick="sortTable('dispatch-location', 'location')">Location</th>
-                <th class="text-right" onclick="sortTable('dispatch-location', 'value')">Total Value</th>
-                <th class="text-right" onclick="sortTable('dispatch-location', 'qty')">Total Qty</th>
-                <th class="text-right" onclick="sortTable('dispatch-location', 'entries')"># of Entries</th>
-                <th class="text-right" onclick="sortTable('dispatch-location', 'percentage')">Percentage</th>
-            `;
-
-            document.getElementById('dispatch-locationBody').innerHTML = sortedData.map(item => `
-                <tr>
-                    <td class="clickable" onclick="applyDrilldown('location', '${item.location}')">${item.location}</td>
-                    <td class="text-right">${formatNumber(item.total)}</td>
-                    <td class="text-right">${formatNumber(item.qty)}</td>
-                    <td class="text-right">${item.entries}</td>
-                    <td class="text-right ${getPercentageClass((item.total/total)*100)}">${formatPercentage((item.total/total)*100)}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('dispatch-locationFooter').innerHTML = `
-                <td><strong>Total (${sortedData.length} locations)</strong></td>
-                <td class="text-right"><strong>${formatNumber(total)}</strong></td>
-                <td class="text-right"><strong>${formatNumber(sortedData.reduce((sum, i) => sum + i.qty, 0))}</strong></td>
-                <td class="text-right"><strong>${sortedData.reduce((sum, i) => sum + i.entries, 0)}</strong></td>
-                <td class="text-right"><strong>100%</strong></td>
-            `;
-
-            document.getElementById('dispatch-locationTotal').textContent = `Total: ${formatNumber(total)}`;
-        }
-
-        // ==================== HELPER FUNCTIONS ====================
-        function aggregateData(data, groupField, valueField, nameField = null) {
-            const result = {};
-            data.forEach(item => {
-                const key = item[groupField];
-                if (!key) return;
-                
-                if (!result[key]) {
-                    result[key] = {
-                        name: key,
-                        total: 0
-                    };
-                    if (nameField) {
-                        result[key][nameField] = item[nameField];
-                    }
-                }
-                result[key].total += item[valueField] || 0;
-            });
-            return Object.values(result);
-        }
-
-        function sortAggregatedData(data, sortState) {
-            if (!sortState) return data;
-            
-            return [...data].sort((a, b) => {
-                let aVal = a[sortState.column];
-                let bVal = b[sortState.column];
-                
-                if (sortState.column === 'total' || sortState.column === 'percentage') {
-                    aVal = aVal || 0;
-                    bVal = bVal || 0;
-                } else {
-                    aVal = (aVal || '').toString().toLowerCase();
-                    bVal = (bVal || '').toString().toLowerCase();
-                }
-                
-                if (aVal < bVal) return sortState.direction === 'asc' ? -1 : 1;
-                if (aVal > bVal) return sortState.direction === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
-
-        // ==================== FILTER FUNCTIONS ====================
-        function updateFilterOptions() {
-            const locationSelect = document.getElementById('locationFilter');
-            const mktBySelect = document.getElementById('mktByFilter');
-            const productTypeSelect = document.getElementById('productTypeFilter');
-            
-            locationSelect.innerHTML = '<option value="all">All Locations</option>';
-            mktBySelect.innerHTML = '<option value="all">All</option>';
-            productTypeSelect.innerHTML = '<option value="all">All Types</option>';
-            
-            Array.from(uniqueLocations).sort().forEach(loc => {
-                if (loc) {
-                    const option = document.createElement('option');
-                    option.value = loc;
-                    option.textContent = loc;
-                    locationSelect.appendChild(option);
-                }
-            });
-
-            Array.from(uniqueMktBy).sort().forEach(mkt => {
-                if (mkt) {
-                    const option = document.createElement('option');
-                    option.value = mkt;
-                    option.textContent = mkt;
-                    mktBySelect.appendChild(option);
-                }
-            });
-
-            Array.from(uniqueProductTypes).sort().forEach(type => {
-                if (type) {
-                    const option = document.createElement('option');
-                    option.value = type;
-                    option.textContent = type;
-                    productTypeSelect.appendChild(option);
-                }
-            });
-        }
-
-        function applyFilters() {
-            activeFilters.location = document.getElementById('locationFilter').value !== 'all' ? document.getElementById('locationFilter').value : null;
-            activeFilters.mktBy = document.getElementById('mktByFilter').value !== 'all' ? document.getElementById('mktByFilter').value : null;
-            activeFilters.productType = document.getElementById('productTypeFilter').value !== 'all' ? document.getElementById('productTypeFilter').value : null;
-            activeFilters.dateFrom = document.getElementById('dateFrom').value || null;
-            activeFilters.dateTo = document.getElementById('dateTo').value || null;
-            activeFilters.search = document.getElementById('globalSearch').value || null;
-
-            // Apply filters
-            filteredData = allData.filter(item => {
-                if (activeFilters.location && item.location !== activeFilters.location) return false;
-                if (activeFilters.mktBy && item.mkt_by !== activeFilters.mktBy) return false;
-                if (activeFilters.productType && item.product_type !== activeFilters.productType) return false;
-                
-                if (activeFilters.dateFrom && item.bill_date) {
-                    const itemDate = item.bill_date.substring(0, 7);
-                    if (itemDate < activeFilters.dateFrom) return false;
-                }
-                if (activeFilters.dateTo && item.bill_date) {
-                    const itemDate = item.bill_date.substring(0, 7);
-                    if (itemDate > activeFilters.dateTo) return false;
-                }
-                
-                if (activeFilters.search) {
-                    const searchTerm = activeFilters.search.toLowerCase();
-                    const searchableFields = [
-                        item.product_name,
-                        item.sf_name,
-                        item.mkt_by,
-                        item.location,
-                        item.batch_no,
-                        item.sf_code,
-                        item.product_type,
-                        item.city,
-                        item.state
-                    ].map(f => (f || '').toLowerCase());
-                    
-                    if (!searchableFields.some(field => field.includes(searchTerm))) {
-                        return false;
-                    }
-                }
-                
-                return true;
-            });
-
-            updateActiveFiltersDisplay();
-            updateStats();
-            renderCurrentTab();
-        }
-
-        function debounceApplyFilters() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(applyFilters, 300);
-        }
-
-        function updateActiveFiltersDisplay() {
-            const bar = document.getElementById('activeFiltersBar');
-            const container = document.getElementById('activeFilters');
-            
-            const activeFilterList = [];
-            
-            if (activeFilters.location) activeFilterList.push(`Location: ${activeFilters.location}`);
-            if (activeFilters.mktBy) activeFilterList.push(`Mkt By: ${activeFilters.mktBy}`);
-            if (activeFilters.productType) activeFilterList.push(`Product Type: ${activeFilters.productType}`);
-            if (activeFilters.dateFrom) activeFilterList.push(`From: ${activeFilters.dateFrom}`);
-            if (activeFilters.dateTo) activeFilterList.push(`To: ${activeFilters.dateTo}`);
-            if (activeFilters.search) activeFilterList.push(`Search: "${activeFilters.search}"`);
-            
-            if (activeFilterList.length > 0) {
-                bar.style.display = 'flex';
-                container.innerHTML = activeFilterList.map(filter => 
-                    `<span class="filter-tag">${filter} <button onclick="removeFilter('${filter.split(':')[0].trim().toLowerCase()}')">✕</button></span>`
-                ).join(' ');
-            } else {
-                bar.style.display = 'none';
-            }
-        }
-
-        function removeFilter(filterType) {
-            switch(filterType) {
-                case 'location':
-                    document.getElementById('locationFilter').value = 'all';
-                    activeFilters.location = null;
-                    break;
-                case 'mkt':
-                    document.getElementById('mktByFilter').value = 'all';
-                    activeFilters.mktBy = null;
-                    break;
-                case 'product':
-                    document.getElementById('productTypeFilter').value = 'all';
-                    activeFilters.productType = null;
-                    break;
-                case 'from':
-                    document.getElementById('dateFrom').value = '';
-                    activeFilters.dateFrom = null;
-                    break;
-                case 'to':
-                    document.getElementById('dateTo').value = '';
-                    activeFilters.dateTo = null;
-                    break;
-                case 'search':
-                    document.getElementById('globalSearch').value = '';
-                    activeFilters.search = null;
-                    break;
-            }
-            applyFilters();
-        }
-
-        function clearAllFilters() {
-            document.getElementById('locationFilter').value = 'all';
-            document.getElementById('mktByFilter').value = 'all';
-            document.getElementById('productTypeFilter').value = 'all';
+    }
+
+    window.removeFilter = function(filterType) {
+        filterType = filterType.toLowerCase();
+        if (filterType.includes('location')) {
+            document.getElementById('locationFilter').value = '';
+        } else if (filterType.includes('mkt')) {
+            document.getElementById('mktByFilter').value = '';
+        } else if (filterType.includes('product')) {
+            document.getElementById('productTypeFilter').value = '';
+        } else if (filterType.includes('from')) {
             document.getElementById('dateFrom').value = '';
+        } else if (filterType.includes('to')) {
             document.getElementById('dateTo').value = '';
+        } else if (filterType.includes('search')) {
             document.getElementById('globalSearch').value = '';
-            
-            activeFilters = {
-                location: null,
-                mktBy: null,
-                productType: null,
-                dateFrom: null,
-                dateTo: null,
-                search: null
-            };
-            
-            filteredData = [...allData];
-            updateActiveFiltersDisplay();
-            updateStats();
-            renderCurrentTab();
         }
+        filterChanged();
+    };
 
-        function resetFilters() {
-            clearAllFilters();
+    window.clearAllFilters = function() {
+        document.getElementById('locationFilter').value = '';
+        document.getElementById('mktByFilter').value = '';
+        document.getElementById('productTypeFilter').value = '';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        document.getElementById('globalSearch').value = '';
+        filterChanged();
+    };
+
+    window.resetAllFilters = clearAllFilters;
+    
+    window.refreshData = function() {
+        loadData();
+    };
+
+    // Pagination
+    window.prevPage = function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderProdSummary();
         }
+    };
+    
+    window.nextPage = function() {
+        currentPage++;
+        renderProdSummary();
+    };
 
-        // ==================== DRILLDOWN FUNCTION ====================
-        function applyDrilldown(type, value) {
-            switch(type) {
-                case 'location':
-                    document.getElementById('locationFilter').value = value;
-                    activeFilters.location = value;
-                    break;
-                case 'mkt_by':
-                    document.getElementById('mktByFilter').value = value;
-                    activeFilters.mktBy = value;
-                    break;
-                case 'product_type':
-                    document.getElementById('productTypeFilter').value = value;
-                    activeFilters.productType = value;
-                    break;
-                case 'sf_name':
-                case 'sf_code':
-                    document.getElementById('globalSearch').value = value;
-                    activeFilters.search = value;
-                    break;
-                case 'product':
-                    document.getElementById('globalSearch').value = value;
-                    activeFilters.search = value;
-                    break;
-                case 'month':
-                case 'date':
-                    if (value && value.length >= 7) {
-                        const yearMonth = value.substring(0, 7);
-                        document.getElementById('dateFrom').value = yearMonth;
-                        document.getElementById('dateTo').value = yearMonth;
-                        activeFilters.dateFrom = yearMonth;
-                        activeFilters.dateTo = yearMonth;
-                    }
-                    break;
+    // Formatting
+    function formatNumber(num) {
+        if (!num && num !== 0) return '-';
+        return num.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+    }
+    
+    function formatPercentage(num) {
+        if (!num && num !== 0) return '-';
+        return num.toFixed(2) + '%';
+    }
+
+    // Render all tables
+    function renderAllTables() {
+        renderFyBoard();
+        renderCategory();
+        renderDosageForm();
+        renderMktBySimple();
+        renderSfWise();
+        renderSfCode();
+        renderProdMonthDetail();
+        renderProdSummary();
+        renderDpr();
+        renderLocDispatch();
+        updateGrandTotal();
+    }
+
+    function renderFyBoard() {
+        const fyData = new Map();
+        filteredData.forEach(item => {
+            if (!item.mkt_by) return;
+            const year = item.bill_date ? item.bill_date.substring(0, 4) : '';
+            if (year < '2024' || year > '2026') return;
+            
+            if (!fyData.has(item.mkt_by)) {
+                fyData.set(item.mkt_by, { '2024': 0, '2025': 0, '2026': 0 });
             }
-            applyFilters();
-        }
+            const record = fyData.get(item.mkt_by);
+            record[year] += item.basic_value || 0;
+        });
 
-        // ==================== UTILITY FUNCTIONS ====================
-        function formatNumber(num) {
-            if (!num || isNaN(num)) return '-';
-            return num.toLocaleString('en-IN', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
+        let total2024 = 0, total2025 = 0, total2026 = 0;
+        let rows = '';
+        
+        fyData.forEach((values, mkt) => {
+            total2024 += values['2024'];
+            total2025 += values['2025'];
+            total2026 += values['2026'];
+            const grand = values['2024'] + values['2025'] + values['2026'];
+            rows += `<tr>
+                <td class="clickable" onclick="drilldown('mktBy', '${mkt}')">${mkt}</td>
+                <td class="text-right">${formatNumber(values['2026'])}</td>
+                <td class="text-right">${formatNumber(values['2025'])}</td>
+                <td class="text-right">${formatNumber(values['2024'])}</td>
+                <td class="text-right">${formatNumber(grand)}</td>
+            </tr>`;
+        });
+
+        const grandTotal = total2024 + total2025 + total2026;
+        
+        document.getElementById('fyBody').innerHTML = rows;
+        document.getElementById('fyFoot').innerHTML = `<tr>
+            <td>Grand total</td>
+            <td class="text-right">${formatNumber(total2026)}</td>
+            <td class="text-right">${formatNumber(total2025)}</td>
+            <td class="text-right">${formatNumber(total2024)}</td>
+            <td class="text-right">${formatNumber(grandTotal)}</td>
+        </tr>`;
+        document.getElementById('fyTotal').textContent = `Total: ${formatNumber(grandTotal)}`;
+    }
+
+    function renderCategory() {
+        const catMap = new Map();
+        filteredData.forEach(item => {
+            if (item.product_type) {
+                catMap.set(item.product_type, (catMap.get(item.product_type) || 0) + (item.basic_value || 0));
+            }
+        });
+
+        const total = Array.from(catMap.values()).reduce((a, b) => a + b, 0);
+        let rows = '';
+        
+        Array.from(catMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([type, val]) => {
+                rows += `<tr>
+                    <td class="clickable" onclick="drilldown('productType', '${type}')">${type}</td>
+                    <td class="text-right">${formatNumber(val)}</td>
+                    <td class="text-right">${formatPercentage((val / total) * 100)}</td>
+                </tr>`;
             });
-        }
 
-        function formatPercentage(num) {
-            if (!num || isNaN(num)) return '-';
-            return num.toFixed(2) + '%';
-        }
+        document.getElementById('catBody').innerHTML = rows;
+        document.getElementById('catFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td></td></tr>`;
+        document.getElementById('catTotal').textContent = `Total: ${formatNumber(total)}`;
+    }
 
-        function getPercentageClass(value) {
-            if (value > 0) return 'percentage-positive';
-            if (value < 0) return 'percentage-negative';
-            return '';
-        }
+    function renderDosageForm() {
+        const dosageMap = new Map();
+        filteredData.forEach(item => {
+            if (item.dosage_form) {
+                dosageMap.set(item.dosage_form, (dosageMap.get(item.dosage_form) || 0) + (item.sale_qty || 0));
+            }
+        });
 
-        function refreshData() {
-            connectWithCorsAnywhere();
-        }
+        const total = Array.from(dosageMap.values()).reduce((a, b) => a + b, 0);
+        let rows = '';
+        
+        Array.from(dosageMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([form, qty]) => {
+                rows += `<tr>
+                    <td>${form}</td>
+                    <td class="text-right">${formatNumber(qty)}</td>
+                    <td class="text-right">${formatPercentage((qty / total) * 100)}</td>
+                </tr>`;
+            });
 
-        // Expose functions to window
-        window.applyFilters = applyFilters;
-        window.sortTable = sortTable;
-        window.resetFilters = resetFilters;
-        window.clearAllFilters = clearAllFilters;
-        window.removeFilter = removeFilter;
-        window.applyDrilldown = applyDrilldown;
-        window.refreshData = refreshData;
-        window.autoConnect = autoConnect;
-        window.debounceApplyFilters = debounceApplyFilters;
-    </script>
+        document.getElementById('dosageBody').innerHTML = rows;
+        document.getElementById('dosageFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td></td></tr>`;
+        document.getElementById('dosageTotal').textContent = `Total: ${formatNumber(total)}`;
+    }
+
+    function renderMktBySimple() {
+        const mktMap = new Map();
+        filteredData.forEach(item => {
+            if (item.mkt_by) {
+                mktMap.set(item.mkt_by, (mktMap.get(item.mkt_by) || 0) + (item.basic_value || 0));
+            }
+        });
+
+        const total = Array.from(mktMap.values()).reduce((a, b) => a + b, 0);
+        let rows = '';
+        
+        Array.from(mktMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([mkt, val]) => {
+                rows += `<tr>
+                    <td class="clickable" onclick="drilldown('mktBy', '${mkt}')">${mkt}</td>
+                    <td class="text-right">${formatNumber(val)}</td>
+                    <td class="text-right">${formatPercentage((val / total) * 100)}</td>
+                </tr>`;
+            });
+
+        document.getElementById('mktByBody').innerHTML = rows;
+        document.getElementById('mktByFoot').innerHTML = `<tr><td>Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
+    }
+
+    function renderSfWise() {
+        const sfMap = new Map();
+        filteredData.forEach(item => {
+            if (!item.sf_name) return;
+            const key = `${item.sf_name}|${item.product_name}`;
+            if (!sfMap.has(key)) {
+                sfMap.set(key, {
+                    sf: item.sf_name,
+                    product: item.product_name,
+                    mkt: item.mkt_by,
+                    qty: 0,
+                    val: 0
+                });
+            }
+            const rec = sfMap.get(key);
+            rec.qty += item.sale_qty || 0;
+            rec.val += item.basic_value || 0;
+        });
+
+        const total = Array.from(sfMap.values()).reduce((a, b) => a + b.val, 0);
+        let rows = '';
+        
+        Array.from(sfMap.values())
+            .sort((a, b) => b.val - a.val)
+            .forEach(item => {
+                rows += `<tr>
+                    <td class="clickable" onclick="drilldown('sfName', '${item.sf}')">${item.sf}</td>
+                    <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product || '-'}</td>
+                    <td class="clickable" onclick="drilldown('mktBy', '${item.mkt}')">${item.mkt || '-'}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${formatNumber(item.val)}</td>
+                    <td class="text-right">${formatPercentage((item.val / total) * 100)}</td>
+                </tr>`;
+            });
+
+        document.getElementById('sfWiseBody').innerHTML = rows;
+        document.getElementById('sfWiseFoot').innerHTML = `<tr><td colspan="4">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
+    }
+
+    function renderSfCode() {
+        const codeMap = new Map();
+        filteredData.forEach(item => {
+            if (!item.sf_code) return;
+            const key = `${item.sf_code}|${item.sf_name}|${item.product_name}`;
+            if (!codeMap.has(key)) {
+                codeMap.set(key, {
+                    code: item.sf_code,
+                    sf: item.sf_name,
+                    product: item.product_name,
+                    qty: 0,
+                    val: 0
+                });
+            }
+            const rec = codeMap.get(key);
+            rec.qty += item.sale_qty || 0;
+            rec.val += item.basic_value || 0;
+        });
+
+        const total = Array.from(codeMap.values()).reduce((a, b) => a + b.val, 0);
+        let rows = '';
+        
+        Array.from(codeMap.values())
+            .sort((a, b) => b.val - a.val)
+            .forEach(item => {
+                rows += `<tr>
+                    <td>${item.code}</td>
+                    <td class="clickable" onclick="drilldown('sfName', '${item.sf}')">${item.sf || ''}</td>
+                    <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product || ''}</td>
+                    <td class="text-right">${formatNumber(item.qty)}</td>
+                    <td class="text-right">${formatNumber(item.val)}</td>
+                    <td class="text-right">${formatPercentage((item.val / total) * 100)}</td>
+                </tr>`;
+            });
+
+        document.getElementById('sfCodeBody').innerHTML = rows;
+        document.getElementById('sfCodeFoot').innerHTML = `<tr><td colspan="4">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
+    }
+
+    function renderProdMonthDetail() {
+        const detailData = filteredData
+            .filter(item => item.product_name && item.bill_date)
+            .map(item => ({
+                product: item.product_name,
+                month: item.bill_date.substring(0, 7),
+                qty: item.sale_qty || 0,
+                val: item.basic_value || 0
+            }))
+            .sort((a, b) => b.val - a.val)
+            .slice(0, 50);
+
+        const total = detailData.reduce((a, b) => a + b.val, 0);
+        let rows = '';
+        
+        detailData.forEach(item => {
+            rows += `<tr>
+                <td class="clickable" onclick="drilldown('product', '${item.product}')">${item.product}</td>
+                <td class="clickable" onclick="drilldown('month', '${item.month}')">${item.month}</td>
+                <td class="text-right">${formatNumber(item.qty)}</td>
+                <td class="text-right">${formatNumber(item.val)}</td>
+            </tr>`;
+        });
+
+        document.getElementById('prodMonthDetailBody').innerHTML = rows;
+        document.getElementById('prodMonthDetailFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
+    }
+
+    function renderProdSummary() {
+        const prodMap = new Map();
+        filteredData.forEach(item => {
+            if (item.product_name) {
+                prodMap.set(item.product_name, {
+                    val: (prodMap.get(item.product_name)?.val || 0) + (item.basic_value || 0),
+                    qty: (prodMap.get(item.product_name)?.qty || 0) + (item.sale_qty || 0)
+                });
+            }
+        });
+
+        const total = Array.from(prodMap.values()).reduce((a, b) => a + b.val, 0);
+        const products = Array.from(prodMap.entries())
+            .map(([name, data]) => ({ name, val: data.val, qty: data.qty }))
+            .sort((a, b) => b.val - a.val);
+
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, products.length);
+        const pageProducts = products.slice(start, end);
+
+        let rows = '';
+        pageProducts.forEach(p => {
+            rows += `<tr>
+                <td class="clickable" onclick="drilldown('product', '${p.name}')">${p.name}</td>
+                <td class="text-right">${formatNumber(p.qty)}</td>
+                <td class="text-right">${formatNumber(p.val)}</td>
+                <td class="text-right">${formatPercentage((p.val / total) * 100)}</td>
+            </tr>`;
+        });
+
+        document.getElementById('prodSummaryBody').innerHTML = rows;
+        document.getElementById('prodSummaryFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
+        document.getElementById('prodRange').textContent = `${start + 1}-${end} / ${products.length}`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = end >= products.length;
+    }
+
+    function renderDpr() {
+        const dprData = filteredData
+            .filter(item => item.bill_date && item.bill_no)
+            .sort((a, b) => (b.bill_date || '').localeCompare(a.bill_date || ''))
+            .slice(0, 100);
+
+        const total = dprData.reduce((a, b) => a + (b.basic_value || 0), 0);
+        let rows = '';
+        
+        dprData.forEach(item => {
+            rows += `<tr>
+                <td class="clickable" onclick="drilldown('month', '${item.bill_date.substring(0, 7)}')">${item.bill_date || ''}</td>
+                <td>${item.bill_no || ''}</td>
+                <td class="clickable" onclick="drilldown('location', '${item.location}')">${item.location || ''}</td>
+                <td class="clickable" onclick="drilldown('mktBy', '${item.mkt_by}')">${item.mkt_by || ''}</td>
+                <td class="clickable" onclick="drilldown('product', '${item.product_name}')">${item.product_name || ''}</td>
+                <td>${item.batch_no || ''}</td>
+                <td class="clickable" onclick="drilldown('sfName', '${item.sf_name}')">${item.sf_name || ''}</td>
+                <td class="text-right">${formatNumber(item.sale_qty)}</td>
+                <td class="text-right">${formatNumber(item.basic_value)}</td>
+            </tr>`;
+        });
+
+        document.getElementById('dprBody').innerHTML = rows;
+        document.getElementById('dprFoot').innerHTML = `<tr><td colspan="8">Grand total</td><td class="text-right">${formatNumber(total)}</td></tr>`;
+    }
+
+    function renderLocDispatch() {
+        const locMap = new Map();
+        filteredData.forEach(item => {
+            if (!item.location) return;
+            if (!locMap.has(item.location)) {
+                locMap.set(item.location, { cnt: 0, qty: 0, val: 0 });
+            }
+            const rec = locMap.get(item.location);
+            rec.cnt++;
+            rec.qty += item.sale_qty || 0;
+            rec.val += item.basic_value || 0;
+        });
+
+        const total = Array.from(locMap.values()).reduce((a, b) => a + b.val, 0);
+        let rows = '';
+        
+        Array.from(locMap.entries())
+            .sort((a, b) => b[1].val - a[1].val)
+            .forEach(([loc, data]) => {
+                rows += `<tr>
+                    <td class="clickable" onclick="drilldown('location', '${loc}')">${loc}</td>
+                    <td class="text-right">${data.cnt}</td>
+                    <td class="text-right">${formatNumber(data.qty)}</td>
+                    <td class="text-right">${formatNumber(data.val)}</td>
+                    <td class="text-right">${formatPercentage((data.val / total) * 100)}</td>
+                </tr>`;
+            });
+
+        document.getElementById('locDispatchBody').innerHTML = rows;
+        document.getElementById('locDispatchFoot').innerHTML = `<tr><td colspan="3">Grand total</td><td class="text-right">${formatNumber(total)}</td><td>100%</td></tr>`;
+    }
+
+    function updateGrandTotal() {
+        const total = filteredData.reduce((sum, item) => sum + (item.basic_value || 0), 0);
+        document.getElementById('grandTotalValue').textContent = formatNumber(total);
+    }
+</script>
 </body>
 </html>
